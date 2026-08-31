@@ -1,91 +1,188 @@
-/* src/App.css */
+/* =========================================================
+   GLOBAL APP WRAPPER
+========================================================= */
+
 .app {
-  display: flex;
-  position: relative; /* Ensure that the positioning context is set */
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  display: block;
+
+  /*
+    IMPORTANT:
+    clip prevents horizontal overflow WITHOUT creating
+    the type of scroll container that can interfere
+    with sticky/fixed child layouts.
+  */
+  overflow-x: clip;
 }
+
+/* =========================================================
+   ROUTED PAGE WRAPPER
+
+   This should stay completely neutral.
+   Individual pages control their own width, spacing,
+   alignment and vertical layout.
+========================================================= */
+
+.content {
+  position: relative;
+
+  z-index: 1;
+
+  width: 100%;
+  min-width: 0;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: block !important;
+
+  overflow: visible !important;
+
+  transition:
+    margin-left 0.3s ease-in-out;
+}
+
+/* =========================================================
+   LEGACY DASHBOARD SHIFT
+========================================================= */
+
+.content.shifted {
+  margin-left: 15px !important;
+}
+
+/* =========================================================
+   LEGACY HAMBURGER
+========================================================= */
 
 .hamburger-icon {
   position: fixed;
+
   top: 40px;
   left: 45px;
+
+  z-index: 1000;
+
+  margin: 0;
+  padding: 0;
+
+  color: #bfaeda;
+
   font-size: 30px;
-  color: #bfaeda; /* Default color when dashboard is closed */
-  z-index: 1000; /* Ensure the hamburger icon is on top */
+
   cursor: pointer;
-  transition: color 0.3s ease-in-out;
-  
+
+  transition:
+    color 0.3s ease-in-out;
 }
 
 .hamburger-icon.open {
-  color: #fff; /* Color when dashboard is open */
+  color: #ffffff;
 }
 
+/* =========================================================
+   LEGACY DASHBOARD
+========================================================= */
+
 .dashboard {
-  width: 80px;
-  background-image: linear-gradient(#4776E6, #8E54E9);
-  height: 100vh;
   position: fixed;
+
   top: 0;
-  left: -350px; /* Move it completely out of sight */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  left: -350px;
+
+  z-index: 999;
+
+  width: 80px;
+
+  height: 100vh;
+  height: 100dvh;
+
   padding: 20px;
-  transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  visibility: hidden; /* Hide it completely */
-  z-index: 999; /* Ensure the dashboard is above other content */
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  background-image:
+    linear-gradient(
+      #4776e6,
+      #8e54e9
+    );
+
+  visibility: hidden;
+
+  transition:
+    left 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
 }
 
 .dashboard.open {
   left: 0;
-  visibility: visible; /* Make it visible when open */
+
+  visibility: visible;
 }
 
-.content {
-  margin-left: 0;
-  padding: 20px;
-  transition: margin-left 0.3s ease-in-out;
-  width: 100%; /* Ensure content takes full width */
-  display: flex;
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  position: relative;
-  z-index: 1; /* Ensure content is below the dashboard */
-}
-
-.content.shifted {
-  margin-left: 15px; /* Adjust based on the width of the dashboard */
-}
+/* =========================================================
+   LEGACY DASHBOARD NAV
+========================================================= */
 
 .dashboard nav {
   width: 100%;
+
   margin-top: 100px;
+
   display: flex;
+
   flex-direction: column;
-  align-items: center; /* Center the navigation items */
+
+  align-items: center;
 }
 
 .dashboard nav ul {
-  list-style-type: none;
+  width: 100%;
+
   margin: 0;
   padding: 0;
-  width: 100%;
+
   display: flex;
+
   flex-direction: column;
-  align-items: center; /* Center the list items */
+
+  align-items: center;
+
+  list-style-type: none;
 }
 
 .dashboard nav ul li {
-  margin: 20px 0;
+  margin:
+    20px
+    0;
 }
 
 .dashboard nav ul li a {
-  text-decoration: none;
-  color: #ffff;
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
+  color: #ffffff;
+
   font-size: 16px;
+
+  text-decoration: none;
 }
 
 .dashboard nav ul li a i {
@@ -94,10 +191,27 @@
 
 .dashboard nav ul li a span {
   margin-top: 5px;
+
   font-size: 12px;
-  text-align: center; /* Center the text */
+
+  text-align: center;
 }
 
 .dashboard nav ul li a:hover {
   text-decoration: underline;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+  .content.shifted {
+    margin-left: 0 !important;
+  }
+
+  .hamburger-icon {
+    top: 20px;
+    left: 20px;
+  }
 }

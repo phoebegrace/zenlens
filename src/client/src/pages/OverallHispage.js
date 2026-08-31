@@ -1,80 +1,223 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Plot from "react-plotly.js";
+
+import {
+  BarChart3,
+  CalendarDays,
+  ChevronRight,
+  Clock3,
+  Layers3,
+  LineChart,
+  RefreshCcw,
+  Sparkles,
+  TrendingUp,
+  X,
+} from "lucide-react";
+
+import ZenLensHeader from "../components/ZenLensHeader";
+
 import "./OverallHispage.css";
-import Header from "../components/Header";
+
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 const DailyWeeklyPage = () => {
   const [dailyData, setDailyData] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
+
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
+
   const [view, setView] = useState("daily");
+
   const [recommendation, setRecommendation] = useState("");
 
-  
+  const [dailyLoading, setDailyLoading] = useState(false);
+  const [weeklyLoading, setWeeklyLoading] = useState(false);
+
+  const [
+    recommendationLoading,
+    setRecommendationLoading,
+  ] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
+
   const fetchDailyData = async () => {
+    setDailyLoading(true);
+    setErrorMessage("");
+
     try {
       const response = await fetch(
-        "http://localhost:5000/daily-emotion-timeline"
+        `${API_BASE_URL}/daily-emotion-timeline`
       );
-      const data = await response.json();
-      setDailyData(data);
+
+      if (!response.ok) {
+        throw new Error(
+          `Daily data request failed with status ${response.status}`
+        );
+      }
+
+      const data =
+        await response.json();
+
+      setDailyData(
+        Array.isArray(data)
+          ? data
+          : []
+      );
     } catch (error) {
-      console.error("Error fetching daily data:", error);
+      console.error(
+        "Error fetching daily data:",
+        error
+      );
+
+      setDailyData([]);
+
+      if (
+        error instanceof TypeError
+      ) {
+        setErrorMessage(
+          "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+        );
+      } else {
+        setErrorMessage(
+          error.message ||
+            "Unable to load daily insight data."
+        );
+      }
+    } finally {
+      setDailyLoading(false);
     }
   };
 
   const fetchWeeklyData = async () => {
+    setWeeklyLoading(true);
+    setErrorMessage("");
+
     try {
       const response = await fetch(
-        "http://localhost:5000/weekly-emotion-timeline"
+        `${API_BASE_URL}/weekly-emotion-timeline`
       );
-      const data = await response.json();
-      setWeeklyData(data);
+
+      if (!response.ok) {
+        throw new Error(
+          `Weekly data request failed with status ${response.status}`
+        );
+      }
+
+      const data =
+        await response.json();
+
+      setWeeklyData(
+        Array.isArray(data)
+          ? data
+          : []
+      );
     } catch (error) {
-      console.error("Error fetching weekly data:", error);
+      console.error(
+        "Error fetching weekly data:",
+        error
+      );
+
+      setWeeklyData([]);
+
+      if (
+        error instanceof TypeError
+      ) {
+        setErrorMessage(
+          "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+        );
+      } else {
+        setErrorMessage(
+          error.message ||
+            "Unable to load weekly insight data."
+        );
+      }
+    } finally {
+      setWeeklyLoading(
+        false
+      );
     }
   };
 
-  const fetchRecommendation = async () => {
-    try {
+  const fetchRecommendation =
+    async () => {
       if (!selectedWeek) {
-        console.error("No week selected.");
-        setRecommendation("Please select a week to view the recommendation.");
+        setRecommendation("");
         return;
       }
-  
-      const response = await fetch("http://localhost:5000/get-weekly-recommendation");
-  
-      if (!response.ok) {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        setRecommendation("Unable to fetch recommendation at this time. Please try again later.");
-        return;
-      }
-  
-      const data = await response.json();
-  
-      if (!Array.isArray(data)) {
-        console.error("Unexpected response format:", data);
-        setRecommendation("Unexpected response format from the server.");
-        return;
-      }
-  
-      // Find the recommendation for the selected week using exact string matching
-      const selectedWeekData = data.find((entry) => entry.week === selectedWeek.week);
-  
-      if (selectedWeekData && selectedWeekData.openai_response) {
-        setRecommendation(
+
+      setRecommendationLoading(
+        true
+      );
+
+      try {
+        const response =
+          await fetch(
+            `${API_BASE_URL}/get-weekly-recommendation`
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            `Recommendation request failed with status ${response.status}`
+          );
+        }
+
+        const data =
+          await response.json();
+
+        if (
+          !Array.isArray(data)
+        ) {
+          setRecommendation(
+            "No recommendation is available for this week."
+          );
+
+          return;
+        }
+
+        const selectedWeekData =
+          data.find(
+            (entry) =>
+              entry.week ===
+              selectedWeek.week
+          );
+
+        if (
+          selectedWeekData &&
           selectedWeekData.openai_response
+        ) {
+          setRecommendation(
+            selectedWeekData.openai_response
+          );
+        } else {
+          setRecommendation(
+            "No recommendation is available for this week."
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Error fetching recommendation:",
+          error
         );
-      } else {
-        setRecommendation("No recommendation available for the selected week.");
+
+        if (
+          error instanceof
+          TypeError
+        ) {
+          setRecommendation(
+            "ZenLens could not connect to the analysis server."
+          );
+        } else {
+          setRecommendation(
+            "The recommendation could not be loaded at this time."
+          );
+        }
+      } finally {
+        setRecommendationLoading(
+          false
+        );
       }
-    } catch (error) {
-      console.error("Error fetching recommendation:", error.message);
-      setRecommendation(`Unable to fetch recommendation: ${error.message}`);
-    }
-  };
+    };
 
   useEffect(() => {
     fetchDailyData();
@@ -87,62 +230,189 @@ const DailyWeeklyPage = () => {
     }
   }, [selectedWeek]);
 
-  const processDailyDataForPlotly = (dayData) => {
-    // Convert timestamps to Date objects and sort them
-    const sortedEntries = dayData.entries
-      .map(entry => ({
+  const processDailyDataForPlotly = (
+    dayData
+  ) => {
+    const sortedEntries = [
+      ...(dayData?.entries ||
+        []),
+    ]
+      .map((entry) => ({
         ...entry,
-        timestamp: new Date(entry.timestamp) // Ensure proper date format
+        timestamp: new Date(
+          entry.timestamp
+        ),
       }))
-      .sort((a, b) => a.timestamp - b.timestamp);
-  
-    // Debugging: Check if sorting is correct
-    console.log("First timestamp:", sortedEntries[0]?.timestamp);
-    console.log("Last timestamp:", sortedEntries[sortedEntries.length - 1]?.timestamp);
-  
-    // Get all unique emotions
-    const emotionLabels = Object.keys(sortedEntries[0]?.emotion_counts || {});
-  
-    return emotionLabels.map((emotion) => ({
-      x: sortedEntries.map((entry) => entry.timestamp),  // ✅ Use sortedEntries
-      y: sortedEntries.map((entry) => entry.emotion_counts[emotion] || 0), // ✅ Handle missing values
-      type: "scatter",
-      mode: "lines",
-      name: emotion.charAt(0).toUpperCase() + emotion.slice(1),
-      connectgaps: false,  // Optional: Change to true if missing data causes gaps
-    }));
+      .sort(
+        (a, b) =>
+          a.timestamp -
+          b.timestamp
+      );
+
+    const emotionLabels = [
+      ...new Set(
+        sortedEntries.flatMap(
+          (entry) =>
+            Object.keys(
+              entry.emotion_counts ||
+                {}
+            )
+        )
+      ),
+    ];
+
+    return emotionLabels.map(
+      (emotion) => ({
+        x: sortedEntries.map(
+          (entry) =>
+            entry.timestamp
+        ),
+
+        y: sortedEntries.map(
+          (entry) =>
+            entry
+              .emotion_counts?.[
+              emotion
+            ] ?? null
+        ),
+
+        type: "scatter",
+
+        mode: "lines",
+
+        name:
+          emotion
+            .charAt(0)
+            .toUpperCase() +
+          emotion.slice(1),
+
+        connectgaps:
+          false,
+
+        hovertemplate:
+          "<b>%{fullData.name}</b><br>%{x}<br>Count: %{y}<extra></extra>",
+
+        line: {
+          shape: "linear",
+          width: 2.2,
+        },
+      })
+    );
   };
-  
 
-  const processWeeklyDataForPlotly = (weekData) => {
-
-    const sortedEntries = [...weekData.entries].sort(
-      (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+  const processWeeklyDataForPlotly = (
+    weekData
+  ) => {
+    const sortedEntries = [
+      ...(weekData?.entries ||
+        []),
+    ].sort(
+      (a, b) =>
+        new Date(
+          a.timestamp
+        ) -
+        new Date(
+          b.timestamp
+        )
     );
 
-    const emotionLabels = Object.keys(sortedEntries[0]?.emotion_counts || {});
+    const emotionLabels = [
+      ...new Set(
+        sortedEntries.flatMap(
+          (entry) =>
+            Object.keys(
+              entry.emotion_counts ||
+                {}
+            )
+        )
+      ),
+    ];
 
-    return emotionLabels.map((emotion) => ({
-      x: sortedEntries.map((entry) => entry.timestamp),
-      y: sortedEntries.map((entry) => entry.emotion_counts[emotion] ?? null),
-      type: "scatter",
-      mode: "lines",
-      name: emotion.charAt(0).toUpperCase() + emotion.slice(1),
-      connectgaps: false,
-    }));
+    return emotionLabels.map(
+      (emotion) => ({
+        x: sortedEntries.map(
+          (entry) =>
+            entry.timestamp
+        ),
+
+        y: sortedEntries.map(
+          (entry) =>
+            entry
+              .emotion_counts?.[
+              emotion
+            ] ?? null
+        ),
+
+        type: "scatter",
+
+        mode: "lines",
+
+        name:
+          emotion
+            .charAt(0)
+            .toUpperCase() +
+          emotion.slice(1),
+
+        connectgaps:
+          false,
+
+        hovertemplate:
+          "<b>%{fullData.name}</b><br>%{x}<br>Count: %{y}<extra></extra>",
+
+        line: {
+          shape: "linear",
+          width: 2.2,
+        },
+      })
+    );
   };
 
-  const toggleDaySelection = (day) => {
-    setSelectedDay(selectedDay?.date === day.date ? null : day);
+  const handleViewChange = (
+    nextView
+  ) => {
+    setView(nextView);
+
+    setSelectedDay(null);
+    setSelectedWeek(null);
+    setRecommendation("");
   };
 
-  const toggleWeekSelection = (week) => {
-    if (selectedWeek?.week === week.week) {
-      setSelectedWeek(null);
-      setRecommendation("");
-    } else {
-      setSelectedWeek(week);
-    }
+  const toggleDaySelection = (
+    day
+  ) => {
+    setSelectedWeek(null);
+    setRecommendation("");
+
+    setSelectedDay(
+      (current) =>
+        current?.date ===
+        day.date
+          ? null
+          : day
+    );
+  };
+
+  const toggleWeekSelection = (
+    week
+  ) => {
+    setSelectedDay(null);
+
+    setSelectedWeek(
+      (current) => {
+        if (
+          current?.week ===
+          week.week
+        ) {
+          setRecommendation(
+            ""
+          );
+
+          return null;
+        }
+
+        return week;
+      }
+    );
   };
 
   const closeInfoCard = () => {
@@ -151,166 +421,753 @@ const DailyWeeklyPage = () => {
     setRecommendation("");
   };
 
-  const toggleView = () => {
-    setView(view === "daily" ? "weekly" : "daily");
-  };
+  const selectedData =
+    selectedDay ||
+    selectedWeek;
 
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const selectedTraces =
+    useMemo(() => {
+      if (selectedDay) {
+        return processDailyDataForPlotly(
+          selectedDay
+        );
+      }
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!isDropdownOpen);
-  };
+      if (selectedWeek) {
+        return processWeeklyDataForPlotly(
+          selectedWeek
+        );
+      }
 
-  const handleViewChange = (viewType) => {
-    setView(viewType);
-    setDropdownOpen(false);
+      return [];
+    }, [
+      selectedDay,
+      selectedWeek,
+    ]);
+
+  const currentData =
+    view === "daily"
+      ? dailyData
+      : weeklyData;
+
+  const currentLoading =
+    view === "daily"
+      ? dailyLoading
+      : weeklyLoading;
+
+  const entryCount =
+    currentData.length;
+
+  const totalTimelinePoints =
+    useMemo(() => {
+      return currentData.reduce(
+        (total, item) =>
+          total +
+          (item.entries
+            ?.length ||
+            0),
+        0
+      );
+    }, [currentData]);
+
+  const chartLayout = {
+    autosize: true,
+
+    margin: {
+      l: 52,
+      r: 22,
+      t: 20,
+      b: 58,
+    },
+
+    paper_bgcolor:
+      "rgba(255,255,255,0)",
+
+    plot_bgcolor:
+      "rgba(255,255,255,0)",
+
+    font: {
+      family:
+        "Inter, sans-serif",
+
+      color:
+        "#68758a",
+
+      size: 10,
+    },
+
+    hovermode:
+      "x unified",
+
+    showlegend: true,
+
+    legend: {
+      orientation: "h",
+
+      x: 0,
+
+      y: -0.28,
+
+      font: {
+        size: 9,
+      },
+    },
+
+    xaxis: {
+      title: {
+        text: "Time",
+
+        font: {
+          size: 10,
+        },
+      },
+
+      showgrid: true,
+
+      gridcolor:
+        "#edf0f5",
+
+      zeroline: false,
+
+      tickfont: {
+        size: 9,
+      },
+    },
+
+    yaxis: {
+      title: {
+        text:
+          "Emotion count",
+
+        font: {
+          size: 10,
+        },
+      },
+
+      showgrid: true,
+
+      gridcolor:
+        "#edf0f5",
+
+      zeroline: false,
+
+      rangemode:
+        "tozero",
+
+      tickfont: {
+        size: 9,
+      },
+    },
   };
 
   return (
-    <div className="daily-weekly-page scoped-page">
-      <div className="daily-weekly-page">
-        <Header />
-        <header className="page-header">
-          {/* <h1 className="logo">Daily and Weekly Emotion Levels</h1> */}
+    <div className="zen-overall-page">
+      <ZenLensHeader />
 
-          {view === "daily" ? (
-            <div className="daily-container">
-              <h2>Daily Data</h2>
-              <button onClick={toggleDropdown} className="dropdown-button">
-                {view === "daily" ? "Daily Data" : "Weekly Data"}
-                <i className="fa fa-chevron-down" aria-hidden="true"></i>
-              </button>
+      <main className="zen-overall-main">
+        <section className="zen-overall-intro">
+          <div className="zen-overall-intro-copy">
+            <div className="zen-overall-eyebrow">
+              <TrendingUp />
 
-              {isDropdownOpen && (
-                <div className="dropdown-menu">
-                  <button onClick={() => handleViewChange("daily")}>
-                    Show Daily Data
-                  </button>
-                  <button onClick={() => handleViewChange("weekly")}>
-                    Show Weekly Data
-                  </button>
-                </div>
-              )}
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dailyData.length > 0 ? (
-                    dailyData.map((day) => (
-                      <tr
-                        key={day.date}
-                        onClick={() => toggleDaySelection(day)}
-                        className="clickable-entry"
+              <span>
+                Stress insights
+              </span>
+            </div>
+
+            <h1>
+              Understand patterns
+              <span>
+                across days and
+                weeks.
+              </span>
+            </h1>
+
+            <p>
+              Compare emotional
+              observations across
+              time to review
+              broader classroom
+              stress patterns
+              beyond a single
+              session.
+            </p>
+          </div>
+
+          <div className="zen-overall-overview">
+            <div>
+              <span>
+                CURRENT VIEW
+              </span>
+
+              <strong>
+                {view === "daily"
+                  ? "Daily"
+                  : "Weekly"}
+              </strong>
+
+              <small>
+                Insight level
+              </small>
+            </div>
+
+            <div>
+              <span>
+                PERIODS
+              </span>
+
+              <strong>
+                {entryCount}
+              </strong>
+
+              <small>
+                Available results
+              </small>
+            </div>
+
+            <div>
+              <span>
+                OBSERVATIONS
+              </span>
+
+              <strong>
+                {
+                  totalTimelinePoints
+                }
+              </strong>
+
+              <small>
+                Timeline entries
+              </small>
+            </div>
+          </div>
+        </section>
+
+        <section className="zen-overall-toolbar">
+          <div className="zen-overall-view-switch">
+            <button
+              type="button"
+              className={
+                view === "daily"
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                handleViewChange(
+                  "daily"
+                )
+              }
+            >
+              <CalendarDays />
+
+              <div>
+                <strong>
+                  Daily
+                </strong>
+
+                <span>
+                  Day-by-day
+                  patterns
+                </span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className={
+                view === "weekly"
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                handleViewChange(
+                  "weekly"
+                )
+              }
+            >
+              <Layers3 />
+
+              <div>
+                <strong>
+                  Weekly
+                </strong>
+
+                <span>
+                  Broader weekly
+                  patterns
+                </span>
+              </div>
+            </button>
+          </div>
+
+          <div className="zen-overall-toolbar-note">
+            <LineChart />
+
+            <p>
+              <span>
+                CURRENTLY VIEWING
+              </span>
+
+              <strong>
+                {view === "daily"
+                  ? "Daily emotion history"
+                  : "Weekly emotion history"}
+              </strong>
+            </p>
+          </div>
+        </section>
+
+        {errorMessage && (
+          <div className="zen-overall-error">
+            <span>
+              {errorMessage}
+            </span>
+
+            <button
+              type="button"
+              onClick={() => {
+                fetchDailyData();
+                fetchWeeklyData();
+              }}
+            >
+              <RefreshCcw />
+
+              <span>
+                Try again
+              </span>
+            </button>
+          </div>
+        )}
+
+        <section className="zen-overall-content">
+          <div className="zen-overall-content-head">
+            <div>
+              <span>
+                {view === "daily"
+                  ? "DAILY INSIGHTS"
+                  : "WEEKLY INSIGHTS"}
+              </span>
+
+              <h2>
+                {view === "daily"
+                  ? "Classroom patterns by day"
+                  : "Classroom patterns by week"}
+              </h2>
+            </div>
+
+            <p>
+              {view === "daily"
+                ? "Select a day to inspect how emotion counts changed throughout that period."
+                : "Select a week to inspect the emotional timeline and review its associated recommendation."}
+            </p>
+          </div>
+
+          {currentLoading ? (
+            <div className="zen-overall-loading">
+              <div className="zen-overall-loading-spinner" />
+
+              <strong>
+                Loading insights
+              </strong>
+
+              <span>
+                Retrieving ZenLens
+                timeline data.
+              </span>
+            </div>
+          ) : currentData.length >
+            0 ? (
+            <div className="zen-overall-period-grid">
+              {view === "daily"
+                ? dailyData.map(
+                    (
+                      day,
+                      index
+                    ) => (
+                      <button
+                        type="button"
+                        className="zen-overall-period-card"
+                        key={
+                          day.date ||
+                          index
+                        }
+                        onClick={() =>
+                          toggleDaySelection(
+                            day
+                          )
+                        }
                       >
-                        <td>{day.date}</td>
-                        <td>View Details</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="2">It may take a while to load the data.</td>
-                    </tr>
+                        <div className="zen-overall-period-top">
+                          <div className="zen-overall-period-icon">
+                            <CalendarDays />
+                          </div>
+
+                          <span>
+                            DAILY
+                          </span>
+                        </div>
+
+                        <div className="zen-overall-period-copy">
+                          <span>
+                            DATE
+                          </span>
+
+                          <h3>
+                            {day.date ||
+                              "Unknown date"}
+                          </h3>
+
+                          <p>
+                            {day.entries
+                              ?.length ||
+                              0}{" "}
+                            timeline{" "}
+                            {(day.entries
+                              ?.length ||
+                              0) ===
+                            1
+                              ? "entry"
+                              : "entries"}
+                          </p>
+                        </div>
+
+                        <div className="zen-overall-period-footer">
+                          <span>
+                            View daily
+                            details
+                          </span>
+
+                          <ChevronRight />
+                        </div>
+                      </button>
+                    )
+                  )
+                : weeklyData.map(
+                    (
+                      week,
+                      index
+                    ) => (
+                      <button
+                        type="button"
+                        className="zen-overall-period-card"
+                        key={
+                          week.week ||
+                          index
+                        }
+                        onClick={() =>
+                          toggleWeekSelection(
+                            week
+                          )
+                        }
+                      >
+                        <div className="zen-overall-period-top">
+                          <div className="zen-overall-period-icon">
+                            <Layers3 />
+                          </div>
+
+                          <span>
+                            WEEKLY
+                          </span>
+                        </div>
+
+                        <div className="zen-overall-period-copy">
+                          <span>
+                            WEEK
+                          </span>
+
+                          <h3>
+                            {week.week ||
+                              "Unknown week"}
+                          </h3>
+
+                          <p>
+                            {week.entries
+                              ?.length ||
+                              0}{" "}
+                            timeline{" "}
+                            {(week.entries
+                              ?.length ||
+                              0) ===
+                            1
+                              ? "entry"
+                              : "entries"}
+                          </p>
+                        </div>
+
+                        <div className="zen-overall-period-footer">
+                          <span>
+                            View weekly
+                            details
+                          </span>
+
+                          <ChevronRight />
+                        </div>
+                      </button>
+                    )
                   )}
-                </tbody>
-              </table>
             </div>
           ) : (
-            <div className="weekly-container">
-              <h2>Weekly Data</h2>
-              <button onClick={toggleDropdown} className="dropdown-button">
-                {view === "daily" ? "Daily Data" : "Weekly Data"}
-                <i className="fa fa-chevron-down" aria-hidden="true"></i>
-              </button>
-
-              {isDropdownOpen && (
-                <div className="dropdown-menu">
-                  <button onClick={() => handleViewChange("daily")}>
-                    Show Daily Data
-                  </button>
-                  <button onClick={() => handleViewChange("weekly")}>
-                    Show Weekly Data
-                  </button>
-                </div>
-              )}
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Week</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {weeklyData.length > 0 ? (
-                    weeklyData.map((week) => (
-                      <tr
-                        key={week.week}
-                        onClick={() => toggleWeekSelection(week)}
-                        className="clickable-entry"
-                      >
-                        <td>{week.week}</td>
-                        <td>View Details</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="2">It may take a while to load the data.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {(selectedDay || selectedWeek) && (
-            <div className="overlay" onClick={closeInfoCard}>
-              <div className="info-card" onClick={(e) => e.stopPropagation()}>
-                <button className="close-btn" onClick={closeInfoCard}>
-                  ×
-                </button>
-                <h3>
-                  {selectedDay
-                    ? `Daily Details for ${selectedDay.date}`
-                    : `Weekly Details for ${selectedWeek.week}`}
-                </h3>
-                {selectedDay && (
-                  <>
-                    <Plot
-                      data={processDailyDataForPlotly(selectedDay)}
-                      layout={{
-                        title: `Emotion Levels for ${selectedDay.date}`,
-                        xaxis: { title: "Timestamp" },
-                        yaxis: { title: "Emotion Count" },
-                        legend: { orientation: "v" },
-                      }}
-                    />
-                    
-                  </>
-                )}
-                {selectedWeek && (
-                  <>
-                    <Plot
-                      data={processWeeklyDataForPlotly(selectedWeek)}
-                      layout={{
-                        title: `Emotion Levels for ${selectedWeek.week}`,
-                        xaxis: { title: "Timestamp" },
-                        yaxis: { title: "Emotion Count" },
-                        legend: { orientation: "v" },
-                      }}
-                    />
-                    <p className="recommendation">
-                      <strong>Recommendation:</strong> {recommendation}
-                    </p>
-                  </>
-                )}
+            <div className="zen-overall-empty">
+              <div className="zen-overall-empty-icon">
+                <BarChart3 />
               </div>
+
+              <span>
+                NO INSIGHT DATA
+              </span>
+
+              <h3>
+                No {view} results
+                are available yet.
+              </h3>
+
+              <p>
+                ZenLens will
+                display historical
+                patterns here once
+                classroom session
+                data is available.
+              </p>
             </div>
           )}
-        </header>
-      </div>
+        </section>
+      </main>
+
+      {selectedData && (
+        <div
+          className="zen-overall-overlay"
+          onMouseDown={
+            closeInfoCard
+          }
+        >
+          <div
+            className="zen-overall-modal"
+            onMouseDown={(
+              event
+            ) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="zen-overall-modal-head">
+              <div>
+                <span>
+                  {selectedDay
+                    ? "DAILY DETAILS"
+                    : "WEEKLY DETAILS"}
+                </span>
+
+                <h2>
+                  {selectedDay
+                    ? selectedDay.date
+                    : selectedWeek?.week}
+                </h2>
+
+                <p>
+                  {selectedDay
+                    ? "Review emotional changes recorded across this day."
+                    : "Review the week's emotional pattern and recommendation."}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="zen-overall-modal-close"
+                onClick={
+                  closeInfoCard
+                }
+                aria-label="Close insight details"
+              >
+                <X />
+              </button>
+            </div>
+
+            <div className="zen-overall-modal-body">
+              <aside className="zen-overall-modal-info">
+                <div className="zen-overall-modal-info-heading">
+                  <span>
+                    PERIOD SUMMARY
+                  </span>
+
+                  <h3>
+                    {selectedDay
+                      ? "Daily insight"
+                      : "Weekly insight"}
+                  </h3>
+                </div>
+
+                <div className="zen-overall-modal-stat-list">
+                  <div>
+                    {selectedDay ? (
+                      <CalendarDays />
+                    ) : (
+                      <Layers3 />
+                    )}
+
+                    <p>
+                      <span>
+                        {selectedDay
+                          ? "Date"
+                          : "Week"}
+                      </span>
+
+                      <strong>
+                        {selectedDay
+                          ? selectedDay.date
+                          : selectedWeek?.week}
+                      </strong>
+                    </p>
+                  </div>
+
+                  <div>
+                    <Clock3 />
+
+                    <p>
+                      <span>
+                        Timeline
+                        entries
+                      </span>
+
+                      <strong>
+                        {selectedData
+                          ?.entries
+                          ?.length ||
+                          0}
+                      </strong>
+                    </p>
+                  </div>
+
+                  <div>
+                    <BarChart3 />
+
+                    <p>
+                      <span>
+                        Emotion
+                        groups
+                      </span>
+
+                      <strong>
+                        {
+                          selectedTraces.length
+                        }
+                      </strong>
+                    </p>
+                  </div>
+                </div>
+
+                {selectedWeek && (
+                  <div className="zen-overall-recommendation">
+                    <div className="zen-overall-recommendation-heading">
+                      <Sparkles />
+
+                      <div>
+                        <span>
+                          WEEKLY
+                          RECOMMENDATION
+                        </span>
+
+                        <strong>
+                          ZenLens
+                          insight
+                        </strong>
+                      </div>
+                    </div>
+
+                    {recommendationLoading ? (
+                      <div className="zen-overall-recommendation-loading">
+                        <div className="zen-overall-mini-spinner" />
+
+                        <span>
+                          Loading
+                          recommendation
+                        </span>
+                      </div>
+                    ) : (
+                      <p>
+                        {recommendation ||
+                          "No recommendation is available for this week."}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </aside>
+
+              <section className="zen-overall-chart-panel">
+                <div className="zen-overall-chart-head">
+                  <div>
+                    <span>
+                      EMOTION TIMELINE
+                    </span>
+
+                    <h3>
+                      Emotional
+                      patterns over
+                      time
+                    </h3>
+                  </div>
+
+                  <p>
+                    Each line
+                    represents one
+                    detected emotion
+                    category across
+                    the selected
+                    period.
+                  </p>
+                </div>
+
+                <div className="zen-overall-chart">
+                  {selectedTraces.length >
+                  0 ? (
+                    <Plot
+                      data={
+                        selectedTraces
+                      }
+                      layout={
+                        chartLayout
+                      }
+                      config={{
+                        responsive:
+                          true,
+
+                        displaylogo:
+                          false,
+
+                        displayModeBar:
+                          false,
+                      }}
+                      useResizeHandler
+                      style={{
+                        width:
+                          "100%",
+
+                        height:
+                          "100%",
+                      }}
+                    />
+                  ) : (
+                    <div className="zen-overall-chart-empty">
+                      <LineChart />
+
+                      <strong>
+                        No timeline
+                        data
+                      </strong>
+
+                      <span>
+                        No emotional
+                        timeline data
+                        is available
+                        for this
+                        period.
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

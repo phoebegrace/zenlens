@@ -1,110 +1,2019 @@
-/* General Styling */
-.stress-monitoring-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: #f8f9fa;
-  font-family: Arial, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap");
+
+:root {
+  --zmon-navy: #0b1735;
+  --zmon-navy-soft: #172747;
+
+  --zmon-blue: #4b78ed;
+  --zmon-blue-dark: #315ed5;
+  --zmon-blue-soft: #eef3ff;
+
+  --zmon-violet: #7868e8;
+
+  --zmon-text: #1c2a43;
+  --zmon-text-soft: #69768c;
+  --zmon-text-muted: #98a5b8;
+
+  --zmon-line: #e2e8f1;
+  --zmon-line-dark: #d2ddeb;
+
+  --zmon-white: #ffffff;
+
+  --zmon-success: #278164;
+  --zmon-success-bg: #edf8f4;
+
+  --zmon-danger: #bd5665;
+  --zmon-danger-bg: #fff4f5;
+
+  --zl-header-height: 76px;
 }
 
-.stress-monitoring-header {
-  text-align: center;
-  margin-bottom: 20px;
-  width: 100%;
+/* =========================================================
+   RESET
+========================================================= */
+
+.zen-monitor-page,
+.zen-monitor-page *,
+.zen-monitor-page *::before,
+.zen-monitor-page *::after {
+  box-sizing: border-box;
 }
 
-.stress-monitoring-header h1 {
-  font-size: 2em;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.combined-result-entry {
-  border: 1px solid #ccc;
-  padding: 15px;
-  margin: 20px 0;
-  border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  text-align: center;
-}
-
-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  font-size: 1em;
-  color: #ffffff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #f5f5f5;
-}
-
-/* Table Styling */
-.data-table {
-  width: 100%;
-  margin-top: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table th,
-table td {
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ddd;
-}
-
-table tr:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-
-/* Info Card Modal Styling */
-.info-card-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.info-card {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.zen-monitor-page {
   position: relative;
+
+  width: 100%;
+  min-width: 0;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  margin: 0;
+
+  overflow-x: clip;
+
+  font-family:
+    "Inter",
+    sans-serif;
+
+  color:
+    var(--zmon-text);
+
+  background:
+    radial-gradient(
+      circle at 84% 3%,
+      rgba(105, 120, 255, 0.065),
+      transparent 22%
+    ),
+    linear-gradient(
+      180deg,
+      #fcfdff 0%,
+      #f7f9fd 58%,
+      #ffffff 100%
+    );
 }
 
-.info-card p {
-  margin: 10px 0;
-}
+/* Protect from old global button CSS */
 
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.zen-monitor-page button {
+  width: auto;
+  max-width: none;
+
+  height: auto;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+
   background: none;
-  border: none;
-  font-size: 1.5em;
-  color: #333;
+  box-shadow: none;
+
+  color: inherit;
+
+  font: inherit;
+
+  text-align: inherit;
+
   cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.zen-monitor-main {
+  width:
+    min(
+      1320px,
+      calc(100% - 48px)
+    );
+
+  margin:
+    var(--zl-header-height)
+    auto
+    0;
+
+  padding:
+    22px
+    0
+    90px;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.zen-monitor-intro {
+  width: 100%;
+
+  padding:
+    9px
+    0
+    34px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.84fr)
+    minmax(500px, 1.16fr);
+
+  align-items: end;
+
+  gap: 52px;
+}
+
+.zen-monitor-intro-copy {
+  width: 100%;
+  max-width: 620px;
+
+  min-width: 0;
+}
+
+.zen-monitor-eyebrow {
+  width: fit-content;
+
+  margin-bottom: 17px;
+
+  padding:
+    7px
+    10px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border:
+    1px solid
+    #dce5f2;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, 0.8);
+
+  color:
+    #58677f;
+
+  font-size: 9px;
+
+  line-height: 1;
+
+  font-weight: 700;
+}
+
+.zen-monitor-eyebrow svg {
+  width: 13px;
+  height: 13px;
+
+  color:
+    var(--zmon-violet);
+}
+
+.zen-monitor-intro h1 {
+  max-width: 600px;
+
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zmon-navy);
+
+  font-size:
+    clamp(
+      44px,
+      3.9vw,
+      60px
+    );
+
+  line-height: 1.015;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.061em;
+
+  text-wrap: balance;
+}
+
+.zen-monitor-intro h1 span {
+  display: block;
+
+  margin-top: 4px;
+
+  color:
+    var(--zmon-blue);
+}
+
+.zen-monitor-intro-copy > p {
+  max-width: 550px;
+
+  margin:
+    20px
+    0
+    0;
+
+  color:
+    var(--zmon-text-soft);
+
+  font-size: 12px;
+
+  line-height: 1.72;
+}
+
+/* =========================================================
+   HERO PROCESS
+========================================================= */
+
+.zen-monitor-process {
+  position: relative;
+
+  width: 100%;
+
+  padding:
+    22px
+    23px;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, 0.82);
+
+  box-shadow:
+    0
+    12px
+    36px
+    rgba(28, 49, 89, 0.04);
+
+  backdrop-filter:
+    blur(14px);
+
+  -webkit-backdrop-filter:
+    blur(14px);
+}
+
+.zen-monitor-process-label {
+  display: block;
+
+  margin-bottom: 15px;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 6.8px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.11em;
+}
+
+.zen-monitor-process-flow {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    18px
+    minmax(0, 1fr)
+    18px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.zen-monitor-process-flow > div {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    29px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.zen-monitor-process-flow > div > span {
+  width: 29px;
+  height: 29px;
+
+  display: grid;
+
+  place-items: center;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 50%;
+
+  background:
+    #ffffff;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 7px;
+
+  font-weight: 800;
+}
+
+.zen-monitor-process-flow p {
+  min-width: 0;
+
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.zen-monitor-process-flow strong {
+  color:
+    var(--zmon-navy);
+
+  font-size: 8.5px;
+
+  font-weight: 700;
+}
+
+.zen-monitor-process-flow small {
+  color:
+    var(--zmon-text-muted);
+
+  font-size: 6.8px;
+
+  line-height: 1.35;
+}
+
+.zen-monitor-process-flow > svg {
+  width: 12px;
+  height: 12px;
+
+  color:
+    #aab5c7;
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.zen-monitor-message {
+  width: 100%;
+
+  margin-bottom: 14px;
+
+  padding:
+    12px
+    14px;
+
+  display: grid;
+
+  grid-template-columns:
+    17px
+    minmax(0, 1fr)
+    28px;
+
+  align-items: center;
+
+  gap: 9px;
+
+  border-radius: 11px;
+
+  font-size: 9px;
+
+  line-height: 1.45;
+}
+
+.zen-monitor-message.error {
+  border:
+    1px solid
+    #efdadd;
+
+  background:
+    var(--zmon-danger-bg);
+
+  color:
+    var(--zmon-danger);
+}
+
+.zen-monitor-message.success {
+  border:
+    1px solid
+    #d6ebe4;
+
+  background:
+    var(--zmon-success-bg);
+
+  color:
+    var(--zmon-success);
+}
+
+.zen-monitor-message > svg {
+  width: 15px;
+  height: 15px;
+}
+
+.zen-monitor-page
+.zen-monitor-message button {
+  width:
+    28px !important;
+
+  height:
+    28px !important;
+
+  display:
+    grid !important;
+
+  place-items: center;
+
+  border-radius:
+    8px !important;
+
+  background:
+    transparent !important;
+
+  color:
+    inherit !important;
+
+  font-size:
+    16px !important;
+}
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.zen-monitor-workspace {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(430px, 0.88fr)
+    minmax(0, 1.12fr);
+
+  align-items: stretch;
+
+  gap: 18px;
+}
+
+.zen-monitor-calendar-panel,
+.zen-monitor-results-panel {
+  min-width: 0;
+
+  padding: 26px;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 21px;
+
+  background:
+    rgba(255, 255, 255, 0.94);
+
+  box-shadow:
+    0
+    14px
+    42px
+    rgba(28, 49, 89, 0.045);
+}
+
+/* =========================================================
+   PANEL HEADING
+========================================================= */
+
+.zen-monitor-panel-heading {
+  margin-bottom: 23px;
+
+  display: grid;
+
+  grid-template-columns:
+    46px
+    minmax(0, 1fr);
+
+  gap: 14px;
+
+  align-items: start;
+}
+
+.zen-monitor-panel-icon {
+  width: 46px;
+  height: 46px;
+
+  display: grid;
+
+  place-items: center;
+
+  border:
+    1px solid
+    #dce6f5;
+
+  border-radius: 13px;
+
+  background:
+    var(--zmon-blue-soft);
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-panel-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.zen-monitor-panel-heading > div:last-child {
+  min-width: 0;
+}
+
+.zen-monitor-panel-heading span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.1em;
+}
+
+.zen-monitor-panel-heading h2 {
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zmon-navy);
+
+  font-size: 20px;
+
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.035em;
+}
+
+.zen-monitor-panel-heading p {
+  max-width: 460px;
+
+  margin:
+    7px
+    0
+    0;
+
+  color:
+    var(--zmon-text-soft);
+
+  font-size: 9px;
+
+  line-height: 1.55;
+}
+
+/* =========================================================
+   RANGE SELECTED
+========================================================= */
+
+.zen-monitor-range-selected {
+  margin-bottom: 14px;
+
+  padding:
+    12px
+    13px;
+
+  display: grid;
+
+  grid-template-columns:
+    31px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 9px;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 11px;
+
+  background:
+    #f8faff;
+}
+
+.zen-monitor-range-selected > svg {
+  width: 15px;
+  height: 15px;
+
+  justify-self: center;
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-range-selected > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.zen-monitor-range-selected span {
+  color:
+    var(--zmon-text-muted);
+
+  font-size: 6.3px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+}
+
+.zen-monitor-range-selected strong {
+  overflow: hidden;
+
+  color:
+    var(--zmon-navy);
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   DATE RANGE CALENDAR
+========================================================= */
+
+.zen-monitor-calendar-wrap {
+  width: 100%;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 14px;
+
+  background:
+    #ffffff;
+}
+
+.zen-monitor-calendar-wrap
+.rdrDateRangeWrapper {
+  width: 100%;
+
+  background:
+    transparent;
+}
+
+.zen-monitor-calendar-wrap
+.rdrCalendarWrapper {
+  width: 100%;
+
+  background:
+    transparent;
+
+  color:
+    var(--zmon-text);
+
+  font-family:
+    "Inter",
+    sans-serif;
+}
+
+.zen-monitor-calendar-wrap
+.rdrMonth {
+  width: 100%;
+
+  padding:
+    12px
+    16px
+    17px;
+}
+
+.zen-monitor-calendar-wrap
+.rdrMonthAndYearWrapper {
+  height: 56px;
+
+  padding:
+    0
+    14px;
+}
+
+.zen-monitor-calendar-wrap
+.rdrMonthAndYearPickers
+select {
+  color:
+    var(--zmon-navy);
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+.zen-monitor-calendar-wrap
+.rdrWeekDay {
+  color:
+    #9aa5b5;
+
+  font-size: 7px;
+
+  font-weight: 700;
+}
+
+.zen-monitor-calendar-wrap
+.rdrDayNumber span {
+  color:
+    #4d5a70;
+
+  font-size: 9px;
+}
+
+.zen-monitor-calendar-wrap
+.rdrDayToday
+.rdrDayNumber span::after {
+  background:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-calendar-wrap
+.rdrNextPrevButton {
+  border-radius: 9px;
+
+  background:
+    #f3f6fb;
+}
+
+/* Hide unnecessary predefined/date input controls */
+
+.zen-monitor-calendar-wrap
+.rdrDateDisplayWrapper {
+  display: none;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.zen-monitor-loading {
+  min-height: 385px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+}
+
+.zen-monitor-spinner {
+  width: 36px;
+  height: 36px;
+
+  margin-bottom: 14px;
+
+  border:
+    3px solid
+    #e3e9f4;
+
+  border-top-color:
+    var(--zmon-blue-dark);
+
+  border-radius: 50%;
+
+  animation:
+    zenMonitorSpin
+    0.9s
+    linear
+    infinite;
+}
+
+.zen-monitor-loading strong {
+  color:
+    var(--zmon-navy);
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+.zen-monitor-loading span {
+  margin-top: 4px;
+
+  color:
+    var(--zmon-text-muted);
+
+  font-size: 7.5px;
+}
+
+/* =========================================================
+   RESULT HERO
+========================================================= */
+
+.zen-monitor-result-hero {
+  min-height: 185px;
+
+  padding: 25px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  border:
+    1px solid
+    #d7e2f3;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f0f5ff,
+      #ffffff 65%
+    );
+}
+
+.zen-monitor-result-hero > span {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.11em;
+}
+
+.zen-monitor-result-hero > strong {
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zmon-navy);
+
+  font-size:
+    clamp(
+      42px,
+      4vw,
+      57px
+    );
+
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.06em;
+}
+
+.zen-monitor-result-hero > p {
+  max-width: 400px;
+
+  margin:
+    12px
+    0
+    0;
+
+  color:
+    var(--zmon-text-soft);
+
+  font-size: 8.5px;
+
+  line-height: 1.55;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.zen-monitor-stat-grid {
+  margin-top: 11px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+.zen-monitor-stat-grid article {
+  min-width: 0;
+
+  padding:
+    13px;
+
+  display: grid;
+
+  grid-template-columns:
+    32px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 9px;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 11px;
+
+  background:
+    #ffffff;
+}
+
+.zen-monitor-stat-icon {
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 9px;
+
+  background:
+    var(--zmon-blue-soft);
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-stat-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.zen-monitor-stat-grid p {
+  min-width: 0;
+
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.zen-monitor-stat-grid p > span {
+  color:
+    var(--zmon-text-muted);
+
+  font-size: 6.3px;
+
+  font-weight: 600;
+}
+
+.zen-monitor-stat-grid p > strong {
+  overflow: hidden;
+
+  color:
+    var(--zmon-navy);
+
+  font-size: 9px;
+
+  line-height: 1.2;
+
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+.zen-monitor-save-section {
+  margin-top: 18px;
+
+  padding-top: 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-top:
+    1px solid
+    var(--zmon-line);
+}
+
+.zen-monitor-save-section > div {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    32px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.zen-monitor-save-section > div > svg {
+  width: 15px;
+  height: 15px;
+
+  justify-self: center;
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-save-section p {
+  min-width: 0;
+
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.zen-monitor-save-section strong {
+  color:
+    var(--zmon-navy);
+
+  font-size: 8.5px;
+
+  font-weight: 700;
+}
+
+.zen-monitor-save-section p > span {
+  color:
+    var(--zmon-text-muted);
+
+  font-size: 7px;
+
+  line-height: 1.4;
+}
+
+.zen-monitor-page
+.zen-monitor-save-button {
+  min-width:
+    160px !important;
+
+  min-height:
+    43px !important;
+
+  padding:
+    0
+    14px !important;
+
+  display:
+    inline-flex !important;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border:
+    0 !important;
+
+  border-radius:
+    10px !important;
+
+  background:
+    var(--zmon-navy) !important;
+
+  color:
+    #ffffff !important;
+
+  box-shadow:
+    0
+    10px
+    22px
+    rgba(11, 23, 53, 0.14) !important;
+
+  font-size:
+    8.5px !important;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.zen-monitor-save-button svg {
+  width: 13px;
+  height: 13px;
+}
+
+.zen-monitor-page
+.zen-monitor-save-button:hover:not(:disabled) {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0
+    14px
+    27px
+    rgba(11, 23, 53, 0.19) !important;
+}
+
+.zen-monitor-page
+.zen-monitor-save-button:disabled {
+  opacity: 0.6;
+
+  cursor: wait;
+}
+
+.zen-monitor-saving-icon {
+  animation:
+    zenMonitorSpin
+    0.85s
+    linear
+    infinite;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.zen-monitor-empty {
+  min-height: 380px;
+
+  padding: 35px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+}
+
+.zen-monitor-empty-icon {
+  width: 56px;
+  height: 56px;
+
+  margin-bottom: 18px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 16px;
+
+  background:
+    var(--zmon-blue-soft);
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-empty-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.zen-monitor-empty > span {
+  margin-bottom: 8px;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.1em;
+}
+
+.zen-monitor-empty h3 {
+  max-width: 430px;
+
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zmon-navy);
+
+  font-size: 22px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.04em;
+}
+
+.zen-monitor-empty p {
+  max-width: 390px;
+
+  margin:
+    10px
+    0
+    0;
+
+  color:
+    var(--zmon-text-soft);
+
+  font-size: 8.5px;
+
+  line-height: 1.6;
+}
+
+/* =========================================================
+   INCLUDED SESSIONS
+========================================================= */
+
+.zen-monitor-sessions {
+  width: 100%;
+
+  margin-top: 28px;
+
+  padding-top: 30px;
+
+  border-top:
+    1px solid
+    var(--zmon-line);
+}
+
+.zen-monitor-sessions-heading {
+  margin-bottom: 21px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(280px, 390px);
+
+  align-items: end;
+
+  gap: 50px;
+}
+
+.zen-monitor-sessions-heading > div > span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.11em;
+}
+
+.zen-monitor-sessions-heading h2 {
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zmon-navy);
+
+  font-size:
+    clamp(
+      29px,
+      2.8vw,
+      40px
+    );
+
+  line-height: 1.07;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.05em;
+}
+
+.zen-monitor-sessions-heading > p {
+  margin: 0;
+
+  color:
+    var(--zmon-text-soft);
+
+  font-size: 8.5px;
+
+  line-height: 1.6;
+}
+
+/* =========================================================
+   SESSION TABLE
+========================================================= */
+
+.zen-monitor-session-list {
+  width: 100%;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 17px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0
+    10px
+    30px
+    rgba(28, 49, 89, 0.035);
+}
+
+.zen-monitor-session-list-head {
+  min-height: 43px;
+
+  padding:
+    0
+    20px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 0.8fr)
+    minmax(180px, 1.2fr)
+    minmax(130px, 0.8fr)
+    minmax(100px, 0.65fr)
+    minmax(130px, 0.75fr);
+
+  align-items: center;
+
+  gap: 14px;
+
+  border-bottom:
+    1px solid
+    var(--zmon-line);
+
+  background:
+    #f8fafe;
+}
+
+.zen-monitor-session-list-head span {
+  color:
+    #909bad;
+
+  font-size: 6.5px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing:
+    0.07em;
+}
+
+.zen-monitor-session-row {
+  min-height: 74px;
+
+  padding:
+    12px
+    20px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 0.8fr)
+    minmax(180px, 1.2fr)
+    minmax(130px, 0.8fr)
+    minmax(100px, 0.65fr)
+    minmax(130px, 0.75fr);
+
+  align-items: center;
+
+  gap: 14px;
+
+  border-bottom:
+    1px solid
+    var(--zmon-line);
+}
+
+.zen-monitor-session-row:last-child {
+  border-bottom: 0;
+}
+
+.zen-monitor-session-row > div {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.zen-monitor-session-icon {
+  width: 34px;
+  height: 34px;
+
+  flex:
+    0
+    0
+    34px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 10px;
+
+  background:
+    var(--zmon-blue-soft);
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-session-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.zen-monitor-session-row p {
+  min-width: 0;
+
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.zen-monitor-session-row p > span {
+  display: none;
+
+  color:
+    var(--zmon-text-muted);
+
+  font-size: 6px;
+
+  font-weight: 600;
+}
+
+.zen-monitor-session-row strong {
+  overflow: hidden;
+
+  color:
+    #536077;
+
+  font-size: 8px;
+
+  line-height: 1.2;
+
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   BOTTOM NOTE
+========================================================= */
+
+.zen-monitor-note {
+  margin-top: 28px;
+
+  padding:
+    27px
+    29px;
+
+  display: grid;
+
+  grid-template-columns:
+    43px
+    minmax(0, 1.1fr)
+    minmax(280px, 0.9fr);
+
+  align-items: center;
+
+  gap: 21px;
+
+  border:
+    1px solid
+    var(--zmon-line);
+
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8faff
+    );
+}
+
+.zen-monitor-note-icon {
+  width: 43px;
+  height: 43px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+
+  background:
+    var(--zmon-blue-soft);
+
+  color:
+    var(--zmon-blue-dark);
+}
+
+.zen-monitor-note-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zen-monitor-note > div:nth-child(2) > span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color:
+    var(--zmon-blue-dark);
+
+  font-size: 6.8px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.1em;
+}
+
+.zen-monitor-note h2 {
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zmon-navy);
+
+  font-size: 18px;
+
+  line-height: 1.25;
+
+  font-weight: 700;
+
+  letter-spacing:
+    -0.03em;
+}
+
+.zen-monitor-note > p {
+  margin: 0;
+
+  color:
+    var(--zmon-text-soft);
+
+  font-size: 8.5px;
+
+  line-height: 1.65;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1120px) {
+  .zen-monitor-intro {
+    grid-template-columns:
+      minmax(0, 0.82fr)
+      minmax(440px, 1.18fr);
+
+    gap: 36px;
+  }
+
+  .zen-monitor-workspace {
+    grid-template-columns:
+      minmax(390px, 0.88fr)
+      minmax(0, 1.12fr);
+  }
+
+  .zen-monitor-stat-grid {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .zen-monitor-stat-grid article:last-child {
+    grid-column:
+      1 / -1;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  :root {
+    --zl-header-height: 68px;
+  }
+
+  .zen-monitor-main {
+    width:
+      calc(100% - 28px);
+
+    padding:
+      22px
+      0
+      70px;
+  }
+
+  .zen-monitor-intro {
+    grid-template-columns:
+      1fr;
+
+    gap: 24px;
+  }
+
+  .zen-monitor-intro-copy {
+    max-width: 700px;
+  }
+
+  .zen-monitor-workspace {
+    grid-template-columns:
+      1fr;
+  }
+
+  .zen-monitor-save-section {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .zen-monitor-page
+  .zen-monitor-save-button {
+    width:
+      100% !important;
+  }
+
+  .zen-monitor-sessions-heading {
+    grid-template-columns:
+      1fr;
+
+    gap: 10px;
+  }
+
+  .zen-monitor-sessions-heading > p {
+    max-width: 550px;
+  }
+
+  .zen-monitor-session-list {
+    overflow-x: auto;
+  }
+
+  .zen-monitor-session-list-head,
+  .zen-monitor-session-row {
+    min-width: 850px;
+  }
+
+  .zen-monitor-note {
+    grid-template-columns:
+      43px
+      1fr;
+  }
+
+  .zen-monitor-note > p {
+    grid-column: 2;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 620px) {
+  :root {
+    --zl-header-height: 64px;
+  }
+
+  .zen-monitor-main {
+    width:
+      calc(100% - 16px);
+
+    padding:
+      18px
+      0
+      52px;
+  }
+
+  .zen-monitor-intro {
+    padding-top: 3px;
+  }
+
+  .zen-monitor-intro h1 {
+    font-size:
+      clamp(
+        38px,
+        11vw,
+        50px
+      );
+  }
+
+  .zen-monitor-intro-copy > p {
+    font-size: 11px;
+  }
+
+  .zen-monitor-process {
+    padding: 17px;
+  }
+
+  .zen-monitor-process-flow {
+    grid-template-columns:
+      1fr;
+
+    gap: 11px;
+  }
+
+  .zen-monitor-process-flow > svg {
+    display: none;
+  }
+
+  .zen-monitor-calendar-panel,
+  .zen-monitor-results-panel {
+    padding: 19px;
+
+    border-radius: 17px;
+  }
+
+  .zen-monitor-panel-heading {
+    grid-template-columns:
+      42px
+      1fr;
+  }
+
+  .zen-monitor-panel-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .zen-monitor-calendar-wrap
+  .rdrMonth {
+    padding:
+      8px
+      8px
+      14px;
+  }
+
+  .zen-monitor-calendar-wrap
+  .rdrMonthAndYearWrapper {
+    padding:
+      0
+      6px;
+  }
+
+  .zen-monitor-stat-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .zen-monitor-stat-grid article:last-child {
+    grid-column: auto;
+  }
+
+  /* MOBILE SESSIONS */
+
+  .zen-monitor-session-list {
+    overflow: visible;
+
+    border: 0;
+
+    border-radius: 0;
+
+    background:
+      transparent;
+
+    box-shadow: none;
+  }
+
+  .zen-monitor-session-list-head {
+    display: none;
+  }
+
+  .zen-monitor-session-row {
+    min-width: 0;
+
+    min-height: 0;
+
+    margin-bottom: 9px;
+
+    padding: 16px;
+
+    grid-template-columns:
+      1fr
+      1fr;
+
+    gap:
+      14px
+      12px;
+
+    border:
+      1px solid
+      var(--zmon-line);
+
+    border-radius: 14px;
+
+    background:
+      #ffffff;
+
+    box-shadow:
+      0
+      7px
+      22px
+      rgba(30, 51, 91, 0.035);
+  }
+
+  .zen-monitor-session-row > div:first-child {
+    grid-column:
+      1 / -1;
+
+    padding-bottom: 12px;
+
+    border-bottom:
+      1px solid
+      var(--zmon-line);
+  }
+
+  .zen-monitor-session-row p > span {
+    display: block;
+  }
+
+  .zen-monitor-session-row strong {
+    font-size: 8.5px;
+  }
+
+  .zen-monitor-note {
+    padding: 20px;
+
+    grid-template-columns:
+      40px
+      1fr;
+
+    gap: 14px;
+  }
+
+  .zen-monitor-note > p {
+    grid-column:
+      1 / -1;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 390px) {
+  .zen-monitor-main {
+    width:
+      calc(100% - 12px);
+  }
+
+  .zen-monitor-intro h1 {
+    font-size: 37px;
+  }
+
+  .zen-monitor-calendar-panel,
+  .zen-monitor-results-panel {
+    padding: 16px;
+  }
+
+  .zen-monitor-session-row {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes zenMonitorSpin {
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .zen-monitor-spinner,
+  .zen-monitor-saving-icon {
+    animation:
+      none !important;
+  }
+
+  .zen-monitor-save-button {
+    transition:
+      none !important;
+  }
 }

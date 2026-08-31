@@ -1,178 +1,1460 @@
-/* Custom Toast Notifications */
-.Toastify__toast-container {
-  width: 420px;
-  font-family: inherit;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap");
+
+:root {
+  --zen-blue-950: #081935;
+  --zen-blue-900: #0d2558;
+  --zen-blue-800: #163d98;
+  --zen-blue-700: #2257d7;
+  --zen-blue-600: #3b74f2;
+  --zen-blue-500: #5b90ff;
+  --zen-blue-400: #8ab6ff;
+  --zen-blue-300: #cfe1ff;
+
+  --zen-page: #f2f4fb;
+  --zen-surface: #ffffff;
+  --zen-surface-soft: #f9fbff;
+
+  --zen-text: #142341;
+  --zen-text-soft: #6d7a92;
+  --zen-text-muted: #99a3b6;
+
+  --zen-border: #dbe4f2;
+  --zen-border-strong: #cfd9ea;
+
+  --zen-danger: #b64859;
+  --zen-danger-bg: #fff1f4;
+
+  --zen-shadow-card:
+    0 30px 80px rgba(25, 51, 117, 0.12);
+
+  --zen-shadow-button:
+    0 12px 24px rgba(41, 87, 214, 0.22);
+
+  --zen-shadow-button-hover:
+    0 16px 30px rgba(41, 87, 214, 0.26);
 }
 
-.Toastify__toast {
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 0.5rem;
-  font-size: 0.95rem;
-  min-height: 60px;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.toast-success {
-  background: #48bb78 !important;
-  color: white !important;
-  border-left: 4px solid #2f855a !important;
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
 }
 
-.toast-error {
-  background: #f56565 !important;
-  color: white !important;
-  border-left: 4px solid #c53030 !important;
+html,
+body {
+  overflow-x: hidden;
 }
 
-.toast-content {
-  display: flex;
-  align-items: center;
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--zen-text);
+  background: var(--zen-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.toast-icon {
-  margin-right: 1rem;
-  width: 24px;
-  height: 24px;
+.zen-login-page button,
+.zen-login-page input {
+  font-family: "Inter", sans-serif;
 }
 
-.toast-progress {
-  background: rgba(255, 255, 255, 0.3) !important;
+.zen-login-page button {
+  border: 0 !important;
+  outline: 0;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-/* Animation */
-@keyframes slideIn {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.zen-login-page input {
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-@keyframes slideOut {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-}
+/* PAGE */
 
-.Toastify__slide-enter {
-  animation: slideIn 0.3s ease-out;
-}
+.zen-login-page {
+  width: 100%;
 
-.Toastify__slide-exit {
-  animation: slideOut 0.3s ease-in;
-}
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  width: 100vw;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100dvh;
+
+  display: grid;
+  place-items: center;
+
+  padding: 32px;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(102, 124, 255, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(
+      180deg,
+      #f1f2fb 0%,
+      #f7f9ff 50%,
+      #f2f5fc 100%
+    );
 }
 
-.auth-form-container {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* CARD */
+
+.zen-login-card {
+  width: min(1120px, 100%);
+  min-height: 660px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.92fr)
+    minmax(0, 1.08fr);
+
+  align-items: stretch;
+
+  padding: 16px;
+
+  border:
+    1px solid rgba(215, 224, 241, 0.95);
+
+  border-radius: 30px;
+
+  background:
+    rgba(255, 255, 255, 0.98);
+
+  box-shadow:
+    var(--zen-shadow-card);
+
+  overflow: hidden;
+
+  animation:
+    zenCardIn
+    650ms
+    cubic-bezier(0.2, 0.8, 0.2, 1)
+    both;
+}
+
+/* LEFT PANEL */
+
+.zen-login-visual {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --light-opacity: 0;
+
+  position: relative;
+
+  min-height: 628px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 34px 34px 30px;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+
+  isolation: isolate;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 14% 10%,
+      rgba(144, 220, 255, 0.95),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 87% 12%,
+      rgba(208, 132, 255, 0.82),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 45% 61%,
+      rgba(44, 43, 208, 0.92),
+      transparent 43%
+    ),
+    linear-gradient(
+      145deg,
+      #60cbff 0%,
+      #4f72f4 32%,
+      #3329c8 61%,
+      #8366ef 100%
+    );
+}
+
+.zen-login-visual::before {
+  content: "";
+
+  position: absolute;
+  z-index: 1;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 16, 68, 0) 45%,
+      rgba(8, 18, 60, 0.24) 100%
+    );
+
+  pointer-events: none;
+}
+
+/* POINTER FOLLOW LIGHT */
+
+.zen-login-pointer-light {
+  position: absolute;
+
+  z-index: 0;
+
+  left: var(--mouse-x);
+  top: var(--mouse-y);
+
+  width: 390px;
+  height: 390px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity: var(--light-opacity);
+
+  transform:
+    translate(-50%, -50%);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.38) 0%,
+      rgba(169, 222, 255, 0.24) 22%,
+      rgba(134, 164, 255, 0.13) 43%,
+      rgba(255, 255, 255, 0) 72%
+    );
+
+  filter: blur(6px);
+
+  mix-blend-mode: screen;
+
+  transition:
+    opacity 260ms ease,
+    left 90ms linear,
+    top 90ms linear;
+}
+
+/* LIQUID FOLLOWER */
+
+.zen-login-pointer-liquid {
+  position: absolute;
+
+  z-index: 0;
+
+  left: var(--mouse-x);
+  top: var(--mouse-y);
+
+  width: 230px;
+  height: 230px;
+
+  pointer-events: none;
+
+  opacity:
+    calc(
+      var(--light-opacity) * 0.58
+    );
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-8deg);
+
+  border-radius:
+    48%
+    52%
+    58%
+    42%
+    /
+    52%
+    42%
+    58%
+    48%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255, 255, 255, 0.42),
+      rgba(141, 205, 255, 0.2) 38%,
+      rgba(147, 130, 255, 0.08) 65%,
+      transparent 76%
+    );
+
+  filter: blur(12px);
+
+  mix-blend-mode: screen;
+
+  transition:
+    opacity 300ms ease,
+    left 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  animation:
+    zenLiquidMorph
+    5s
+    ease-in-out
+    infinite;
+}
+
+/* DECORATIVE GLOW */
+
+.zen-login-visual-glow {
+  position: absolute;
+
+  z-index: 0;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity: 0.85;
+}
+
+.zen-login-visual-glow-one {
+  width: 280px;
+  height: 280px;
+
+  top: 140px;
+  left: -120px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(91, 211, 255, 0.22),
+      transparent 70%
+    );
+
+  animation:
+    zenGlowOne
+    10s
+    ease-in-out
+    infinite;
+}
+
+.zen-login-visual-glow-two {
+  width: 250px;
+  height: 250px;
+
+  right: -90px;
+  bottom: 76px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(228, 203, 255, 0.24),
+      transparent 70%
+    );
+
+  animation:
+    zenGlowTwo
+    12s
+    ease-in-out
+    infinite;
+}
+
+/* BRAND */
+
+.zen-login-brand {
+  position: relative;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.zen-login-logo-box {
+  width: 56px;
+  height: 56px;
+
+  flex: 0 0 56px;
+
+  padding: 9px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 16px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.28);
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    inset
+    0
+    1px
+    0
+    rgba(255, 255, 255, 0.22);
+}
+
+.zen-login-logo {
   width: 100%;
-  max-width: 400px;
-  margin: 1rem;
-  transition: transform 0.3s ease;
-}
+  height: 100%;
 
-.auth-form-container:hover {
-  transform: translateY(-5px);
-}
-
-.auth-form-container h3 {
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-  margin-right: 40px;
-}
-
-.form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  color: #4a5568;
-  font-weight: 500;
+
+  object-fit: contain;
+
+  filter:
+    brightness(0)
+    invert(1)
+    drop-shadow(
+      0
+      4px
+      8px
+      rgba(0, 0, 0, 0.14)
+    );
 }
 
-.form-control {
+.zen-login-brand-copy {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-login-brand-copy strong {
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 21px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.04em;
+}
+
+.zen-login-brand-copy span {
+  color:
+    rgba(255, 255, 255, 0.78);
+
+  font-size: 13px;
+
+  line-height: 1.35;
+}
+
+/* LEFT COPY */
+
+.zen-login-visual-copy {
+  position: relative;
+  z-index: 3;
+
+  max-width: 375px;
+
+  margin-top: auto;
+  margin-bottom: 42px;
+}
+
+.zen-login-small-label {
+  display: block;
+
+  margin-bottom: 18px;
+
+  color:
+    rgba(255, 255, 255, 0.76);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+.zen-login-visual-copy h1 {
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size:
+    clamp(46px, 4vw, 64px);
+
+  line-height: 0.98;
+
+  font-weight: 800;
+
+  letter-spacing: -0.065em;
+}
+
+.zen-login-visual-copy p {
+  max-width: 345px;
+
+  margin: 20px 0 0;
+
+  color:
+    rgba(255, 255, 255, 0.8);
+
+  font-size: 14px;
+
+  line-height: 1.75;
+}
+
+.zen-login-visual-footer {
+  position: relative;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  color:
+    rgba(255, 255, 255, 0.58);
+
+  font-size: 11px;
+}
+
+.zen-login-dot {
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.55);
+}
+
+/* RIGHT SIDE */
+
+.zen-login-form-side {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 32px 42px;
+}
+
+.zen-login-form-wrap {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+
+  max-width: 470px;
+
+  animation:
+    zenFormIn
+    650ms
+    ease
+    both
+    120ms;
 }
 
-.form-control:focus {
-  outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+.zen-login-mobile-brand {
+  display: none;
 }
 
-.btn-primary {
+/* HEADER */
+
+.zen-login-header {
+  margin-bottom: 30px;
+}
+
+.zen-login-kicker {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color:
+    var(--zen-blue-600);
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+}
+
+.zen-login-header h2 {
+  margin: 0;
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  color:
+    var(--zen-blue-950);
+
+  font-size:
+    clamp(36px, 4vw, 64px);
+
+  line-height: 1.02;
+
+  font-weight: 800;
+
+  letter-spacing: -0.06em;
+}
+
+.zen-login-header p {
+  max-width: 420px;
+
+  margin: 16px 0 0;
+
+  color:
+    var(--zen-text-soft);
+
+  font-size: 15px;
+
+  line-height: 1.75;
+}
+
+/* FORM */
+
+.zen-login-form {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #4299e1;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+}
+
+.zen-login-error {
+  margin-bottom: 18px;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  background:
+    var(--zen-danger-bg);
+
+  color:
+    var(--zen-danger);
+
+  font-size: 13px;
+
+  line-height: 1.45;
+}
+
+.zen-login-field + .zen-login-field {
+  margin-top: 24px;
+}
+
+.zen-login-field > label,
+.zen-login-label-row label {
+  color: #2a3958;
+
+  font-size: 14px !important;
+
+  line-height: 1.25;
+
+  font-weight: 700;
+}
+
+.zen-login-field > label {
+  display: block;
+
+  margin-bottom: 10px;
+}
+
+.zen-login-label-row {
+  width: 100%;
+
+  margin-bottom: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 14px;
+}
+
+/* FORGOT */
+
+.zen-login-page .zen-login-forgot {
+  display: inline-flex !important;
+
+  width: auto !important;
+
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  flex: 0 0 auto;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+
+  padding: 0 !important;
+
+  border: 0 !important;
+
+  border-radius: 0 !important;
+
+  outline: 0 !important;
+
+  background:
+    transparent !important;
+
+  box-shadow:
+    none !important;
+
+  color:
+    var(--zen-blue-600) !important;
+
+  font-family:
+    "Inter",
+    sans-serif !important;
+
+  font-size:
+    10.5px !important;
+
+  line-height: 1 !important;
+
+  font-weight:
+    600 !important;
+
+  letter-spacing:
+    0 !important;
+
+  text-transform:
+    none !important;
+
+  white-space: nowrap;
+
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.btn-primary:hover {
-  background-color: #3182ce;
+.zen-login-page .zen-login-forgot:hover {
+  color:
+    var(--zen-blue-700) !important;
+
+  text-decoration: underline;
+
+  text-underline-offset: 2px;
 }
 
-.btn-primary:active {
-  background-color: #2b6cb0;
+/* INPUT */
+
+.zen-login-input-wrap {
+  position: relative;
+
+  width: 100%;
+
+  height: 62px;
 }
 
-.forgot-password {
-  text-align: right;
-  margin-top: 1rem;
+.zen-login-input-wrap input {
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+
+  padding:
+    0
+    58px
+    0
+    50px;
+
+  border:
+    1px solid
+    var(--zen-border);
+
+  border-radius: 16px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color:
+    var(--zen-text);
+
+  font-size: 16px;
+
+  line-height: normal;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
 }
 
-.forgot-password a {
-  color: #4299e1;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
+.zen-login-input-wrap input::placeholder {
+  color: #a0a9bb;
 }
 
-.forgot-password a:hover {
-  color: #3182ce;
+.zen-login-input-wrap input:hover {
+  border-color:
+    var(--zen-border-strong);
+
+  background:
+    var(--zen-surface-soft);
+}
+
+.zen-login-input-wrap input:focus {
+  border-color:
+    var(--zen-blue-500);
+
+  background: #ffffff;
+
+  box-shadow:
+    0
+    0
+    0
+    4px
+    rgba(91, 144, 255, 0.12);
+}
+
+.zen-login-input-icon {
+  position: absolute;
+
+  z-index: 3;
+
+  top: 50%;
+  left: 18px;
+
+  width: 19px;
+  height: 19px;
+
+  display: block;
+
+  transform:
+    translateY(-50%);
+
+  color: #8a95aa;
+
+  pointer-events: none;
+}
+
+/* EYE */
+
+.zen-login-page .zen-login-password-toggle {
+  position: absolute !important;
+
+  z-index: 5 !important;
+
+  top: 0 !important;
+  right: 10px !important;
+  bottom: 0 !important;
+
+  width: 42px !important;
+  height: 42px !important;
+
+  min-width: 42px !important;
+  min-height: 42px !important;
+
+  margin:
+    auto
+    0 !important;
+
+  padding: 0 !important;
+
+  display: grid !important;
+
+  place-items: center !important;
+
+  border: 0 !important;
+
+  border-radius: 11px !important;
+
+  outline: 0 !important;
+
+  background:
+    transparent !important;
+
+  box-shadow:
+    none !important;
+
+  color:
+    #8894aa !important;
+
+  line-height:
+    0 !important;
+
+  transform:
+    none !important;
+
+  cursor: pointer;
+}
+
+.zen-login-page
+.zen-login-password-toggle:hover {
+  color:
+    var(--zen-blue-600) !important;
+
+  background:
+    #eff5ff !important;
+}
+
+.zen-login-page
+.zen-login-password-toggle svg {
+  display: block !important;
+
+  width: 18px !important;
+  height: 18px !important;
+
+  margin: 0 !important;
+
+  position: static !important;
+
+  transform:
+    none !important;
+}
+
+/* SUBMIT */
+
+.zen-login-submit {
+  width: 100%;
+
+  min-height: 60px;
+
+  margin-top: 28px;
+
+  padding: 0 22px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  border: 0 !important;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2952da 0%,
+      #4e69ff 45%,
+      #6295ff 100%
+    ) !important;
+
+  color: #ffffff;
+
+  box-shadow:
+    var(--zen-shadow-button) !important;
+
+  font-size: 18px;
+
+  line-height: 1;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 170ms ease,
+    box-shadow 170ms ease,
+    filter 170ms ease;
+}
+
+.zen-login-submit:hover:not(:disabled) {
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    var(
+      --zen-shadow-button-hover
+    ) !important;
+
+  filter:
+    brightness(1.02);
+}
+
+.zen-login-submit:disabled {
+  opacity: 0.72;
+
+  cursor: wait;
+}
+
+.zen-login-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* REGISTER */
+
+.zen-login-register {
+  width: 100%;
+
+  margin-top: 28px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  color:
+    var(--zen-text-muted);
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  white-space: nowrap;
+}
+
+.zen-login-register > span {
+  margin: 0;
+
+  padding: 0;
+}
+
+.zen-login-page
+.zen-login-register button {
+  display: inline-block !important;
+
+  width: auto !important;
+
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding: 0 !important;
+
+  border: 0 !important;
+
+  border-radius: 0 !important;
+
+  outline: 0 !important;
+
+  background:
+    transparent !important;
+
+  box-shadow:
+    none !important;
+
+  color:
+    var(--zen-blue-600) !important;
+
+  font-size:
+    14px !important;
+
+  line-height:
+    1.4 !important;
+
+  font-weight:
+    700 !important;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+}
+
+/* MOBILE */
+
+@media (max-width: 1100px) {
+
+  .zen-login-page {
+    padding: 24px;
+  }
+
+  .zen-login-card {
+    min-height: 620px;
+  }
+
+  .zen-login-form-side {
+    padding:
+      28px
+      30px;
+  }
+
+  .zen-login-visual {
+    padding: 28px;
+  }
+}
+
+@media (max-width: 820px) {
+
+  .zen-login-page {
+    padding: 18px;
+
+    place-items:
+      start
+      center;
+  }
+
+  .zen-login-card {
+    width:
+      min(
+        100%,
+        560px
+      );
+
+    min-height: auto;
+
+    display: block;
+
+    padding: 0;
+
+    border-radius: 24px;
+  }
+
+  .zen-login-visual {
+    display: none;
+  }
+
+  .zen-login-form-side {
+    display: block;
+
+    padding:
+      28px
+      22px
+      26px;
+  }
+
+  .zen-login-mobile-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 32px;
+  }
+
+  .zen-login-mobile-logo-box {
+    width: 50px;
+    height: 50px;
+
+    flex:
+      0
+      0
+      50px;
+
+    padding: 8px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 15px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #2952da,
+        #6295ff
+      );
+  }
+
+  .zen-login-mobile-logo {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    filter:
+      brightness(0)
+      invert(1);
+  }
+
+  .zen-login-mobile-brand-copy {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+  }
+
+  .zen-login-mobile-brand-copy strong {
+    font-family:
+      "Manrope",
+      sans-serif;
+
+    color:
+      var(--zen-blue-950);
+
+    font-size: 22px;
+
+    font-weight: 800;
+  }
+
+  .zen-login-mobile-brand-copy span {
+    color:
+      var(--zen-text-soft);
+
+    font-size: 12px;
+  }
+
+  .zen-login-form-wrap {
+    max-width: 100%;
+
+    animation: none;
+  }
+
+  .zen-login-header h2 {
+    font-size: 42px;
+  }
+
+  .zen-login-input-wrap {
+    height: 58px;
+  }
+
+  .zen-login-page
+  .zen-login-forgot {
+    font-size:
+      10px !important;
+  }
 }
 
 @media (max-width: 480px) {
-  .auth-form-container {
-    padding: 1.5rem;
-    margin: 1rem;
+
+  .zen-login-page {
+    padding: 0;
+
+    background: #ffffff;
   }
 
-  .auth-form-container h3 {
-    font-size: 1.75rem;
+  .zen-login-card {
+    width: 100%;
+
+    min-height: 100vh;
+
+    border: 0;
+
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+
+  .zen-login-form-side {
+    min-height: 100vh;
+
+    padding:
+      24px
+      18px
+      28px;
+  }
+
+  .zen-login-mobile-brand {
+    margin-bottom: 28px;
+  }
+
+  .zen-login-mobile-logo-box {
+    width: 46px;
+    height: 46px;
+
+    flex:
+      0
+      0
+      46px;
+  }
+
+  .zen-login-mobile-brand-copy strong {
+    font-size: 20px;
+  }
+
+  .zen-login-mobile-brand-copy span {
+    font-size: 11px;
+  }
+
+  .zen-login-header h2 {
+    font-size: 34px;
+  }
+
+  .zen-login-header p {
+    font-size: 14px;
+  }
+
+  .zen-login-input-wrap {
+    height: 54px;
+  }
+
+  .zen-login-field > label,
+  .zen-login-label-row label {
+    font-size:
+      13px !important;
+  }
+
+  .zen-login-page
+  .zen-login-forgot {
+    font-size:
+      9.5px !important;
+  }
+
+  .zen-login-input-wrap input {
+    padding:
+      0
+      52px
+      0
+      46px;
+
+    font-size: 15px;
+  }
+
+  .zen-login-submit {
+    min-height: 54px;
+
+    font-size: 16px;
+  }
+
+  .zen-login-register {
+    font-size: 13px;
+  }
+
+  .zen-login-page
+  .zen-login-register button {
+    font-size:
+      13px !important;
+  }
+}
+
+/* ANIMATION */
+
+@keyframes zenCardIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(18px)
+      scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes zenFormIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(0);
+  }
+}
+
+@keyframes zenGlowOne {
+
+  0%,
+  100% {
+    transform:
+      translate(0, 0);
+  }
+
+  50% {
+    transform:
+      translate(18px, 14px);
+  }
+}
+
+@keyframes zenGlowTwo {
+
+  0%,
+  100% {
+    transform:
+      translate(0, 0);
+  }
+
+  50% {
+    transform:
+      translate(-16px, -12px);
+  }
+}
+
+@keyframes zenLiquidMorph {
+
+  0%,
+  100% {
+    border-radius:
+      48%
+      52%
+      58%
+      42%
+      /
+      52%
+      42%
+      58%
+      48%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(-8deg)
+      scale(1);
+  }
+
+  33% {
+    border-radius:
+      56%
+      44%
+      46%
+      54%
+      /
+      42%
+      58%
+      44%
+      56%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(4deg)
+      scale(1.08);
+  }
+
+  66% {
+    border-radius:
+      42%
+      58%
+      52%
+      48%
+      /
+      58%
+      44%
+      56%
+      42%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(-3deg)
+      scale(0.94);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .zen-login-card,
+  .zen-login-form-wrap,
+  .zen-login-visual-glow,
+  .zen-login-pointer-liquid {
+    animation: none !important;
+  }
+
+  .zen-login-pointer-light,
+  .zen-login-pointer-liquid {
+    display: none;
   }
 }
