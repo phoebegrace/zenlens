@@ -1,0 +1,87 @@
+/* Header Styles */
+.header {
+  margin: 0;
+  font-family: poppins;
+  padding: 0 300px; /* Use percentage for padding to make it responsive */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  background-size: cover;
+  background-position: center;
+  width: 100%; /* Ensure it covers the full width of the container */
+  max-width: 1200px; /* Constrain the maximum width to avoid stretching */
+  position: fixed;
+  top: 0; /* Stick to the top */
+  height: 80px; /* Use fixed height instead of vh for more control */
+  z-index: 1000; /* Ensure the header stays on top */
+  left: 50%; /* Center the header */
+  transform: translateX(-50%); /* Align center by moving it back by half */
+}
+
+/* Logo Styles */
+.logo {
+  height: 40px; /* Fixed logo size */
+  padding-left: -20px;
+  padding-right: 560px;
+  padding-top: 20px;
+  width: auto; /* Maintain aspect ratio */
+}
+
+/* Navigation Styles */
+.nav {
+  display: flex;
+  justify-content: flex-start; /* Keep buttons aligned to the left */
+  gap: 20px;
+  flex-grow: 1;
+}
+
+/* Navigation Button Styles */
+.nav-button {
+  position: relative; /* Necessary for the pseudo-element positioning */
+  display: flex;
+  align-items: right;
+  justify-content: center;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  font-size: 14px;
+  text-decoration: none;
+  border: none;
+  padding: 10px 0px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #ffffff;
+  color: #457ba1;
+}
+
+.nav-button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover::after {
+  background-color: #457ba1; /* Blue bar on hover */
+}
+
+.nav-button.active::after {
+  background-color: #457ba1; /* Blue bar stays on the active page */
+}
+
+/* Icon in Buttons */
+.nav-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  margin-top: 2.8px;
+  transition: filter 0.3s ease; /* Smooth transition for the icon */
+}

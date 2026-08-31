@@ -1,0 +1,221 @@
+/* Base styles */
+html,
+body {
+  font-family: Gotham;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Main container with padding for header */
+.homepage {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  min-height: 100vh;
+  padding-top: 300px;
+  box-sizing: border-box;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Intro section */
+.intro {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 20px;
+  flex: 1 1 100%;
+  min-width: 200px;
+  border-radius: 10px;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 78vh;
+  margin-bottom: 50px;
+  transition: opacity 1s ease-in, transform 1s ease-in;
+  text-align: left;
+  transform: translateY(30px);
+  animation: easeInAnimation 0.8s ease-in forwards;
+}
+
+/* Base styles for h2 */
+.intro h2 {
+  font-size: 70px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-family: Gotham;
+  align-self: center;
+  text-align: center;
+  color: #000000;
+}
+
+/* Highlight animation */
+@keyframes highlight {
+  0%,
+  100% {
+    color: #cccccc;
+  }
+  50% {
+    color: #65a0d6;
+  }
+}
+
+.intro h2 .highlight-word {
+  animation: highlight 6s infinite;
+}
+
+.intro p {
+  font-size: 20px;
+  font-family: Gotham;
+  align-self: center;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+/* Sections area in row layout */
+.sections {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Section styles - square layout with centered content */
+.section1,
+.section2,
+.section3 {
+  background-color: transparent;
+  border-radius: 10px;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.2);
+  color: #000000;
+  width: 350px;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+  border: 3.5px solid rgb(0, 0, 0);
+  margin-bottom: 70px;
+  transform: translateY(30px);
+  animation: easeInAnimation 1.5s ease-in forwards;
+}
+
+/* Image and label container */
+.section-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+/* Description text, hidden by default */
+.section-description {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+/* Show description on hover */
+.section1:hover .section-description,
+.section2:hover .section-description,
+.section3:hover .section-description {
+  opacity: 1;
+  border: 3.5px solid rgb(62, 157, 221);
+  color: rgb(62, 157, 221);
+  background-color: transparent;
+  width: 305px;
+  height: 305px;
+  border-radius: 200px;
+}
+
+.section1:hover .section-content,
+.section2:hover .section-content,
+.section3:hover .section-content {
+  opacity: 0;
+}
+
+.section1 img,
+.section2 img,
+.section3 img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.section1 h1,
+.section2 h1,
+.section3 h1 {
+  font-size: 25px;
+  margin: 0;
+  color: #000000;
+  font-family: Gotham;
+}
+
+@media (max-width: 768px) {
+  .sections {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+/* Styles for the "See How the App Works" button */
+.show-app-button {
+  padding: 10px 20px;
+  font-size: 12px;
+  font-family: Gotham;
+  color: #000000;
+  border: 3.5px solid rgb(0, 0, 0);
+  border-radius: 24px;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 20px;
+  width: fit-content;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.show-app-button:hover {
+  border: 3.5px solid rgb(62, 157, 221);
+  color: rgb(62, 157, 221);
+}
+
+.arrow-right {
+  fill: #000000;
+  width: 16px;
+  height: 16px;
+}
+
+.arrow-right:hover {
+  fill: #38b2df;
+}

@@ -1,0 +1,209 @@
+.history-page {
+  padding: 0px;
+  font-family: Arial, sans-serif;
+  min-height: 1000vh;
+  width: 1000vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-radius: 24px;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+.history-header {
+  text-align: center;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 19px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 840px;
+  max-width: 1000px;
+  margin-top: 30px;
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 500px;
+  border: 3.5px solid rgb(0, 0, 0);
+  position: fixed;
+  transform: translateY(30px);
+  animation: easeInAnimation 0.8s ease-in forwards;
+}
+/* Ease-in Animation */
+@keyframes easeInAnimation {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.history-header h1 {
+  position: fixed;
+  font-size: 16px;
+  margin-bottom: 6px;
+  margin-top: -30px;
+  text-align: center;
+  background-color: #3498db;
+  width: 900px;
+  color: white;
+  height: 35px;
+  line-height: 30px; /* Centers text vertically */
+  border-bottom: 3.5px solid #000000; /* Adds a border line at the bottom */
+  margin-left: -30px;
+  border-top-left-radius: 14px; /* Rounds the top-left corner */
+  border-top-right-radius: 14px; /* Rounds the top-right corner */
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 900px; /* Adjust this width as needed */
+  margin: 20px auto;
+}
+
+.filters label {
+  margin: 0 20px;
+  flex: 0.8;
+  color: rgb(0, 0, 0);
+  align-items: left;
+  margin-left: -0px;
+  margin-top: 20px;
+  font-family: poppins;
+  font-size: 12px;
+}
+
+.filters label input,
+.filters label select {
+  width: 90%;
+  padding: 6px;
+  border-radius: 24px;
+  border: 1px solid #ddd;
+  /* height: 20px; */
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.history-table th {
+  background-color: #3498db;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.history-table tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+/* Overlay Styling */
+.overlay {
+  position: fixed; /* Fixed position to cover the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* High z-index to ensure it covers everything */
+}
+
+/* Session Details Pop-Up */
+.session-details {
+  position: fixed; /* Fixed position to ensure it pops up outside any container */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the pop-up on the screen */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
+  width: 1000px;
+  height: 430px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  z-index: 10000; /* Higher than the overlay */
+  border: 3.5px solid rgb(0, 0, 0);
+}
+
+.plot-container-details {
+  flex: 1; /* Allow the details container to take available space */
+  text-align: left; /* Aligns the text to the left */
+  padding: 10px; /* Optional: Adds padding for better readability */
+  margin-top: 50px;
+  margin-left: 20px;
+}
+
+.plot-container {
+  flex: 1; /* Allow the details container to take available space */
+  max-width: 700px; /* Set a maximum width if needed */
+}
+
+.close-btn {
+  position: absolute;
+  top: 2px;
+  left: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000000;
+  width: 20px;
+  height: 37px;
+  margin: 20px;
+  border: 3.5px solid rgb(0, 0, 0);
+}
+
+.close-btn:hover {
+  color: #5cabc8;
+}
+
+.session-details h3 {
+  color: #4776e6;
+  margin-bottom: 10px;
+}
+
+.session-details p {
+  margin: 5px 0;
+}
+
+button {
+  background-color: #ffffff;
+  color: #000000;
+  border: 3.5px solid rgb(0, 0, 0);
+  padding: 10px 15px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #f6f6f6;
+}
+
+button:focus {
+  outline: none;
+}

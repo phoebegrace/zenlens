@@ -1,0 +1,80 @@
+.history-page {
+  padding: 0px;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-radius: 16px;
+}
+
+.history-header {
+  text-align: center;
+  background-color: #fff;
+  padding: 50px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 1000px;
+  margin: 0 auto; /* Center the header */
+  margin-top: 20px;
+}
+
+.view-options {
+  margin-bottom: 20px;
+}
+
+.view-options label {
+  margin-right: 15px;
+}
+
+.filters {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.filters label {
+  margin: 10px;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 60px;
+}
+
+.history-entry {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.weekly-result-detail {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  grid-column: span 3; /* Make sure it spans the whole row */
+  margin-top: 20px;
+}
+
+.openai-response {
+  margin-top: 10px;
+  font-style: italic;
+  color: #555;
+}
+
+.logo {
+  font-size: 50px;
+  color: #4776e6;
+  margin-bottom: 20px;
+  text-align: center;
+}

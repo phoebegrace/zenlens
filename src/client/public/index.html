@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenLens</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css"> <!-- Make sure you have a styles.css file -->
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="App.js"></script>
+    <script>
+        const { useState } = React;
+        
+        function App() {
+            const [folderPath, setFolderPath] = useState('');
+            const [temperature, setTemperature] = useState('');
+            const [weather, setWeather] = useState('');
+            const [teacher, setTeacher] = useState('');
+            const [results, setResults] = useState(null);
+
+            const handleAnalyze = async () => {
+                try {
+                    const response = await axios.post('http://localhost:5000/analyze', {
+                        folder_path: folderPath,
+                        temperature,
+                        weather,
+                        teacher
+                    });
+                    setResults(response.data);
+                } catch (error) {
+                    console.error("Error analyzing folder:", error);
+                }
+            };
+
+            return (
+                <div className="App">
+                    <header className="App-header">
+                        <h1>Emotion Detection and Stress Analysis</h1>
+                        <div>
+                            <label>
+                                Folder Path:
+                                <input type="text" value={folderPath} onChange={(e) => setFolderPath(e.target.value)} />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Temperature:
+                                <input type="text" value={temperature} onChange={(e) => setTemperature(e.target.value)} />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Weather:
+                                <input type="text" value={weather} onChange={(e) => setWeather(e.target.value)} />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Teacher's Name:
+                                <input type="text" value={teacher} onChange={(e) => setTeacher(e.target.value)} />
+                            </label>
+                        </div>
+                        <button onClick={handleAnalyze}>Start Analysis</button>
+                        {results && (
+                            <div>
+                                <h2>Analysis Results</h2>
+                                <p>Total Faces: {results.total_faces}</p>
+                                <p>Average Stress: {results.average_stress}%</p>
+                                {results.details.map((detail, index) => (
+                                    <div key={index}>
+                                        <h3>{detail.filename}</h3>
+                                        <img src={`http://localhost:5000/processed/${detail.filename}?folder_path=${encodeURIComponent(folderPath)}`} alt={detail.filename} />
+                                        {Object.entries(detail.results).map(([face, data], i) => (
+                                            <div key={i}>
+                                                <p>{face}: {data.emotion} (Stress Score: {data.stress_score})</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </header>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
