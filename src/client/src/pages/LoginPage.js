@@ -393,14 +393,11 @@ const LoginPage = () => {
                   <button
                     type="button"
                     className="zen-login-forgot"
-                    onClick={() => {
-                      /*
-                        We'll connect this
-                        properly when we build
-                        the password recovery
-                        flow.
-                      */
-                    }}
+                    onClick={() =>
+                      navigate(
+                        "/forgot-password"
+                      )
+                    }
                   >
                     Forgot password?
                   </button>

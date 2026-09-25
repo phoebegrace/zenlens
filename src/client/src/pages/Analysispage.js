@@ -1,37 +1,72 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import axios from "axios";
 
 import {
+  Activity,
   AlertCircle,
   ArrowLeft,
+  ArrowRight,
   BarChart3,
+  BookOpen,
   Brain,
   CalendarDays,
   Check,
-  ChevronRight,
   Clock3,
   Cloud,
   FileImage,
   FolderOpen,
   GraduationCap,
+  History,
+  Home,
   Image as ImageIcon,
+  Info,
+  LineChart,
   LoaderCircle,
+  LogOut,
   MapPin,
+  Menu,
   Play,
   Printer,
   RotateCcw,
   ScanFace,
+  ShieldCheck,
   Sparkles,
   UploadCloud,
   UserRound,
   X,
 } from "lucide-react";
 
-import ZenLensHeader from "../components/ZenLensHeader";
+import {
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  auth,
+  db,
+} from "../components/firebase";
+
+import zenlensLogo from "../image/app.png";
 
 import "./Analysispage.css";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL =
+  "http://127.0.0.1:5001";
 
 const EMOTION_CODES = [
   {
@@ -86,17 +121,26 @@ const EMOTION_CODE_MAP = {
   disgusted: "DIS",
 };
 
-const getEmotionShortLabel = (emotion) => {
+const getEmotionShortLabel = (
+  emotion
+) => {
   if (!emotion) {
     return "UNK";
   }
 
-  const normalizedEmotion = String(emotion)
-    .trim()
-    .toLowerCase();
+  const normalizedEmotion =
+    String(emotion)
+      .trim()
+      .toLowerCase();
 
-  if (EMOTION_CODE_MAP[normalizedEmotion]) {
-    return EMOTION_CODE_MAP[normalizedEmotion];
+  if (
+    EMOTION_CODE_MAP[
+      normalizedEmotion
+    ]
+  ) {
+    return EMOTION_CODE_MAP[
+      normalizedEmotion
+    ];
   }
 
   return String(emotion)
@@ -114,39 +158,278 @@ const escapeHtml = (value) => {
     .replace(/'/g, "&#039;");
 };
 
+const navigationItems = [
+  {
+    label: "Home",
+    icon: Home,
+    route: "/home",
+  },
+  {
+    label: "New Analysis",
+    icon: ScanFace,
+    route: "/stressdetection",
+  },
+  {
+    label: "Monitoring",
+    icon: Activity,
+    route: "/stressmonitoring",
+  },
+  {
+    label: "Session History",
+    icon: Clock3,
+    route: "/sessionhistory",
+  },
+  {
+    label: "Overall Insights",
+    icon: BarChart3,
+    route: "/overallhistory",
+  },
+  {
+    label: "Stress History",
+    icon: History,
+    route: "/stresshistory",
+  },
+];
+
+const supportNavigation = [
+  {
+    label: "About ZenLens",
+    icon: Info,
+    route: "/about",
+  },
+  {
+    label: "How It Works",
+    icon: BookOpen,
+    route: "/how-it-works",
+  },
+];
+
 const AnalysisPage = () => {
-  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [files, setFiles] = useState([]);
+  const [userDetails, setUserDetails] =
+    useState(null);
 
-  const [subject, setSubject] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
-  const [teacher, setTeacher] = useState("");
-  const [weather, setWeather] = useState("");
-  const [date, setDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] = useState(false);
 
-  const [results, setResults] = useState(null);
-  const [loadingPage, setLoadingPage] = useState(false);
+  const [files, setFiles] =
+    useState([]);
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [subject, setSubject] =
+    useState("");
+
+  const [
+    roomNumber,
+    setRoomNumber,
+  ] = useState("");
+
+  const [teacher, setTeacher] =
+    useState("");
+
+  const [weather, setWeather] =
+    useState("");
+
+  const [date, setDate] =
+    useState("");
+
+  const [
+    startTime,
+    setStartTime,
+  ] = useState("");
+
+  const [
+    endTime,
+    setEndTime,
+  ] = useState("");
+
+  const [results, setResults] =
+    useState(null);
+
+  const [
+    loadingPage,
+    setLoadingPage,
+  ] = useState(false);
+
+  const [
+    isDragging,
+    setIsDragging,
+  ] = useState(false);
+
+  const [
+    errorMessage,
+    setErrorMessage,
+  ] = useState("");
+
+  const fileInputId =
+    "zen-analysis-folder-input";
+
+  /* ======================================================
+     USER
+  ====================================================== */
+
+  useEffect(() => {
+    const unsubscribe =
+      onAuthStateChanged(
+        auth,
+        async (user) => {
+          if (!user) {
+            setUserDetails(null);
+            return;
+          }
+
+          try {
+            const userRef = doc(
+              db,
+              "Users",
+              user.uid
+            );
+
+            const snapshot =
+              await getDoc(userRef);
+
+            if (
+              snapshot.exists()
+            ) {
+              setUserDetails(
+                snapshot.data()
+              );
+            } else {
+              setUserDetails({
+                email:
+                  user.email ||
+                  "",
+                firstName: "",
+                lastName: "",
+              });
+            }
+          } catch (error) {
+            console.error(
+              "Unable to load user details:",
+              error
+            );
+
+            setUserDetails({
+              email:
+                user.email ||
+                "",
+              firstName: "",
+              lastName: "",
+            });
+          }
+        }
+      );
+
+    return () =>
+      unsubscribe();
+  }, []);
+
+  const firstName =
+    userDetails?.firstName ||
+    "";
+
+  const lastName =
+    userDetails?.lastName ||
+    "";
+
+  const email =
+    userDetails?.email ||
+    auth.currentUser?.email ||
+    "";
+
+  const fullName =
+    `${firstName} ${lastName}`.trim() ||
+    email?.split("@")[0] ||
+    "ZenLens User";
+
+  const initials = (() => {
+    if (
+      firstName ||
+      lastName
+    ) {
+      return `${
+        firstName?.[0] || ""
+      }${
+        lastName?.[0] || ""
+      }`.toUpperCase();
+    }
+
+    return (
+      email?.[0] || "Z"
+    ).toUpperCase();
+  })();
+
+  const goTo = (route) => {
+    setMobileMenuOpen(false);
+
+    navigate(route);
+  };
+
+  const handleLogout =
+    async () => {
+      try {
+        await signOut(auth);
+
+        navigate("/login");
+      } catch (error) {
+        console.error(
+          "Unable to sign out:",
+          error
+        );
+      }
+    };
+
+  /* ======================================================
+     RESTORE FORM
+  ====================================================== */
 
   useEffect(() => {
     try {
-      const savedFormData = JSON.parse(
-        localStorage.getItem("formData")
-      );
+      const savedFormData =
+        JSON.parse(
+          localStorage.getItem(
+            "formData"
+          )
+        );
 
       if (savedFormData) {
-        setSubject(savedFormData.subject || "");
-        setRoomNumber(savedFormData.roomNumber || "");
-        setTeacher(savedFormData.teacher || "");
-        setWeather(savedFormData.weather || "");
-        setDate(savedFormData.date || "");
-        setStartTime(savedFormData.startTime || "");
-        setEndTime(savedFormData.endTime || "");
+        setSubject(
+          savedFormData.subject ||
+            ""
+        );
+
+        setRoomNumber(
+          savedFormData.roomNumber ||
+            ""
+        );
+
+        setTeacher(
+          savedFormData.teacher ||
+            ""
+        );
+
+        setWeather(
+          savedFormData.weather ||
+            ""
+        );
+
+        setDate(
+          savedFormData.date ||
+            ""
+        );
+
+        setStartTime(
+          savedFormData.startTime ||
+            ""
+        );
+
+        setEndTime(
+          savedFormData.endTime ||
+            ""
+        );
       }
     } catch (error) {
       console.error(
@@ -156,30 +439,48 @@ const AnalysisPage = () => {
     }
   }, []);
 
-  const updateFiles = (selectedFiles) => {
+  /* ======================================================
+     FILE INPUT
+  ====================================================== */
+
+  const updateFiles = (
+    selectedFiles
+  ) => {
     if (!selectedFiles) {
       return;
     }
 
-    const normalizedFiles = Array.from(
-      selectedFiles
-    ).filter(
-      (file) =>
-        file.type.startsWith("image/") ||
-        /\.(jpg|jpeg|png|webp|bmp)$/i.test(
-          file.name
-        )
+    const normalizedFiles =
+      Array.from(
+        selectedFiles
+      ).filter(
+        (file) =>
+          file.type?.startsWith(
+            "image/"
+          ) ||
+          /\.(jpg|jpeg|png|webp|bmp)$/i.test(
+            file.name
+          )
+      );
+
+    setFiles(
+      normalizedFiles
     );
 
-    setFiles(normalizedFiles);
     setErrorMessage("");
   };
 
-  const handleFileChange = (event) => {
-    updateFiles(event.target.files);
+  const handleFileChange = (
+    event
+  ) => {
+    updateFiles(
+      event.target.files
+    );
   };
 
-  const handleDrop = (event) => {
+  const handleDrop = (
+    event
+  ) => {
     event.preventDefault();
 
     setIsDragging(false);
@@ -189,31 +490,71 @@ const AnalysisPage = () => {
     );
   };
 
-  const handleDragOver = (event) => {
+  const handleDragOver = (
+    event
+  ) => {
     event.preventDefault();
 
     setIsDragging(true);
   };
 
-  const handleDragLeave = (event) => {
+  const handleDragLeave = (
+    event
+  ) => {
     event.preventDefault();
 
     setIsDragging(false);
   };
 
-  const openFolderPicker = () => {
-    fileInputRef.current?.click();
-  };
+  const openFolderPicker =
+    () => {
+      document
+        .getElementById(
+          fileInputId
+        )
+        ?.click();
+    };
 
-  const clearSelectedFiles = (event) => {
+  const clearSelectedFiles = (
+    event
+  ) => {
     event.stopPropagation();
 
     setFiles([]);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    const input =
+      document.getElementById(
+        fileInputId
+      );
+
+    if (input) {
+      input.value = "";
     }
   };
+
+  const selectedFolderName =
+    useMemo(() => {
+      if (!files.length) {
+        return "";
+      }
+
+      const firstFile =
+        files[0];
+
+      if (
+        firstFile.webkitRelativePath
+      ) {
+        return firstFile.webkitRelativePath.split(
+          "/"
+        )[0];
+      }
+
+      return "Selected images";
+    }, [files]);
+
+  /* ======================================================
+     VALIDATION
+  ====================================================== */
 
   const requiredFieldsComplete =
     subject.trim() &&
@@ -224,154 +565,155 @@ const AnalysisPage = () => {
     endTime;
 
   const canAnalyze =
-    Boolean(requiredFieldsComplete) &&
+    Boolean(
+      requiredFieldsComplete
+    ) &&
     files.length > 0 &&
     !loadingPage;
 
-  const selectedFolderName = useMemo(() => {
-    if (!files.length) {
-      return "";
-    }
+  /* ======================================================
+     ANALYZE
+  ====================================================== */
 
-    const firstFile = files[0];
+  const handleAnalyze =
+    async () => {
+      setErrorMessage("");
 
-    if (firstFile.webkitRelativePath) {
-      return firstFile.webkitRelativePath.split(
-        "/"
-      )[0];
-    }
-
-    return "Selected images";
-  }, [files]);
-
-  const handleAnalyze = async () => {
-    setErrorMessage("");
-
-    if (!requiredFieldsComplete) {
-      setErrorMessage(
-        "Complete the required session information before starting the analysis."
-      );
-
-      return;
-    }
-
-    if (!files.length) {
-      setErrorMessage(
-        "Select a folder containing classroom images before starting the analysis."
-      );
-
-      return;
-    }
-
-    setLoadingPage(true);
-
-    const formData = new FormData();
-
-    formData.append(
-      "subject",
-      subject
-    );
-
-    formData.append(
-      "roomNumber",
-      roomNumber
-    );
-
-    formData.append(
-      "teacher",
-      teacher
-    );
-
-    formData.append(
-      "weather",
-      weather
-    );
-
-    formData.append(
-      "date",
-      date
-    );
-
-    formData.append(
-      "startTime",
-      startTime
-    );
-
-    formData.append(
-      "endTime",
-      endTime
-    );
-
-    files.forEach((file) => {
-      formData.append(
-        "folder",
-        file
-      );
-    });
-
-    try {
-      const response =
-        await axios.post(
-          `${API_BASE_URL}/analyze`,
-          formData
-        );
-
-      setResults(
-        response.data
-      );
-
-      const formDataToSave = {
-        subject,
-        roomNumber,
-        teacher,
-        weather,
-        date,
-        startTime,
-        endTime,
-      };
-
-      localStorage.setItem(
-        "formData",
-        JSON.stringify(
-          formDataToSave
-        )
-      );
-
-      localStorage.setItem(
-        "analysisResults",
-        JSON.stringify(
-          response.data
-        )
-      );
-    } catch (error) {
-      console.error(
-        "Error analyzing folder:",
-        error
-      );
-
-      if (error.response) {
-        const serverMessage =
-          error.response?.data?.error ||
-          error.response?.data?.message ||
-          "The ZenLens server returned an error while processing the session.";
-
+      if (
+        !requiredFieldsComplete
+      ) {
         setErrorMessage(
-          serverMessage
+          "Complete the required session information before starting the analysis."
         );
-      } else if (error.request) {
-        setErrorMessage(
-          "ZenLens could not connect to the analysis server at 127.0.0.1:5000. Make sure python app.py is still running."
-        );
-      } else {
-        setErrorMessage(
-          error.message ||
-            "The analysis could not be started. Please try again."
-        );
+
+        return;
       }
-    } finally {
-      setLoadingPage(false);
-    }
-  };
+
+      if (!files.length) {
+        setErrorMessage(
+          "Select a folder containing classroom images before starting the analysis."
+        );
+
+        return;
+      }
+
+      setLoadingPage(true);
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "subject",
+        subject
+      );
+
+      formData.append(
+        "roomNumber",
+        roomNumber
+      );
+
+      formData.append(
+        "teacher",
+        teacher
+      );
+
+      formData.append(
+        "weather",
+        weather
+      );
+
+      formData.append(
+        "date",
+        date
+      );
+
+      formData.append(
+        "startTime",
+        startTime
+      );
+
+      formData.append(
+        "endTime",
+        endTime
+      );
+
+      files.forEach(
+        (file) => {
+          formData.append(
+            "folder",
+            file
+          );
+        }
+      );
+
+      try {
+        const response =
+          await axios.post(
+            `${API_BASE_URL}/analyze`,
+            formData
+          );
+
+        setResults(
+          response.data
+        );
+
+        localStorage.setItem(
+          "formData",
+          JSON.stringify({
+            subject,
+            roomNumber,
+            teacher,
+            weather,
+            date,
+            startTime,
+            endTime,
+          })
+        );
+
+        localStorage.setItem(
+          "analysisResults",
+          JSON.stringify(
+            response.data
+          )
+        );
+      } catch (error) {
+        console.error(
+          "Error analyzing folder:",
+          error
+        );
+
+        if (error.response) {
+          const serverMessage =
+            error.response
+              ?.data?.error ||
+            error.response
+              ?.data
+              ?.message ||
+            "The ZenLens server returned an error while processing the session.";
+
+          setErrorMessage(
+            serverMessage
+          );
+        } else if (
+          error.request
+        ) {
+          setErrorMessage(
+            "ZenLens could not connect to the analysis server at 127.0.0.1:5000. Make sure python app.py is still running."
+          );
+        } else {
+          setErrorMessage(
+            error.message ||
+              "The analysis could not be started. Please try again."
+          );
+        }
+      } finally {
+        setLoadingPage(false);
+      }
+    };
+
+  /* ======================================================
+     CLEAR
+  ====================================================== */
 
   const handleClear = () => {
     setFiles([]);
@@ -387,9 +729,13 @@ const AnalysisPage = () => {
     setResults(null);
     setErrorMessage("");
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value =
-        "";
+    const input =
+      document.getElementById(
+        fileInputId
+      );
+
+    if (input) {
+      input.value = "";
     }
 
     localStorage.removeItem(
@@ -401,98 +747,120 @@ const AnalysisPage = () => {
     );
   };
 
-  const handleNewAnalysis = () => {
-    setResults(null);
-    setFiles([]);
-    setErrorMessage("");
+  const handleNewAnalysis =
+    () => {
+      setResults(null);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value =
-        "";
-    }
+      setFiles([]);
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+      setErrorMessage("");
+
+      const input =
+        document.getElementById(
+          fileInputId
+        );
+
+      if (input) {
+        input.value = "";
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    };
+
+  /* ======================================================
+     RESULT DATA
+  ====================================================== */
 
   const totalImages =
     results?.details?.length ||
     0;
 
-  const totalFaces = useMemo(() => {
-    if (!results?.details) {
-      return 0;
-    }
+  const totalFaces =
+    useMemo(() => {
+      if (!results?.details) {
+        return 0;
+      }
 
-    return results.details.reduce(
-      (
-        total,
-        detail
-      ) => {
-        return (
+      return results.details.reduce(
+        (
+          total,
+          detail
+        ) =>
           total +
           Object.keys(
-            detail.results || {}
-          ).length
-        );
-      },
-      0
-    );
-  }, [results]);
+            detail.results ||
+              {}
+          ).length,
+        0
+      );
+    }, [results]);
 
-  const emotionCounts = useMemo(() => {
-    if (!results?.details) {
-      return {};
-    }
-
-    const counts = {};
-
-    results.details.forEach(
-      (detail) => {
-        Object.values(
-          detail.results || {}
-        ).forEach((data) => {
-          const emotion =
-            data?.emotion ||
-            "Unknown";
-
-          counts[emotion] =
-            (counts[emotion] || 0) + 1;
-        });
+  const emotionCounts =
+    useMemo(() => {
+      if (!results?.details) {
+        return {};
       }
-    );
 
-    return counts;
-  }, [results]);
+      const counts = {};
 
-  const dominantEmotion = useMemo(() => {
-    const entries =
-      Object.entries(
-        emotionCounts
+      results.details.forEach(
+        (detail) => {
+          Object.values(
+            detail.results ||
+              {}
+          ).forEach(
+            (data) => {
+              const emotion =
+                data?.emotion ||
+                "Unknown";
+
+              counts[emotion] =
+                (counts[
+                  emotion
+                ] || 0) + 1;
+            }
+          );
+        }
       );
 
-    if (!entries.length) {
-      return "—";
-    }
+      return counts;
+    }, [results]);
 
-    return entries.sort(
-      (a, b) =>
-        b[1] - a[1]
-    )[0][0];
-  }, [emotionCounts]);
+  const dominantEmotion =
+    useMemo(() => {
+      const entries =
+        Object.entries(
+          emotionCounts
+        );
+
+      if (!entries.length) {
+        return "—";
+      }
+
+      return [...entries].sort(
+        (a, b) =>
+          b[1] - a[1]
+      )[0][0];
+    }, [emotionCounts]);
+
+  /* ======================================================
+     PRINT
+  ====================================================== */
 
   const handlePrint = () => {
     if (!results) {
       return;
     }
 
-    const printWindow = window.open(
-      "",
-      "_blank",
-      "width=1100,height=900"
-    );
+    const printWindow =
+      window.open(
+        "",
+        "_blank",
+        "width=1100,height=900"
+      );
 
     if (!printWindow) {
       return;
@@ -502,32 +870,32 @@ const AnalysisPage = () => {
       results.stress_category ||
       "Not available";
 
-    const dominantEmotionCode =
+    const dominantCode =
       dominantEmotion === "—"
         ? "—"
         : getEmotionShortLabel(
             dominantEmotion
           );
 
-    const emotionLegendHtml =
+    const emotionLegend =
       EMOTION_CODES.map(
-        (emotion) => `
-          <div class="emotion-legend-item">
+        (item) => `
+          <div class="legend-item">
+            <strong>${escapeHtml(
+              item.code
+            )}</strong>
             <span>${escapeHtml(
-              emotion.code
+              item.label
             )}</span>
-
-            <small>
-              ${escapeHtml(
-                emotion.label
-              )}
-            </small>
           </div>
         `
       ).join("");
 
-    const resultRowsHtml =
-      (results.details || [])
+    const imageRows =
+      (
+        results.details ||
+        []
+      )
         .map(
           (
             detail,
@@ -537,9 +905,11 @@ const AnalysisPage = () => {
               detail.filename
                 ?.split("/")
                 .pop() ||
-              `Image ${index + 1}`;
+              `Image ${
+                index + 1
+              }`;
 
-            const detectedFaces =
+            const faces =
               Object.entries(
                 detail.results ||
                   {}
@@ -554,8 +924,8 @@ const AnalysisPage = () => {
               )}`;
 
             const faceRows =
-              detectedFaces.length
-                ? detectedFaces
+              faces.length
+                ? faces
                     .map(
                       (
                         [
@@ -564,111 +934,91 @@ const AnalysisPage = () => {
                         ],
                         faceIndex
                       ) => {
-                        const fullEmotion =
-                          data?.emotion ||
+                        const emotion =
+                          data
+                            ?.emotion ||
                           "Unknown";
-
-                        const emotionCode =
-                          getEmotionShortLabel(
-                            fullEmotion
-                          );
 
                         return `
                           <div class="face-row">
-                            <div class="face-number">
-                              ${String(
+                            <span>
+                              Face ${
                                 faceIndex +
-                                  1
-                              ).padStart(
-                                2,
-                                "0"
-                              )}
-                            </div>
-
-                            <div class="face-copy">
-                              <small>
-                                FACE ${
-                                  faceIndex +
-                                  1
-                                }
-                              </small>
-
-                              <strong>
-                                ${escapeHtml(
-                                  emotionCode
-                                )}
-                              </strong>
-                            </div>
-
-                            <span
-                              class="face-full-emotion"
-                            >
-                              ${escapeHtml(
-                                fullEmotion
-                              )}
+                                1
+                              }
                             </span>
+
+                            <strong>
+                              ${escapeHtml(
+                                getEmotionShortLabel(
+                                  emotion
+                                )
+                              )}
+                            </strong>
+
+                            <small>
+                              ${escapeHtml(
+                                emotion
+                              )}
+                            </small>
                           </div>
                         `;
                       }
                     )
                     .join("")
                 : `
-                    <div class="no-face">
-                      No faces were detected in this image.
+                    <div class="empty-face">
+                      No faces detected.
                     </div>
                   `;
 
             return `
-              <section class="image-result-card">
-                <div class="image-result-top">
-                  <div>
-                    <span class="image-number">
-                      ${String(
-                        index + 1
-                      ).padStart(
-                        2,
-                        "0"
-                      )}
-                    </span>
+              <article class="result-row">
+                <div class="result-index">
+                  ${String(
+                    index + 1
+                  ).padStart(
+                    2,
+                    "0"
+                  )}
+                </div>
 
-                    <p>
-                      IMAGE OBSERVATION
-                    </p>
-                  </div>
+                <div class="result-image">
+                  <img
+                    src="${imageUrl}"
+                    alt="${escapeHtml(
+                      filename
+                    )}"
+                  />
+                </div>
 
-                  <div class="image-file">
+                <div class="result-info">
+                  <span class="label">
+                    IMAGE FILE
+                  </span>
+
+                  <h3>
                     ${escapeHtml(
                       filename
                     )}
-                  </div>
-                </div>
+                  </h3>
 
-                <div class="image-result-body">
-                  <div class="image-column">
-                    <img
-                      src="${imageUrl}"
-                      alt="${escapeHtml(
-                        filename
-                      )}"
-                    />
+                  <p>
+                    ${
+                      faces.length
+                    } ${
+                      faces.length ===
+                      1
+                        ? "face"
+                        : "faces"
+                    } detected
+                  </p>
 
-                    <div class="image-face-count">
-                      ${detectedFaces.length}
-                      ${
-                        detectedFaces.length ===
-                        1
-                          ? "face"
-                          : "faces"
-                      }
-                      detected
-                    </div>
-                  </div>
-
-                  <div class="faces-column">
+                  <div class="face-list">
                     ${faceRows}
                   </div>
                 </div>
-              </section>
+              </article>
             `;
           }
         )
@@ -686,183 +1036,126 @@ const AnalysisPage = () => {
           </title>
 
           <style>
-            @page {
-              size: A4;
-              margin: 13mm;
-            }
-
             * {
               box-sizing: border-box;
             }
 
-            html,
             body {
               margin: 0;
-              padding: 0;
-            }
+              padding: 36px;
 
-            body {
-              width: 100%;
-
-              color: #1b2940;
-
-              background: #ffffff;
+              color: #142341;
 
               font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
                 Arial,
                 sans-serif;
 
-              font-size: 10px;
-
-              line-height: 1.45;
-
-              -webkit-print-color-adjust:
-                exact;
-
-              print-color-adjust:
-                exact;
+              background: #ffffff;
             }
 
             .report {
-              width: 100%;
+              max-width: 1000px;
+              margin: auto;
             }
 
-            .report-header {
-              padding-bottom: 18px;
+            .header {
+              padding-bottom: 24px;
 
               display: flex;
-
-              align-items: flex-start;
-
-              justify-content: space-between;
-
-              gap: 30px;
+              justify-content:
+                space-between;
+              align-items:
+                flex-start;
 
               border-bottom:
-                1px solid #dfe5ee;
+                1px solid #dfe6f1;
             }
 
-            .report-brand {
+            .brand {
               display: flex;
-
               align-items: center;
-
-              gap: 10px;
+              gap: 12px;
             }
 
             .brand-mark {
-              width: 35px;
-              height: 35px;
+              width: 42px;
+              height: 42px;
 
               display: grid;
-
               place-items: center;
 
-              border-radius: 8px;
+              border-radius: 12px;
 
-              color: #ffffff;
+              color: white;
 
               background:
-                #315ed5;
-
-              font-size: 13px;
+                linear-gradient(
+                  145deg,
+                  #315ed5,
+                  #6d6fe7
+                );
 
               font-weight: 800;
             }
 
-            .report-brand h1 {
+            h1,
+            h2,
+            h3,
+            p {
+              margin-top: 0;
+            }
+
+            .header h1 {
+              margin-bottom: 4px;
+
+              color: #081935;
+
+              font-size: 22px;
+            }
+
+            .header p {
               margin: 0;
 
-              color: #0b1735;
+              color: #6d7a92;
 
-              font-size: 17px;
-
-              line-height: 1.1;
-
-              font-weight: 800;
-
-              letter-spacing:
-                -0.03em;
+              font-size: 11px;
             }
 
-            .report-brand p {
-              margin:
-                3px
-                0
-                0;
-
-              color: #778398;
-
-              font-size: 8px;
-            }
-
-            .report-heading {
+            .report-title {
               text-align: right;
             }
 
-            .report-heading span {
+            .report-title span,
+            .label {
               display: block;
 
-              margin-bottom: 4px;
+              margin-bottom: 6px;
 
               color: #315ed5;
 
-              font-size: 7px;
+              font-size: 9px;
 
               font-weight: 800;
 
               letter-spacing:
-                0.12em;
+                0.08em;
             }
 
-            .report-heading strong {
-              display: block;
+            .session {
+              margin-top: 28px;
 
-              color: #0b1735;
+              padding: 22px;
 
-              font-size: 14px;
+              border:
+                1px solid #dfe6f1;
 
-              font-weight: 800;
+              border-radius: 16px;
             }
 
-            .session-section {
-              padding:
-                18px
-                0;
-            }
+            .session h2 {
+              margin-bottom: 16px;
 
-            .section-label {
-              margin-bottom: 7px;
-
-              color: #315ed5;
-
-              font-size: 7px;
-
-              font-weight: 800;
-
-              letter-spacing:
-                0.11em;
-            }
-
-            .session-title {
-              margin:
-                0
-                0
-                12px;
-
-              color: #0b1735;
-
-              font-size: 20px;
-
-              line-height: 1.15;
-
-              font-weight: 800;
-
-              letter-spacing:
-                -0.035em;
+              color: #081935;
             }
 
             .session-grid {
@@ -871,478 +1164,231 @@ const AnalysisPage = () => {
               grid-template-columns:
                 repeat(
                   3,
-                  minmax(0, 1fr)
+                  1fr
                 );
 
-              gap:
-                9px
-                14px;
+              gap: 16px;
             }
 
-            .session-field {
-              padding:
-                8px
-                0;
+            .session-grid div {
+              padding-bottom: 10px;
 
               border-bottom:
                 1px solid #edf0f5;
             }
 
-            .session-field span {
+            .session-grid span {
               display: block;
 
-              margin-bottom: 3px;
+              margin-bottom: 4px;
 
-              color: #8b96a8;
-
-              font-size: 6.5px;
-
-              font-weight: 700;
-
-              letter-spacing:
-                0.08em;
-
-              text-transform:
-                uppercase;
-            }
-
-            .session-field strong {
-              display: block;
-
-              color: #233149;
+              color: #98a4b8;
 
               font-size: 9px;
-
-              font-weight: 700;
             }
 
-            .summary-section {
-              margin-bottom: 18px;
+            .session-grid strong {
+              font-size: 12px;
+            }
+
+            .summary {
+              margin-top: 18px;
 
               display: grid;
 
               grid-template-columns:
                 repeat(
                   4,
-                  minmax(0, 1fr)
+                  1fr
                 );
 
-              gap: 8px;
+              gap: 10px;
             }
 
-            .summary-card {
-              min-height: 73px;
-
-              padding: 11px;
+            .summary div {
+              padding: 17px;
 
               border:
-                1px solid #e1e6ef;
+                1px solid #dfe6f1;
 
-              border-radius: 8px;
-
-              background: #ffffff;
+              border-radius: 14px;
             }
 
-            .summary-card.primary {
-              border-color:
-                #cbd8fa;
-
-              background:
-                #f4f7ff;
-            }
-
-            .summary-card span {
+            .summary span {
               display: block;
 
-              margin-bottom: 7px;
+              margin-bottom: 9px;
 
-              color: #7b879a;
+              color: #6d7a92;
 
-              font-size: 6.5px;
-
-              font-weight: 700;
-
-              letter-spacing:
-                0.06em;
-
-              text-transform:
-                uppercase;
+              font-size: 9px;
             }
 
-            .summary-card strong {
-              display: block;
+            .summary strong {
+              color: #081935;
 
-              color: #0b1735;
-
-              font-size: 17px;
-
-              line-height: 1;
-
-              font-weight: 800;
-
-              letter-spacing:
-                -0.025em;
+              font-size: 22px;
             }
 
-            .emotion-legend {
-              margin:
-                0
-                0
-                20px;
+            .legend {
+              margin-top: 18px;
 
-              padding:
-                11px
-                12px;
+              padding: 14px;
 
               display: flex;
-
-              align-items: center;
-
               flex-wrap: wrap;
-
-              gap:
-                8px
-                16px;
+              gap: 12px;
 
               border:
-                1px solid #e5e9f0;
+                1px solid #dfe6f1;
 
-              border-radius: 8px;
+              border-radius: 14px;
 
-              background:
-                #fafbfd;
+              background: #f8faff;
             }
 
-            .emotion-legend-title {
-              margin-right: 6px;
-
-              color: #657187;
-
-              font-size: 7px;
-
-              font-weight: 800;
-
-              letter-spacing:
-                0.08em;
-            }
-
-            .emotion-legend-item {
-              display: inline-flex;
-
+            .legend-item {
+              display: flex;
               align-items: center;
-
-              gap: 5px;
+              gap: 6px;
             }
 
-            .emotion-legend-item span {
-              min-width: 31px;
-
+            .legend-item strong {
               padding:
-                3px
-                5px;
+                4px
+                6px;
 
-              border-radius: 4px;
+              border-radius: 5px;
 
               color: #315ed5;
 
-              background:
-                #eaf0ff;
+              background: #edf3ff;
 
-              text-align: center;
-
-              font-size: 7px;
-
-              font-weight: 800;
+              font-size: 9px;
             }
 
-            .emotion-legend-item small {
-              color: #707c8e;
+            .legend-item span {
+              color: #6d7a92;
 
-              font-size: 7px;
+              font-size: 9px;
             }
 
-            .results-heading {
-              margin-bottom: 12px;
+            .observations {
+              margin-top: 28px;
             }
 
-            .results-heading h2 {
-              margin:
-                0
-                0
-                4px;
+            .result-row {
+              margin-top: 12px;
 
-              color: #0b1735;
+              padding: 14px;
 
-              font-size: 16px;
+              display: grid;
 
-              font-weight: 800;
+              grid-template-columns:
+                38px
+                220px
+                1fr;
 
-              letter-spacing:
-                -0.025em;
-            }
-
-            .results-heading p {
-              margin: 0;
-
-              color: #778398;
-
-              font-size: 8px;
-            }
-
-            .image-result-card {
-              margin-bottom: 12px;
-
-              padding: 12px;
+              gap: 16px;
 
               border:
-                1px solid #e0e5ed;
+                1px solid #dfe6f1;
 
-              border-radius: 8px;
-
-              background: #ffffff;
-
-              break-inside: avoid;
+              border-radius: 14px;
 
               page-break-inside:
                 avoid;
             }
 
-            .image-result-top {
-              margin-bottom: 10px;
-
-              padding-bottom: 8px;
-
-              display: flex;
-
-              align-items: center;
-
-              justify-content: space-between;
-
-              gap: 16px;
-
-              border-bottom:
-                1px solid #eef1f5;
-            }
-
-            .image-result-top > div:first-child {
-              display: flex;
-
-              align-items: center;
-
-              gap: 8px;
-            }
-
-            .image-number {
-              min-width: 28px;
-
+            .result-index {
               color: #315ed5;
 
-              font-size: 8px;
-
+              font-size: 12px;
               font-weight: 800;
             }
 
-            .image-result-top p {
-              margin: 0;
-
-              color: #8490a2;
-
-              font-size: 6.5px;
-
-              font-weight: 800;
-
-              letter-spacing:
-                0.09em;
-            }
-
-            .image-file {
-              max-width: 65%;
-
-              overflow: hidden;
-
-              color: #26344c;
-
-              font-size: 8px;
-
-              font-weight: 700;
-
-              text-overflow:
-                ellipsis;
-
-              white-space: nowrap;
-            }
-
-            .image-result-body {
-              display: grid;
-
-              grid-template-columns:
-                175px
-                minmax(0, 1fr);
-
-              align-items: start;
-
-              gap: 16px;
-            }
-
-            .image-column img {
+            .result-image img {
               width: 100%;
-              height: auto;
 
-              max-height: 180px;
-
-              display: block;
-
-              object-fit: contain;
-
-              border:
-                1px solid #e4e8ef;
-
-              border-radius: 6px;
-
-              background:
-                #f5f7fa;
+              border-radius: 10px;
             }
 
-            .image-face-count {
-              margin-top: 6px;
+            .result-info h3 {
+              margin-bottom: 4px;
 
-              color: #788497;
-
-              font-size: 7px;
+              color: #081935;
             }
 
-            .faces-column {
+            .result-info p {
+              color: #6d7a92;
+
+              font-size: 10px;
+            }
+
+            .face-list {
+              margin-top: 12px;
+
               display: grid;
 
-              gap: 6px;
+              gap: 7px;
             }
 
             .face-row {
-              min-height: 42px;
-
               padding:
-                7px
-                9px;
+                8px
+                10px;
 
               display: grid;
 
               grid-template-columns:
-                29px
-                minmax(0, 1fr)
-                auto;
+                1fr
+                50px
+                100px;
 
               align-items: center;
 
-              gap: 8px;
-
               border:
-                1px solid #e7ebf1;
+                1px solid #edf0f5;
 
-              border-radius: 6px;
+              border-radius: 8px;
             }
 
-            .face-number {
-              width: 27px;
-              height: 27px;
+            .face-row span,
+            .face-row small {
+              color: #6d7a92;
 
-              display: grid;
+              font-size: 9px;
+            }
 
-              place-items: center;
-
-              border-radius: 6px;
-
+            .face-row strong {
               color: #315ed5;
-
-              background:
-                #eef3ff;
-
-              font-size: 7px;
-
-              font-weight: 800;
             }
 
-            .face-copy small {
-              display: block;
+            .empty-face {
+              color: #b64859;
 
-              margin-bottom: 1px;
-
-              color: #909aac;
-
-              font-size: 5.8px;
-
-              font-weight: 700;
-
-              letter-spacing:
-                0.07em;
+              font-size: 10px;
             }
 
-            .face-copy strong {
-              display: block;
+            .notice {
+              margin-top: 24px;
 
-              color: #0b1735;
+              padding: 16px;
 
-              font-size: 11px;
+              border-radius: 12px;
 
-              font-weight: 800;
-            }
+              background: #f4f7ff;
 
-            .face-full-emotion {
-              color: #788397;
+              color: #6d7a92;
 
-              font-size: 7px;
-            }
+              font-size: 10px;
 
-            .no-face {
-              padding: 11px;
-
-              border:
-                1px dashed #d8dee8;
-
-              border-radius: 6px;
-
-              color: #808b9c;
-
-              font-size: 8px;
-            }
-
-            .report-notice {
-              margin-top: 20px;
-
-              padding-top: 12px;
-
-              border-top:
-                1px solid #e1e6ed;
-
-              color: #7b8798;
-
-              font-size: 7px;
-
-              line-height: 1.55;
-            }
-
-            .report-footer {
-              margin-top: 14px;
-
-              display: flex;
-
-              align-items: center;
-
-              justify-content: space-between;
-
-              gap: 15px;
-
-              color: #929cad;
-
-              font-size: 6.5px;
+              line-height: 1.5;
             }
 
             @media print {
-              .image-result-card {
-                break-inside:
-                  avoid-page;
-
-                page-break-inside:
-                  avoid;
+              body {
+                padding: 0;
               }
             }
           </style>
@@ -1350,8 +1396,8 @@ const AnalysisPage = () => {
 
         <body>
           <main class="report">
-            <header class="report-header">
-              <div class="report-brand">
+            <header class="header">
+              <div class="brand">
                 <div class="brand-mark">
                   Z
                 </div>
@@ -1367,7 +1413,7 @@ const AnalysisPage = () => {
                 </div>
               </div>
 
-              <div class="report-heading">
+              <div class="report-title">
                 <span>
                   ANALYSIS REPORT
                 </span>
@@ -1378,20 +1424,20 @@ const AnalysisPage = () => {
               </div>
             </header>
 
-            <section class="session-section">
-              <div class="section-label">
+            <section class="session">
+              <span class="label">
                 SESSION INFORMATION
-              </div>
+              </span>
 
-              <h2 class="session-title">
+              <h2>
                 ${escapeHtml(
                   subject ||
-                    "Classroom Session"
+                    "Classroom session"
                 )}
               </h2>
 
               <div class="session-grid">
-                <div class="session-field">
+                <div>
                   <span>
                     Teacher
                   </span>
@@ -1399,12 +1445,12 @@ const AnalysisPage = () => {
                   <strong>
                     ${escapeHtml(
                       teacher ||
-                        "Not specified"
+                        "—"
                     )}
                   </strong>
                 </div>
 
-                <div class="session-field">
+                <div>
                   <span>
                     Room
                   </span>
@@ -1412,12 +1458,12 @@ const AnalysisPage = () => {
                   <strong>
                     ${escapeHtml(
                       roomNumber ||
-                        "Not specified"
+                        "—"
                     )}
                   </strong>
                 </div>
 
-                <div class="session-field">
+                <div>
                   <span>
                     Date
                   </span>
@@ -1425,38 +1471,38 @@ const AnalysisPage = () => {
                   <strong>
                     ${escapeHtml(
                       date ||
-                        "Not specified"
+                        "—"
                     )}
                   </strong>
                 </div>
 
-                <div class="session-field">
+                <div>
                   <span>
-                    Start Time
+                    Start
                   </span>
 
                   <strong>
                     ${escapeHtml(
                       startTime ||
-                        "Not specified"
+                        "—"
                     )}
                   </strong>
                 </div>
 
-                <div class="session-field">
+                <div>
                   <span>
-                    End Time
+                    End
                   </span>
 
                   <strong>
                     ${escapeHtml(
                       endTime ||
-                        "Not specified"
+                        "—"
                     )}
                   </strong>
                 </div>
 
-                <div class="session-field">
+                <div>
                   <span>
                     Weather
                   </span>
@@ -1464,15 +1510,15 @@ const AnalysisPage = () => {
                   <strong>
                     ${escapeHtml(
                       weather ||
-                        "Not specified"
+                        "—"
                     )}
                   </strong>
                 </div>
               </div>
             </section>
 
-            <section class="summary-section">
-              <div class="summary-card primary">
+            <section class="summary">
+              <div>
                 <span>
                   Stress Level
                 </span>
@@ -1484,9 +1530,9 @@ const AnalysisPage = () => {
                 </strong>
               </div>
 
-              <div class="summary-card">
+              <div>
                 <span>
-                  Images Processed
+                  Images
                 </span>
 
                 <strong>
@@ -1496,9 +1542,9 @@ const AnalysisPage = () => {
                 </strong>
               </div>
 
-              <div class="summary-card">
+              <div>
                 <span>
-                  Faces Detected
+                  Faces
                 </span>
 
                 <strong>
@@ -1508,52 +1554,38 @@ const AnalysisPage = () => {
                 </strong>
               </div>
 
-              <div class="summary-card">
+              <div>
                 <span>
                   Dominant Emotion
                 </span>
 
                 <strong>
                   ${escapeHtml(
-                    dominantEmotionCode
+                    dominantCode
                   )}
                 </strong>
               </div>
             </section>
 
-            <section class="emotion-legend">
-              <strong class="emotion-legend-title">
-                EMOTION CODES
-              </strong>
-
-              ${emotionLegendHtml}
+            <section class="legend">
+              ${emotionLegend}
             </section>
 
-            <section class="results-heading">
+            <section class="observations">
+              <span class="label">
+                IMAGE OBSERVATIONS
+              </span>
+
               <h2>
-                Image observations
+                Detected emotional responses
               </h2>
 
-              <p>
-                Processed classroom images and emotional classifications for each detected face.
-              </p>
+              ${imageRows}
             </section>
 
-            ${resultRowsHtml}
-
-            <div class="report-notice">
+            <div class="notice">
               ZenLens provides supporting information based on detected classroom emotional patterns. Results should not be interpreted as a medical or psychological diagnosis.
             </div>
-
-            <footer class="report-footer">
-              <span>
-                ZenLens Classroom Stress Analytics
-              </span>
-
-              <span>
-                Generated from the recorded classroom session
-              </span>
-            </footer>
           </main>
         </body>
       </html>
@@ -1561,27 +1593,31 @@ const AnalysisPage = () => {
 
     printWindow.document.close();
 
-    const waitForImages =
+    const images =
       Array.from(
         printWindow.document.images
-      ).map((image) => {
-        if (image.complete) {
-          return Promise.resolve();
-        }
-
-        return new Promise(
-          (resolve) => {
-            image.onload =
-              resolve;
-
-            image.onerror =
-              resolve;
-          }
-        );
-      });
+      );
 
     Promise.all(
-      waitForImages
+      images.map(
+        (image) => {
+          if (
+            image.complete
+          ) {
+            return Promise.resolve();
+          }
+
+          return new Promise(
+            (resolve) => {
+              image.onload =
+                resolve;
+
+              image.onerror =
+                resolve;
+            }
+          );
+        }
+      )
     ).then(() => {
       setTimeout(() => {
         printWindow.focus();
@@ -1591,261 +1627,618 @@ const AnalysisPage = () => {
     });
   };
 
-  if (loadingPage) {
-    return (
-      <div className="zen-analysis-page">
-        <ZenLensHeader />
+  /* ======================================================
+     GLOW
+  ====================================================== */
 
-        <main className="zen-analysis-loading">
-          <div className="zen-analysis-loading-visual">
-            <div className="zen-analysis-loading-ring ring-one" />
+  const handleGlowMove = (
+    event
+  ) => {
+    const element =
+      event.currentTarget;
 
-            <div className="zen-analysis-loading-ring ring-two" />
+    const rect =
+      element.getBoundingClientRect();
 
-            <div className="zen-analysis-loading-core">
-              <LoaderCircle />
+    element.style.setProperty(
+      "--analysis-glow-x",
+      `${
+        event.clientX -
+        rect.left
+      }px`
+    );
+
+    element.style.setProperty(
+      "--analysis-glow-y",
+      `${
+        event.clientY -
+        rect.top
+      }px`
+    );
+
+    element.style.setProperty(
+      "--analysis-glow-opacity",
+      "1"
+    );
+  };
+
+  const handleGlowLeave = (
+    event
+  ) => {
+    event.currentTarget.style.setProperty(
+      "--analysis-glow-opacity",
+      "0"
+    );
+  };
+
+  const glowProps = {
+    onMouseMove:
+      handleGlowMove,
+    onMouseLeave:
+      handleGlowLeave,
+  };
+
+  /* ======================================================
+     SHARED SIDEBAR
+  ====================================================== */
+
+  const renderSidebar = () => (
+    <>
+      <aside className="zen-analysis-sidebar">
+        <div className="zen-analysis-sidebar-inner">
+          <button
+            type="button"
+            className="zen-analysis-brand"
+            onClick={() =>
+              goTo("/home")
+            }
+          >
+            <span className="zen-analysis-brand-mark">
+              <img
+                src={zenlensLogo}
+                alt="ZenLens"
+              />
+            </span>
+
+            <span className="zen-analysis-brand-copy">
+              <strong>
+                ZenLens
+              </strong>
+
+              <small>
+                Classroom Stress Analytics
+              </small>
+            </span>
+          </button>
+
+          <div className="zen-analysis-nav-scroll">
+            <p className="zen-analysis-nav-label">
+              Workspace
+            </p>
+
+            <nav className="zen-analysis-navigation">
+              {navigationItems.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  const active =
+                    location.pathname ===
+                    item.route;
+
+                  return (
+                    <button
+                      type="button"
+                      key={
+                        item.label
+                      }
+                      className={`zen-analysis-nav-item ${
+                        active
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <span className="zen-analysis-nav-icon">
+                        <Icon />
+                      </span>
+
+                      <span>
+                        {
+                          item.label
+                        }
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </nav>
+
+            <div className="zen-analysis-nav-divider" />
+
+            <p className="zen-analysis-nav-label">
+              Support
+            </p>
+
+            <nav className="zen-analysis-navigation">
+              {supportNavigation.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  return (
+                    <button
+                      type="button"
+                      key={
+                        item.label
+                      }
+                      className="zen-analysis-nav-item"
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <span className="zen-analysis-nav-icon">
+                        <Icon />
+                      </span>
+
+                      <span>
+                        {
+                          item.label
+                        }
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </nav>
+          </div>
+
+          <div className="zen-analysis-sidebar-bottom">
+            <div className="zen-analysis-user">
+              <span className="zen-analysis-user-avatar">
+                {initials}
+              </span>
+
+              <div className="zen-analysis-user-copy">
+                <strong>
+                  {fullName}
+                </strong>
+
+                <small>
+                  {email}
+                </small>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="zen-analysis-signout"
+              onClick={
+                handleLogout
+              }
+            >
+              <LogOut />
+
+              <span>
+                Sign out
+              </span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <header className="zen-analysis-mobile-header">
+        <button
+          type="button"
+          className="zen-analysis-mobile-brand"
+          onClick={() =>
+            goTo("/home")
+          }
+        >
+          <span>
+            <img
+              src={zenlensLogo}
+              alt="ZenLens"
+            />
+          </span>
+
+          <strong>
+            ZenLens
+          </strong>
+        </button>
+
+        <button
+          type="button"
+          className="zen-analysis-mobile-toggle"
+          aria-label="Toggle navigation"
+          onClick={() =>
+            setMobileMenuOpen(
+              (current) =>
+                !current
+            )
+          }
+        >
+          {mobileMenuOpen ? (
+            <X />
+          ) : (
+            <Menu />
+          )}
+        </button>
+      </header>
+
+      {mobileMenuOpen && (
+        <div className="zen-analysis-mobile-drawer">
+          <div className="zen-analysis-mobile-user">
+            <span className="zen-analysis-user-avatar">
+              {initials}
+            </span>
+
+            <div>
+              <strong>
+                {fullName}
+              </strong>
+
+              <small>
+                {email}
+              </small>
             </div>
           </div>
 
-          <span>
-            ZENLENS ANALYSIS
-          </span>
+          <nav>
+            {[
+              ...navigationItems,
+              ...supportNavigation,
+            ].map((item) => {
+              const Icon =
+                item.icon;
 
-          <h1>
-            Reviewing the classroom images.
-          </h1>
+              const active =
+                location.pathname ===
+                item.route;
 
-          <p>
-            ZenLens is processing the uploaded session and organizing
-            detected emotional observations.
-          </p>
+              return (
+                <button
+                  type="button"
+                  key={
+                    item.label
+                  }
+                  className={
+                    active
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    goTo(
+                      item.route
+                    )
+                  }
+                >
+                  <Icon />
 
-          <div className="zen-analysis-loading-status">
-            <i />
+                  <span>
+                    {
+                      item.label
+                    }
+                  </span>
+                </button>
+              );
+            })}
 
-            Analysis in progress
-          </div>
-        </main>
-      </div>
-    );
-  }
+            <button
+              type="button"
+              className="logout"
+              onClick={
+                handleLogout
+              }
+            >
+              <LogOut />
+
+              <span>
+                Sign out
+              </span>
+            </button>
+          </nav>
+        </div>
+      )}
+    </>
+  );
+
+  /* ======================================================
+     UI
+  ====================================================== */
 
   return (
     <div className="zen-analysis-page">
-      <ZenLensHeader />
+      {renderSidebar()}
 
       <main className="zen-analysis-main">
-        {results ? (
-          <section className="zen-analysis-results-view">
-            <div className="zen-analysis-results-top">
-              <div className="zen-analysis-results-heading">
-                <button
-                  type="button"
-                  className="zen-analysis-back-button"
-                  onClick={
-                    handleNewAnalysis
-                  }
-                >
-                  <ArrowLeft />
+        <div className="zen-analysis-orb orb-one" />
+        <div className="zen-analysis-orb orb-two" />
 
-                  <span>
-                    New analysis
-                  </span>
-                </button>
+        <div className="zen-analysis-content">
+          {loadingPage ? (
+            <section className="zen-analysis-loading-card">
+              <div className="zen-analysis-loading-visual">
+                <span className="zen-analysis-loading-ring ring-one" />
 
-                <span className="zen-analysis-section-label">
-                  ANALYSIS COMPLETE
+                <span className="zen-analysis-loading-ring ring-two" />
+
+                <span className="zen-analysis-loading-core">
+                  <LoaderCircle />
                 </span>
-
-                <h1>
-                  Classroom session results
-                </h1>
-
-                <p>
-                  Review the emotional observations detected across
-                  the uploaded classroom images.
-                </p>
               </div>
 
-              <div className="zen-analysis-result-actions">
-                <button
-                  type="button"
-                  className="zen-analysis-print-button"
-                  onClick={
-                    handlePrint
-                  }
-                >
-                  <Printer />
+              <span className="zen-analysis-loading-kicker">
+                ZENLENS ANALYSIS
+              </span>
 
-                  <span>
-                    Print results
-                  </span>
-                </button>
+              <h1>
+                Reviewing the classroom images.
+              </h1>
 
-                <button
-                  type="button"
-                  className="zen-analysis-clear-button"
-                  onClick={
-                    handleClear
-                  }
-                >
-                  <RotateCcw />
+              <p>
+                ZenLens is processing the uploaded session and organizing detected emotional observations.
+              </p>
 
-                  <span>
-                    Clear session
-                  </span>
-                </button>
+              <div className="zen-analysis-loading-status">
+                <i />
+
+                Analysis in progress
               </div>
-            </div>
+            </section>
+          ) : results ? (
+            <section className="zen-analysis-results-view">
+              <div className="zen-analysis-results-top">
+                <div className="zen-analysis-results-heading">
+                  <button
+                    type="button"
+                    className="zen-analysis-back-button"
+                    onClick={
+                      handleNewAnalysis
+                    }
+                  >
+                    <ArrowLeft />
 
-            <div className="zen-analysis-summary-grid">
-              <article className="zen-analysis-summary-card primary">
-                <div className="zen-analysis-summary-icon">
-                  <Brain />
-                </div>
-
-                <span>
-                  Stress level
-                </span>
-
-                <strong>
-                  {results.stress_category ||
-                    "Not available"}
-                </strong>
-
-                <p>
-                  Overall category returned by the ZenLens analysis.
-                </p>
-              </article>
-
-              <article className="zen-analysis-summary-card">
-                <div className="zen-analysis-summary-icon">
-                  <ImageIcon />
-                </div>
-
-                <span>
-                  Images processed
-                </span>
-
-                <strong>
-                  {totalImages}
-                </strong>
-
-                <p>
-                  Classroom images included in this session.
-                </p>
-              </article>
-
-              <article className="zen-analysis-summary-card">
-                <div className="zen-analysis-summary-icon">
-                  <ScanFace />
-                </div>
-
-                <span>
-                  Faces detected
-                </span>
-
-                <strong>
-                  {totalFaces}
-                </strong>
-
-                <p>
-                  Facial observations included in the analysis.
-                </p>
-              </article>
-
-              <article className="zen-analysis-summary-card">
-                <div className="zen-analysis-summary-icon">
-                  <Sparkles />
-                </div>
-
-                <span>
-                  Most frequent emotion
-                </span>
-
-                <strong
-                  title={
-                    dominantEmotion
-                  }
-                >
-                  {dominantEmotion ===
-                  "—"
-                    ? "—"
-                    : getEmotionShortLabel(
-                        dominantEmotion
-                      )}
-                </strong>
-
-                <p>
-                  Most commonly classified emotion in this result set.
-                </p>
-              </article>
-            </div>
-
-            <div
-              className="zen-analysis-results-content"
-              id="printable-results"
-            >
-              <div className="zen-analysis-session-summary">
-                <div>
-                  <span>
-                    SESSION INFORMATION
-                  </span>
-
-                  <h2>
-                    {subject ||
-                      "Classroom session"}
-                  </h2>
-                </div>
-
-                <div className="zen-analysis-session-meta">
-                  <span>
-                    <GraduationCap />
-
-                    {teacher ||
-                      "Teacher not specified"}
-                  </span>
-
-                  <span>
-                    <MapPin />
-
-                    Room{" "}
-                    {roomNumber ||
-                      "—"}
-                  </span>
-
-                  <span>
-                    <CalendarDays />
-
-                    {date ||
-                      "Date not specified"}
-                  </span>
-
-                  <span>
-                    <Clock3 />
-
-                    {startTime ||
-                      "—"}{" "}
-                    –{" "}
-                    {endTime ||
-                      "—"}
-                  </span>
-
-                  {weather && (
                     <span>
-                      <Cloud />
-
-                      {
-                        weather
-                      }
+                      New analysis
                     </span>
-                  )}
+                  </button>
+
+                  <span className="zen-analysis-section-label">
+                    ANALYSIS COMPLETE
+                  </span>
+
+                  <h1>
+                    Classroom session
+                    <span>
+                      {" "}
+                      results.
+                    </span>
+                  </h1>
+
+                  <p>
+                    Review the emotional observations detected across the uploaded classroom images.
+                  </p>
+                </div>
+
+                <div className="zen-analysis-result-actions">
+                  <button
+                    type="button"
+                    className="zen-analysis-print-button"
+                    onClick={
+                      handlePrint
+                    }
+                  >
+                    <Printer />
+
+                    <span>
+                      Print results
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="zen-analysis-clear-button"
+                    onClick={
+                      handleClear
+                    }
+                  >
+                    <RotateCcw />
+
+                    <span>
+                      Clear session
+                    </span>
+                  </button>
                 </div>
               </div>
+
+              <div className="zen-analysis-summary-grid">
+                <article
+                  className="zen-analysis-summary-card primary zen-analysis-glow-card"
+                  {...glowProps}
+                >
+                  <span className="zen-analysis-card-glow" />
+
+                  <div className="zen-analysis-card-layer">
+                    <div className="zen-analysis-summary-icon">
+                      <Brain />
+                    </div>
+
+                    <span>
+                      Stress level
+                    </span>
+
+                    <strong>
+                      {results.stress_category ||
+                        "Not available"}
+                    </strong>
+
+                    <p>
+                      Overall category returned by the ZenLens analysis.
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  className="zen-analysis-summary-card zen-analysis-glow-card"
+                  {...glowProps}
+                >
+                  <span className="zen-analysis-card-glow" />
+
+                  <div className="zen-analysis-card-layer">
+                    <div className="zen-analysis-summary-icon">
+                      <ImageIcon />
+                    </div>
+
+                    <span>
+                      Images processed
+                    </span>
+
+                    <strong>
+                      {totalImages}
+                    </strong>
+
+                    <p>
+                      Classroom images included in this session.
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  className="zen-analysis-summary-card zen-analysis-glow-card"
+                  {...glowProps}
+                >
+                  <span className="zen-analysis-card-glow" />
+
+                  <div className="zen-analysis-card-layer">
+                    <div className="zen-analysis-summary-icon">
+                      <ScanFace />
+                    </div>
+
+                    <span>
+                      Faces detected
+                    </span>
+
+                    <strong>
+                      {totalFaces}
+                    </strong>
+
+                    <p>
+                      Facial observations included in the analysis.
+                    </p>
+                  </div>
+                </article>
+
+                <article
+                  className="zen-analysis-summary-card zen-analysis-glow-card"
+                  {...glowProps}
+                >
+                  <span className="zen-analysis-card-glow" />
+
+                  <div className="zen-analysis-card-layer">
+                    <div className="zen-analysis-summary-icon">
+                      <Sparkles />
+                    </div>
+
+                    <span>
+                      Most frequent emotion
+                    </span>
+
+                    <strong
+                      title={
+                        dominantEmotion
+                      }
+                    >
+                      {dominantEmotion ===
+                      "—"
+                        ? "—"
+                        : getEmotionShortLabel(
+                            dominantEmotion
+                          )}
+                    </strong>
+
+                    <p>
+                      Most commonly classified emotion in this result set.
+                    </p>
+                  </div>
+                </article>
+              </div>
+
+              <section
+                className="zen-analysis-session-result zen-analysis-glow-card"
+                {...glowProps}
+              >
+                <span className="zen-analysis-card-glow" />
+
+                <div className="zen-analysis-card-layer">
+                  <div className="zen-analysis-session-head">
+                    <div>
+                      <span className="zen-analysis-section-label">
+                        SESSION INFORMATION
+                      </span>
+
+                      <h2>
+                        {subject ||
+                          "Classroom session"}
+                      </h2>
+                    </div>
+
+                    <ShieldCheck />
+                  </div>
+
+                  <div className="zen-analysis-session-meta">
+                    <span>
+                      <GraduationCap />
+
+                      {teacher ||
+                        "Teacher not specified"}
+                    </span>
+
+                    <span>
+                      <MapPin />
+
+                      Room{" "}
+                      {roomNumber ||
+                        "—"}
+                    </span>
+
+                    <span>
+                      <CalendarDays />
+
+                      {date ||
+                        "Date not specified"}
+                    </span>
+
+                    <span>
+                      <Clock3 />
+
+                      {startTime ||
+                        "—"}{" "}
+                      –{" "}
+                      {endTime ||
+                        "—"}
+                    </span>
+
+                    {weather && (
+                      <span>
+                        <Cloud />
+
+                        {weather}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </section>
 
               <div className="zen-analysis-result-list-head">
                 <div>
-                  <span>
+                  <span className="zen-analysis-section-label">
                     IMAGE OBSERVATIONS
                   </span>
 
@@ -1855,8 +2248,7 @@ const AnalysisPage = () => {
                 </div>
 
                 <p>
-                  Each image below shows the processed classroom image
-                  and the emotion code identified for each detected face.
+                  Each result shows the processed classroom image and the emotion identified for every detected face.
                 </p>
               </div>
 
@@ -1868,8 +2260,11 @@ const AnalysisPage = () => {
                   ) => {
                     const filename =
                       detail.filename
-                        .split("/")
-                        .pop();
+                        ?.split("/")
+                        .pop() ||
+                      `Image ${
+                        index + 1
+                      }`;
 
                     const detectedFaces =
                       Object.entries(
@@ -1879,117 +2274,129 @@ const AnalysisPage = () => {
 
                     return (
                       <article
-                        className="zen-analysis-result-row"
+                        className="zen-analysis-result-row zen-analysis-glow-card"
                         key={`${filename}-${index}`}
+                        {...glowProps}
                       >
-                        <div className="zen-analysis-result-image-wrap">
-                          <img
-                            src={`${API_BASE_URL}/processed/${encodeURIComponent(
-                              filename
-                            )}?folder_path=${encodeURIComponent(
-                              results.folder_path
-                            )}`}
-                            alt={
-                              filename
-                            }
-                            onError={(
-                              event
-                            ) => {
-                              event.currentTarget.src =
-                                "/placeholder.png";
-                            }}
-                            className="result-image"
-                          />
+                        <span className="zen-analysis-card-glow" />
 
-                          <div className="zen-analysis-image-index">
-                            {String(
-                              index +
-                                1
-                            ).padStart(
-                              2,
-                              "0"
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="zen-analysis-result-detail">
-                          <div className="zen-analysis-result-file">
-                            <span>
-                              IMAGE FILE
-                            </span>
-
-                            <h3>
-                              {
+                        <div className="zen-analysis-card-layer result">
+                          <div className="zen-analysis-result-image-wrap">
+                            <img
+                              src={`${API_BASE_URL}/processed/${encodeURIComponent(
+                                filename
+                              )}?folder_path=${encodeURIComponent(
+                                results.folder_path ||
+                                  ""
+                              )}`}
+                              alt={
                                 filename
                               }
-                            </h3>
+                              onError={(
+                                event
+                              ) => {
+                                event.currentTarget.src =
+                                  "/placeholder.png";
+                              }}
+                            />
 
-                            <p>
-                              {
-                                detectedFaces.length
-                              }{" "}
-                              {detectedFaces.length ===
-                              1
-                                ? "face"
-                                : "faces"}{" "}
-                              detected
-                            </p>
+                            <span className="zen-analysis-image-index">
+                              {String(
+                                index +
+                                  1
+                              ).padStart(
+                                2,
+                                "0"
+                              )}
+                            </span>
                           </div>
 
-                          <div className="zen-analysis-face-list">
-                            {detectedFaces.length ? (
-                              detectedFaces.map(
-                                (
-                                  [
-                                    face,
-                                    data,
-                                  ],
-                                  faceIndex
-                                ) => {
-                                  const fullEmotion =
-                                    data?.emotion ||
-                                    "Unknown";
+                          <div className="zen-analysis-result-detail">
+                            <div className="zen-analysis-result-file">
+                              <span>
+                                IMAGE FILE
+                              </span>
 
-                                  return (
-                                    <div
-                                      className="zen-analysis-face-item"
-                                      key={`${face}-${faceIndex}`}
-                                      title={
-                                        fullEmotion
-                                      }
-                                    >
-                                      <div className="zen-analysis-face-number">
-                                        <ScanFace />
-                                      </div>
+                              <h3>
+                                {
+                                  filename
+                                }
+                              </h3>
 
-                                      <div>
-                                        <span>
-                                          Face{" "}
-                                          {faceIndex +
-                                            1}
+                              <p>
+                                {
+                                  detectedFaces.length
+                                }{" "}
+                                {detectedFaces.length ===
+                                1
+                                  ? "face"
+                                  : "faces"}{" "}
+                                detected
+                              </p>
+                            </div>
+
+                            <div className="zen-analysis-face-list">
+                              {detectedFaces.length ? (
+                                detectedFaces.map(
+                                  (
+                                    [
+                                      face,
+                                      data,
+                                    ],
+                                    faceIndex
+                                  ) => {
+                                    const fullEmotion =
+                                      data
+                                        ?.emotion ||
+                                      "Unknown";
+
+                                    return (
+                                      <div
+                                        className="zen-analysis-face-item"
+                                        key={`${face}-${faceIndex}`}
+                                        title={
+                                          fullEmotion
+                                        }
+                                      >
+                                        <span className="zen-analysis-face-number">
+                                          <ScanFace />
                                         </span>
 
-                                        <strong>
-                                          {getEmotionShortLabel(
-                                            fullEmotion
-                                          )}
-                                        </strong>
+                                        <div>
+                                          <span>
+                                            Face{" "}
+                                            {faceIndex +
+                                              1}
+                                          </span>
+
+                                          <strong>
+                                            {getEmotionShortLabel(
+                                              fullEmotion
+                                            )}
+                                          </strong>
+
+                                          <small>
+                                            {
+                                              fullEmotion
+                                            }
+                                          </small>
+                                        </div>
+
+                                        <Check />
                                       </div>
+                                    );
+                                  }
+                                )
+                              ) : (
+                                <div className="zen-analysis-no-face">
+                                  <AlertCircle />
 
-                                      <Check />
-                                    </div>
-                                  );
-                                }
-                              )
-                            ) : (
-                              <div className="zen-analysis-no-face">
-                                <AlertCircle />
-
-                                <span>
-                                  No faces were detected in this image.
-                                </span>
-                              </div>
-                            )}
+                                  <span>
+                                    No faces were detected in this image.
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </article>
@@ -1997,601 +2404,637 @@ const AnalysisPage = () => {
                   }
                 )}
               </div>
-            </div>
-          </section>
-        ) : (
-          <>
-            <section className="zen-analysis-intro">
-              <div className="zen-analysis-intro-copy">
-                <div className="zen-analysis-eyebrow">
-                  <ScanFace />
 
-                  <span>
-                    New classroom analysis
-                  </span>
+              <section className="zen-analysis-bottom-note">
+                <div className="zen-analysis-bottom-note-icon">
+                  <ShieldCheck />
                 </div>
 
-                <h1>
-                  Analyze a classroom session with context.
-                </h1>
+                <div>
+                  <span>
+                    INTERPRETATION SUPPORT
+                  </span>
+
+                  <h2>
+                    ZenLens supports classroom stress assessment.
+                  </h2>
+                </div>
 
                 <p>
-                  Add the session information and upload the classroom
-                  image folder. ZenLens will process the images and
-                  organize detected emotional patterns for review.
+                  Results help organize classroom emotional patterns and should be interpreted alongside appropriate educational and professional judgment.
                 </p>
-              </div>
-
-              <div className="zen-analysis-intro-guide">
-                <span>
-                  BEFORE YOU BEGIN
-                </span>
-
-                <div>
-                  <i>01</i>
-
-                  <p>
-                    <strong>
-                      Add session information
-                    </strong>
-
-                    <small>
-                      Record the classroom context for the analysis.
-                    </small>
-                  </p>
-                </div>
-
-                <ChevronRight />
-
-                <div>
-                  <i>02</i>
-
-                  <p>
-                    <strong>
-                      Select image folder
-                    </strong>
-
-                    <small>
-                      Choose the classroom images for the session.
-                    </small>
-                  </p>
-                </div>
-
-                <ChevronRight />
-
-                <div>
-                  <i>03</i>
-
-                  <p>
-                    <strong>
-                      Run analysis
-                    </strong>
-
-                    <small>
-                      Review the processed emotional observations.
-                    </small>
-                  </p>
-                </div>
-              </div>
+              </section>
             </section>
+          ) : (
+            <>
+              <section className="zen-analysis-intro">
+                <div className="zen-analysis-intro-copy">
+                  <span className="zen-analysis-eyebrow">
+                    <Sparkles />
 
-            {errorMessage && (
-              <div className="zen-analysis-error">
-                <AlertCircle />
+                    ZenLens analysis workspace
+                  </span>
 
-                <span>
-                  {errorMessage}
-                </span>
+                  <p className="zen-analysis-overline">
+                    Image-based classroom analysis
+                  </p>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setErrorMessage(
-                      ""
-                    )
-                  }
-                  aria-label="Dismiss error"
-                >
-                  <X />
-                </button>
-              </div>
-            )}
-
-            <section className="zen-analysis-workspace">
-              <div className="zen-analysis-form-panel">
-                <div className="zen-analysis-panel-heading">
-                  <div className="zen-analysis-panel-icon">
-                    <GraduationCap />
-                  </div>
-
-                  <div>
+                  <h1>
+                    New Classroom
                     <span>
-                      STEP 1
+                      {" "}
+                      Analysis
                     </span>
+                  </h1>
 
-                    <h2>
-                      Session information
-                    </h2>
-
-                    <p>
-                      Add the classroom context associated with these
-                      images.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="zen-analysis-form-grid">
-                  <div className="zen-analysis-field wide">
-                    <label htmlFor="analysis-subject">
-                      Subject
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <GraduationCap />
-
-                      <input
-                        id="analysis-subject"
-                        type="text"
-                        placeholder="e.g. Mathematics"
-                        value={
-                          subject
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setSubject(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="zen-analysis-field">
-                    <label htmlFor="analysis-room">
-                      Room number
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <MapPin />
-
-                      <input
-                        id="analysis-room"
-                        type="text"
-                        placeholder="e.g. 204"
-                        value={
-                          roomNumber
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setRoomNumber(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="zen-analysis-field">
-                    <label htmlFor="analysis-teacher">
-                      Teacher's name
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <UserRound />
-
-                      <input
-                        id="analysis-teacher"
-                        type="text"
-                        placeholder="Enter teacher's name"
-                        value={
-                          teacher
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setTeacher(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="zen-analysis-field">
-                    <label htmlFor="analysis-date">
-                      Date
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <CalendarDays />
-
-                      <input
-                        id="analysis-date"
-                        type="date"
-                        value={
-                          date
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setDate(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="zen-analysis-field">
-                    <label htmlFor="analysis-weather">
-                      Weather
-
-                      <span>
-                        Optional
-                      </span>
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <Cloud />
-
-                      <input
-                        id="analysis-weather"
-                        type="text"
-                        placeholder="e.g. Sunny"
-                        value={
-                          weather
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setWeather(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="zen-analysis-field">
-                    <label htmlFor="analysis-start">
-                      Start time
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <Clock3 />
-
-                      <input
-                        id="analysis-start"
-                        type="time"
-                        value={
-                          startTime
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setStartTime(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="zen-analysis-field">
-                    <label htmlFor="analysis-end">
-                      End time
-                    </label>
-
-                    <div className="zen-analysis-input-wrap">
-                      <Clock3 />
-
-                      <input
-                        id="analysis-end"
-                        type="time"
-                        value={
-                          endTime
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setEndTime(
-                            event.target
-                              .value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="zen-analysis-form-note">
-                  <Sparkles />
-
-                  <p>
-                    Session information provides useful context when
-                    reviewing the analysis later.
+                  <p className="zen-analysis-description">
+                    Add the classroom context and upload the session image folder. ZenLens will process the images and organize detected emotional patterns for review.
                   </p>
                 </div>
-              </div>
 
-              <div className="zen-analysis-upload-panel">
-                <div className="zen-analysis-panel-heading">
-                  <div className="zen-analysis-panel-icon">
-                    <FolderOpen />
-                  </div>
-
+                <div className="zen-analysis-intro-guide">
                   <div>
-                    <span>
-                      STEP 2
-                    </span>
-
-                    <h2>
-                      Classroom images
-                    </h2>
+                    <i>
+                      01
+                    </i>
 
                     <p>
-                      Select the folder containing images captured
-                      during this classroom session.
-                    </p>
-                  </div>
-                </div>
-
-                <input
-                  ref={
-                    fileInputRef
-                  }
-                  className="zen-analysis-hidden-input"
-                  type="file"
-                  webkitdirectory="true"
-                  directory="true"
-                  multiple
-                  onChange={
-                    handleFileChange
-                  }
-                />
-
-                <div
-                  className={`zen-analysis-dropzone ${
-                    isDragging
-                      ? "dragging"
-                      : ""
-                  } ${
-                    files.length
-                      ? "has-files"
-                      : ""
-                  }`}
-                  role="button"
-                  tabIndex={0}
-                  onClick={
-                    openFolderPicker
-                  }
-                  onKeyDown={(
-                    event
-                  ) => {
-                    if (
-                      event.key ===
-                        "Enter" ||
-                      event.key ===
-                        " "
-                    ) {
-                      event.preventDefault();
-
-                      openFolderPicker();
-                    }
-                  }}
-                  onDrop={
-                    handleDrop
-                  }
-                  onDragOver={
-                    handleDragOver
-                  }
-                  onDragLeave={
-                    handleDragLeave
-                  }
-                >
-                  {files.length ? (
-                    <>
-                      <div className="zen-analysis-upload-success">
-                        <Check />
-                      </div>
-
-                      <div className="zen-analysis-upload-selected-copy">
-                        <span>
-                          FOLDER SELECTED
-                        </span>
-
-                        <h3>
-                          {
-                            selectedFolderName
-                          }
-                        </h3>
-
-                        <p>
-                          {
-                            files.length
-                          }{" "}
-                          {files.length ===
-                          1
-                            ? "image"
-                            : "images"}{" "}
-                          ready for analysis
-                        </p>
-                      </div>
-
-                      <div className="zen-analysis-upload-selected-actions">
-                        <span>
-                          <FolderOpen />
-
-                          Change folder
-                        </span>
-
-                        <button
-                          type="button"
-                          onClick={
-                            clearSelectedFiles
-                          }
-                        >
-                          <X />
-
-                          Remove
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="zen-analysis-upload-icon">
-                        <UploadCloud />
-                      </div>
-
-                      <span className="zen-analysis-upload-kicker">
-                        SELECT CLASSROOM IMAGES
-                      </span>
-
-                      <h3>
-                        Choose the session folder
-                      </h3>
-
-                      <p>
-                        Select a folder containing the classroom
-                        images you want ZenLens to analyze.
-                      </p>
-
-                      <span className="zen-analysis-upload-button">
-                        <FolderOpen />
-
-                        Browse folder
-                      </span>
+                      <strong>
+                        Session information
+                      </strong>
 
                       <small>
-                        Image files inside the selected folder will
-                        be included.
+                        Add classroom context
                       </small>
-                    </>
-                  )}
-                </div>
-
-                <div className="zen-analysis-upload-info">
-                  <div>
-                    <FileImage />
-
-                    <p>
-                      <strong>
-                        Image-based
-                      </strong>
-
-                      <span>
-                        ZenLens analyzes uploaded images rather than
-                        continuous live video.
-                      </span>
                     </p>
                   </div>
 
+                  <ArrowRight />
+
                   <div>
-                    <Brain />
+                    <i>
+                      02
+                    </i>
 
                     <p>
                       <strong>
-                        Emotion analysis
+                        Classroom images
                       </strong>
 
-                      <span>
-                        Facial observations are classified into
-                        emotional categories.
-                      </span>
+                      <small>
+                        Select the image folder
+                      </small>
+                    </p>
+                  </div>
+
+                  <ArrowRight />
+
+                  <div>
+                    <i>
+                      03
+                    </i>
+
+                    <p>
+                      <strong>
+                        Analyze
+                      </strong>
+
+                      <small>
+                        Review the session
+                      </small>
                     </p>
                   </div>
                 </div>
+              </section>
 
-                <div className="zen-analysis-run-section">
-                  <div className="zen-analysis-ready-status">
-                    {canAnalyze ? (
-                      <>
-                        <span className="ready">
-                          <Check />
-                        </span>
+              {errorMessage && (
+                <div className="zen-analysis-error">
+                  <AlertCircle />
 
-                        <p>
-                          <strong>
-                            Ready to analyze
-                          </strong>
-
-                          <small>
-                            Session information and images are ready.
-                          </small>
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <span>
-                          <AlertCircle />
-                        </span>
-
-                        <p>
-                          <strong>
-                            Analysis setup incomplete
-                          </strong>
-
-                          <small>
-                            Complete the session information and
-                            select an image folder.
-                          </small>
-                        </p>
-                      </>
-                    )}
-                  </div>
+                  <span>
+                    {errorMessage}
+                  </span>
 
                   <button
                     type="button"
-                    className="zen-analysis-run-button"
-                    onClick={
-                      handleAnalyze
+                    onClick={() =>
+                      setErrorMessage(
+                        ""
+                      )
                     }
-                    disabled={
-                      !canAnalyze
-                    }
+                    aria-label="Dismiss error"
                   >
-                    <Play />
-
-                    <span>
-                      Run analysis
-                    </span>
+                    <X />
                   </button>
                 </div>
-              </div>
-            </section>
+              )}
 
-            <section className="zen-analysis-bottom-note">
-              <div className="zen-analysis-bottom-note-icon">
-                <BarChart3 />
-              </div>
+              <section className="zen-analysis-workspace">
+                <article
+                  className="zen-analysis-form-panel zen-analysis-glow-card"
+                  {...glowProps}
+                >
+                  <span className="zen-analysis-card-glow" />
 
-              <div>
-                <span>
-                  WHAT HAPPENS NEXT
-                </span>
+                  <div className="zen-analysis-card-layer">
+                    <div className="zen-analysis-panel-heading">
+                      <div className="zen-analysis-panel-icon">
+                        <GraduationCap />
+                      </div>
 
-                <h2>
-                  Results are organized into a session you can review
-                  later.
-                </h2>
-              </div>
+                      <div>
+                        <span>
+                          STEP 1
+                        </span>
 
-              <p>
-                After processing, ZenLens displays the detected
-                emotions for each image and keeps the session
-                information connected to the result.
-              </p>
-            </section>
-          </>
-        )}
+                        <h2>
+                          Session information
+                        </h2>
+
+                        <p>
+                          Add the classroom context associated with the images.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="zen-analysis-form-grid">
+                      <div className="zen-analysis-field wide">
+                        <label htmlFor="analysis-subject">
+                          Subject
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <GraduationCap />
+
+                          <input
+                            id="analysis-subject"
+                            type="text"
+                            placeholder="e.g. Mathematics"
+                            value={
+                              subject
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setSubject(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="zen-analysis-field">
+                        <label htmlFor="analysis-room">
+                          Room number
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <MapPin />
+
+                          <input
+                            id="analysis-room"
+                            type="text"
+                            placeholder="e.g. 204"
+                            value={
+                              roomNumber
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setRoomNumber(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="zen-analysis-field">
+                        <label htmlFor="analysis-teacher">
+                          Teacher's name
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <UserRound />
+
+                          <input
+                            id="analysis-teacher"
+                            type="text"
+                            placeholder="Enter teacher's name"
+                            value={
+                              teacher
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setTeacher(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="zen-analysis-field">
+                        <label htmlFor="analysis-date">
+                          Date
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <CalendarDays />
+
+                          <input
+                            id="analysis-date"
+                            type="date"
+                            value={
+                              date
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setDate(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="zen-analysis-field">
+                        <label htmlFor="analysis-weather">
+                          Weather
+
+                          <span>
+                            Optional
+                          </span>
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <Cloud />
+
+                          <input
+                            id="analysis-weather"
+                            type="text"
+                            placeholder="e.g. Sunny"
+                            value={
+                              weather
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setWeather(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="zen-analysis-field">
+                        <label htmlFor="analysis-start">
+                          Start time
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <Clock3 />
+
+                          <input
+                            id="analysis-start"
+                            type="time"
+                            value={
+                              startTime
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setStartTime(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="zen-analysis-field">
+                        <label htmlFor="analysis-end">
+                          End time
+                        </label>
+
+                        <div className="zen-analysis-input-wrap">
+                          <Clock3 />
+
+                          <input
+                            id="analysis-end"
+                            type="time"
+                            value={
+                              endTime
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              setEndTime(
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="zen-analysis-form-note">
+                      <Sparkles />
+
+                      <p>
+                        Session information stays connected to the analysis so the result can be understood in context later.
+                      </p>
+                    </div>
+                  </div>
+                </article>
+
+                <article
+                  className="zen-analysis-upload-panel zen-analysis-glow-card"
+                  {...glowProps}
+                >
+                  <span className="zen-analysis-card-glow" />
+
+                  <div className="zen-analysis-card-layer">
+                    <div className="zen-analysis-panel-heading">
+                      <div className="zen-analysis-panel-icon">
+                        <FolderOpen />
+                      </div>
+
+                      <div>
+                        <span>
+                          STEP 2
+                        </span>
+
+                        <h2>
+                          Classroom images
+                        </h2>
+
+                        <p>
+                          Select the folder containing images captured during this classroom session.
+                        </p>
+                      </div>
+                    </div>
+
+                    <input
+                      id={
+                        fileInputId
+                      }
+                      className="zen-analysis-hidden-input"
+                      type="file"
+                      webkitdirectory="true"
+                      directory="true"
+                      multiple
+                      onChange={
+                        handleFileChange
+                      }
+                    />
+
+                    <div
+                      className={`zen-analysis-dropzone ${
+                        isDragging
+                          ? "dragging"
+                          : ""
+                      } ${
+                        files.length
+                          ? "has-files"
+                          : ""
+                      }`}
+                      role="button"
+                      tabIndex={0}
+                      onClick={
+                        openFolderPicker
+                      }
+                      onKeyDown={(
+                        event
+                      ) => {
+                        if (
+                          event.key ===
+                            "Enter" ||
+                          event.key ===
+                            " "
+                        ) {
+                          event.preventDefault();
+
+                          openFolderPicker();
+                        }
+                      }}
+                      onDrop={
+                        handleDrop
+                      }
+                      onDragOver={
+                        handleDragOver
+                      }
+                      onDragLeave={
+                        handleDragLeave
+                      }
+                    >
+                      {files.length ? (
+                        <>
+                          <div className="zen-analysis-upload-success">
+                            <Check />
+                          </div>
+
+                          <div className="zen-analysis-upload-selected-copy">
+                            <span>
+                              FOLDER SELECTED
+                            </span>
+
+                            <h3>
+                              {
+                                selectedFolderName
+                              }
+                            </h3>
+
+                            <p>
+                              {
+                                files.length
+                              }{" "}
+                              {files.length ===
+                              1
+                                ? "image"
+                                : "images"}{" "}
+                              ready for analysis
+                            </p>
+                          </div>
+
+                          <div className="zen-analysis-upload-selected-actions">
+                            <span>
+                              <FolderOpen />
+
+                              Change folder
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={
+                                clearSelectedFiles
+                              }
+                            >
+                              <X />
+
+                              Remove
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="zen-analysis-upload-icon">
+                            <UploadCloud />
+                          </div>
+
+                          <span className="zen-analysis-upload-kicker">
+                            SELECT CLASSROOM IMAGES
+                          </span>
+
+                          <h3>
+                            Choose the session folder
+                          </h3>
+
+                          <p>
+                            Select a folder containing the classroom images you want ZenLens to analyze.
+                          </p>
+
+                          <span className="zen-analysis-upload-button">
+                            <FolderOpen />
+
+                            Browse folder
+                          </span>
+
+                          <small>
+                            JPG, JPEG, PNG, WEBP and BMP images are supported.
+                          </small>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="zen-analysis-upload-info">
+                      <div>
+                        <FileImage />
+
+                        <p>
+                          <strong>
+                            Image-based
+                          </strong>
+
+                          <span>
+                            ZenLens analyzes uploaded images rather than continuous live video.
+                          </span>
+                        </p>
+                      </div>
+
+                      <div>
+                        <Brain />
+
+                        <p>
+                          <strong>
+                            Emotion analysis
+                          </strong>
+
+                          <span>
+                            Facial observations are organized into supported emotional categories.
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="zen-analysis-run-section">
+                      <div className="zen-analysis-ready-status">
+                        {canAnalyze ? (
+                          <>
+                            <span className="ready">
+                              <Check />
+                            </span>
+
+                            <p>
+                              <strong>
+                                Ready to analyze
+                              </strong>
+
+                              <small>
+                                Session information and images are ready.
+                              </small>
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <span>
+                              <AlertCircle />
+                            </span>
+
+                            <p>
+                              <strong>
+                                Setup incomplete
+                              </strong>
+
+                              <small>
+                                Complete the required fields and select an image folder.
+                              </small>
+                            </p>
+                          </>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        className="zen-analysis-run-button"
+                        onClick={
+                          handleAnalyze
+                        }
+                        disabled={
+                          !canAnalyze
+                        }
+                      >
+                        <Play />
+
+                        <span>
+                          Analyze session
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              </section>
+
+              <section className="zen-analysis-bottom-note">
+                <div className="zen-analysis-bottom-note-icon">
+                  <BarChart3 />
+                </div>
+
+                <div>
+                  <span>
+                    WHAT HAPPENS NEXT
+                  </span>
+
+                  <h2>
+                    Results are organized into a classroom session you can review later.
+                  </h2>
+                </div>
+
+                <p>
+                  ZenLens displays detected emotions for each processed image and keeps the classroom context connected to the analysis result.
+                </p>
+              </section>
+            </>
+          )}
+        </div>
       </main>
     </div>
   );

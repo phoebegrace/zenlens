@@ -1,54 +1,331 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import axios from "axios";
 import Plot from "react-plotly.js";
 
 import {
+  Activity,
+  AlertCircle,
   BarChart3,
+  BookOpen,
   CalendarDays,
   ChevronDown,
   Clock3,
   Cloud,
   Filter,
   History,
+  Home,
+  Info,
+  LogOut,
+  Menu,
+  ScanFace,
   Search,
+  ShieldCheck,
   SlidersHorizontal,
+  Sparkles,
   UserRound,
   X,
 } from "lucide-react";
 
-import ZenLensHeader from "../components/ZenLensHeader";
+import {
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  auth,
+  db,
+} from "../components/firebase";
+
+import zenlensLogo from "../image/app.png";
 
 import "./SessionHispage.css";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL =
+  "http://127.0.0.1:5001";
+
+const navigationItems = [
+  {
+    label: "Home",
+    icon: Home,
+    route: "/home",
+  },
+  {
+    label: "New Analysis",
+    icon: ScanFace,
+    route: "/stressdetection",
+  },
+  {
+    label: "Monitoring",
+    icon: Activity,
+    route: "/stressmonitoring",
+  },
+  {
+    label: "Session History",
+    icon: Clock3,
+    route: "/sessionhistory",
+  },
+  {
+    label: "Overall Insights",
+    icon: BarChart3,
+    route: "/overallhistory",
+  },
+  {
+    label: "Stress History",
+    icon: History,
+    route: "/stresshistory",
+  },
+];
+
+const supportNavigation = [
+  {
+    label: "About ZenLens",
+    icon: Info,
+    route: "/about",
+  },
+  {
+    label: "How It Works",
+    icon: BookOpen,
+    route: "/how-it-works",
+  },
+];
 
 const SessionHisPage = () => {
-  const [history, setHistory] = useState([]);
-  const [emotionTimeline, setEmotionTimeline] = useState([]);
+  const navigate =
+    useNavigate();
 
-  const [filters, setFilters] = useState({
+  const location =
+    useLocation();
+
+  const [
+    userDetails,
+    setUserDetails,
+  ] = useState(null);
+
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] = useState(false);
+
+  const [
+    history,
+    setHistory,
+  ] = useState([]);
+
+  const [
+    emotionTimeline,
+    setEmotionTimeline,
+  ] = useState([]);
+
+  const [
+    filters,
+    setFilters,
+  ] = useState({
     subject: "",
     teacher: "",
     weather: "",
   });
 
-  const [sortOrder, setSortOrder] = useState("latest");
-  const [openDetails, setOpenDetails] = useState(null);
+  const [
+    sortOrder,
+    setSortOrder,
+  ] = useState("latest");
 
-  const [subjectOptions, setSubjectOptions] = useState([]);
-  const [teacherOptions, setTeacherOptions] = useState([]);
-  const [weatherOptions, setWeatherOptions] = useState([]);
+  const [
+    openDetails,
+    setOpenDetails,
+  ] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [timelineLoading, setTimelineLoading] = useState(false);
+  const [
+    subjectOptions,
+    setSubjectOptions,
+  ] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [
+    teacherOptions,
+    setTeacherOptions,
+  ] = useState([]);
 
-  const extractFilterOptions = (data) => {
+  const [
+    weatherOptions,
+    setWeatherOptions,
+  ] = useState([]);
+
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(false);
+
+  const [
+    timelineLoading,
+    setTimelineLoading,
+  ] = useState(false);
+
+  const [
+    errorMessage,
+    setErrorMessage,
+  ] = useState("");
+
+  /* ======================================================
+     USER
+  ====================================================== */
+
+  useEffect(() => {
+    const unsubscribe =
+      onAuthStateChanged(
+        auth,
+        async (user) => {
+          if (!user) {
+            setUserDetails(
+              null
+            );
+
+            return;
+          }
+
+          try {
+            const userRef =
+              doc(
+                db,
+                "Users",
+                user.uid
+              );
+
+            const snapshot =
+              await getDoc(
+                userRef
+              );
+
+            if (
+              snapshot.exists()
+            ) {
+              setUserDetails(
+                snapshot.data()
+              );
+            } else {
+              setUserDetails({
+                email:
+                  user.email ||
+                  "",
+                firstName: "",
+                lastName: "",
+              });
+            }
+          } catch (error) {
+            console.error(
+              "Unable to load user details:",
+              error
+            );
+
+            setUserDetails({
+              email:
+                user.email ||
+                "",
+              firstName: "",
+              lastName: "",
+            });
+          }
+        }
+      );
+
+    return () =>
+      unsubscribe();
+  }, []);
+
+  const firstName =
+    userDetails?.firstName ||
+    "";
+
+  const lastName =
+    userDetails?.lastName ||
+    "";
+
+  const email =
+    userDetails?.email ||
+    auth.currentUser?.email ||
+    "";
+
+  const fullName =
+    `${firstName} ${lastName}`.trim() ||
+    email?.split("@")[0] ||
+    "ZenLens User";
+
+  const initials = (() => {
+    if (
+      firstName ||
+      lastName
+    ) {
+      return `${
+        firstName?.[0] ||
+        ""
+      }${
+        lastName?.[0] ||
+        ""
+      }`.toUpperCase();
+    }
+
+    return (
+      email?.[0] ||
+      "Z"
+    ).toUpperCase();
+  })();
+
+  const goTo = (
+    route
+  ) => {
+    setMobileMenuOpen(
+      false
+    );
+
+    navigate(route);
+  };
+
+  const handleLogout =
+    async () => {
+      try {
+        await signOut(
+          auth
+        );
+
+        navigate(
+          "/login"
+        );
+      } catch (error) {
+        console.error(
+          "Unable to sign out:",
+          error
+        );
+      }
+    };
+
+  /* ======================================================
+     FILTER OPTIONS
+  ====================================================== */
+
+  const extractFilterOptions = (
+    data
+  ) => {
     const subjects = [
       ...new Set(
         data
-          .map((item) => item.subject)
+          .map(
+            (item) =>
+              item.subject
+          )
           .filter(Boolean)
       ),
     ];
@@ -56,86 +333,124 @@ const SessionHisPage = () => {
     const teachers = [
       ...new Set(
         data
-          .map((item) => item.teacher)
+          .map(
+            (item) =>
+              item.teacher
+          )
           .filter(Boolean)
       ),
     ];
 
-    const weatherConditions = [
-      ...new Set(
-        data
-          .map((item) => item.weather)
-          .filter(Boolean)
-      ),
-    ];
+    const weatherConditions =
+      [
+        ...new Set(
+          data
+            .map(
+              (item) =>
+                item.weather
+            )
+            .filter(
+              Boolean
+            )
+        ),
+      ];
 
-    setSubjectOptions(subjects);
-    setTeacherOptions(teachers);
-    setWeatherOptions(weatherConditions);
+    setSubjectOptions(
+      subjects
+    );
+
+    setTeacherOptions(
+      teachers
+    );
+
+    setWeatherOptions(
+      weatherConditions
+    );
   };
 
-  const fetchHistory = async (
-    activeFilters,
-    activeSortOrder
-  ) => {
-    setIsLoading(true);
-    setErrorMessage("");
+  /* ======================================================
+     FETCH HISTORY
+  ====================================================== */
 
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/history`,
-        {
-          params: {
-            ...activeFilters,
-            sort_order:
-              activeSortOrder,
-          },
+  const fetchHistory =
+    async (
+      activeFilters,
+      activeSortOrder
+    ) => {
+      setIsLoading(true);
+
+      setErrorMessage("");
+
+      try {
+        const response =
+          await axios.get(
+            `${API_BASE_URL}/history`,
+            {
+              params: {
+                ...activeFilters,
+
+                sort_order:
+                  activeSortOrder,
+              },
+            }
+          );
+
+        const data =
+          Array.isArray(
+            response.data
+          )
+            ? response.data
+            : [];
+
+        setHistory(data);
+
+        extractFilterOptions(
+          data
+        );
+      } catch (error) {
+        console.error(
+          "Error fetching history:",
+          error
+        );
+
+        setHistory([]);
+
+        if (
+          error.response
+        ) {
+          const serverMessage =
+            error.response
+              ?.data?.error ||
+            error.response
+              ?.data
+              ?.message ||
+            `The ZenLens server returned status ${error.response.status}.`;
+
+          setErrorMessage(
+            serverMessage
+          );
+        } else if (
+          error.request
+        ) {
+          setErrorMessage(
+            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+          );
+        } else {
+          setErrorMessage(
+            error.message ||
+              "Unable to load session history."
+          );
         }
-      );
-
-      const data =
-        response.data || [];
-
-      setHistory(data);
-
-      extractFilterOptions(
-        data
-      );
-    } catch (error) {
-      console.error(
-        "Error fetching history:",
-        error
-      );
-
-      setHistory([]);
-
-      if (error.response) {
-        const serverMessage =
-          error.response?.data
-            ?.error ||
-          error.response?.data
-            ?.message ||
-          `The ZenLens server returned status ${error.response.status}.`;
-
-        setErrorMessage(
-          serverMessage
-        );
-      } else if (
-        error.request
-      ) {
-        setErrorMessage(
-          "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
-        );
-      } else {
-        setErrorMessage(
-          error.message ||
-            "Unable to load session history."
+      } finally {
+        setIsLoading(
+          false
         );
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+  /* ======================================================
+     FETCH TIMELINE
+  ====================================================== */
 
   const fetchEmotionTimeline =
     async () => {
@@ -150,7 +465,11 @@ const SessionHisPage = () => {
           );
 
         setEmotionTimeline(
-          response.data || []
+          Array.isArray(
+            response.data
+          )
+            ? response.data
+            : []
         );
       } catch (error) {
         console.error(
@@ -162,10 +481,12 @@ const SessionHisPage = () => {
           []
         );
 
-        if (error.response) {
+        if (
+          error.response
+        ) {
           setErrorMessage(
-            error.response?.data
-              ?.error ||
+            error.response
+              ?.data?.error ||
               error.response
                 ?.data
                 ?.message ||
@@ -199,16 +520,27 @@ const SessionHisPage = () => {
       filters,
       sortOrder
     );
-  }, [filters, sortOrder]);
+  }, [
+    filters,
+    sortOrder,
+  ]);
+
+  /* ======================================================
+     FILTER HANDLERS
+  ====================================================== */
 
   const handleFilterChange = (
     event
   ) => {
-    const { name, value } =
-      event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
     setFilters(
-      (previousFilters) => ({
+      (
+        previousFilters
+      ) => ({
         ...previousFilters,
         [name]: value,
       })
@@ -223,25 +555,58 @@ const SessionHisPage = () => {
     );
   };
 
-  const clearFilters = () => {
-    setFilters({
-      subject: "",
-      teacher: "",
-      weather: "",
-    });
+  const clearFilters =
+    () => {
+      setFilters({
+        subject: "",
+        teacher: "",
+        weather: "",
+      });
 
-    setSortOrder("latest");
-  };
+      setSortOrder(
+        "latest"
+      );
+    };
+
+  const activeFilterCount =
+    useMemo(() => {
+      return Object.values(
+        filters
+      ).filter(
+        (value) =>
+          String(value).trim()
+      ).length;
+    }, [filters]);
+
+  /* ======================================================
+     SESSION DETAIL
+  ====================================================== */
 
   const toggleDetails = (
     index
   ) => {
-    setOpenDetails(index);
+    setOpenDetails(
+      index
+    );
   };
 
-  const closeDetails = () => {
-    setOpenDetails(null);
-  };
+  const closeDetails =
+    () => {
+      setOpenDetails(
+        null
+      );
+    };
+
+  const selectedSession =
+    openDetails !== null
+      ? history[
+          openDetails
+        ]
+      : null;
+
+  /* ======================================================
+     PLOTLY DATA
+  ====================================================== */
 
   const processDataForPlotly = (
     sessionId
@@ -300,40 +665,31 @@ const SessionHisPage = () => {
             ] ?? null
         ),
 
-        type: "scatter",
+        type:
+          "scatter",
 
-        mode: "lines",
+        mode:
+          "lines",
 
-        name: emotion,
+        name:
+          emotion,
 
-        connectgaps: false,
+        connectgaps:
+          false,
 
         hovertemplate:
           "<b>%{fullData.name}</b><br>%{x}<br>Count: %{y}<extra></extra>",
 
         line: {
-          shape: "linear",
-          width: 2.2,
+          shape:
+            "linear",
+
+          width:
+            2.4,
         },
       })
     );
   };
-
-  const activeFilterCount =
-    useMemo(() => {
-      return Object.values(
-        filters
-      ).filter((value) =>
-        String(value).trim()
-      ).length;
-    }, [filters]);
-
-  const selectedSession =
-    openDetails !== null
-      ? history[
-          openDetails
-        ]
-      : null;
 
   const selectedSessionTraces =
     useMemo(() => {
@@ -351,478 +707,889 @@ const SessionHisPage = () => {
       emotionTimeline,
     ]);
 
-  return (
-    <div className="zen-session-page">
-      <ZenLensHeader />
+  /* ======================================================
+     GLOW
+  ====================================================== */
 
-      <main className="zen-session-main">
-        <section className="zen-session-intro">
-          <div className="zen-session-intro-copy">
-            <div className="zen-session-eyebrow">
-              <History />
+  const handleGlowMove = (
+    event
+  ) => {
+    const element =
+      event.currentTarget;
 
-              <span>
-                Session history
-              </span>
-            </div>
+    const rect =
+      element.getBoundingClientRect();
 
-            <h1>
-              Review classroom
-              <span>
-                sessions over time.
-              </span>
-            </h1>
+    element.style.setProperty(
+      "--session-glow-x",
+      `${
+        event.clientX -
+        rect.left
+      }px`
+    );
 
-            <p>
-              Browse completed
-              ZenLens sessions,
-              filter by classroom
-              context, and open
-              individual sessions
-              to inspect their
-              emotional timeline.
-            </p>
-          </div>
+    element.style.setProperty(
+      "--session-glow-y",
+      `${
+        event.clientY -
+        rect.top
+      }px`
+    );
 
-          <div className="zen-session-overview">
-            <div>
-              <span>
-                SESSIONS
-              </span>
+    element.style.setProperty(
+      "--session-glow-opacity",
+      "1"
+    );
+  };
 
-              <strong>
-                {history.length}
-              </strong>
+  const handleGlowLeave = (
+    event
+  ) => {
+    event.currentTarget.style.setProperty(
+      "--session-glow-opacity",
+      "0"
+    );
+  };
 
-              <small>
-                Matching current
-                filters
-              </small>
-            </div>
+  const glowProps = {
+    onMouseMove:
+      handleGlowMove,
 
-            <div>
-              <span>
-                ACTIVE FILTERS
-              </span>
+    onMouseLeave:
+      handleGlowLeave,
+  };
 
-              <strong>
-                {
-                  activeFilterCount
-                }
-              </strong>
+  /* ======================================================
+     SIDEBAR
+  ====================================================== */
 
-              <small>
-                Current selections
-              </small>
-            </div>
-          </div>
-        </section>
-
-        <section className="zen-session-toolbar">
-          <div className="zen-session-toolbar-title">
-            <Filter />
-
-            <div>
-              <span>
-                FILTER SESSIONS
-              </span>
-
-              <strong>
-                Find a classroom
-                session
-              </strong>
-            </div>
-          </div>
-
-          <div className="zen-session-toolbar-fields">
-            <div className="zen-session-select-wrap">
-              <Search />
-
-              <select
-                name="subject"
-                value={
-                  filters.subject
-                }
-                onChange={
-                  handleFilterChange
-                }
-              >
-                <option value="">
-                  All subjects
-                </option>
-
-                {subjectOptions.map(
-                  (
-                    subject,
-                    index
-                  ) => (
-                    <option
-                      key={`${subject}-${index}`}
-                      value={
-                        subject
-                      }
-                    >
-                      {
-                        subject
-                      }
-                    </option>
-                  )
-                )}
-              </select>
-
-              <ChevronDown />
-            </div>
-
-            <div className="zen-session-select-wrap">
-              <UserRound />
-
-              <select
-                name="teacher"
-                value={
-                  filters.teacher
-                }
-                onChange={
-                  handleFilterChange
-                }
-              >
-                <option value="">
-                  All teachers
-                </option>
-
-                {teacherOptions.map(
-                  (
-                    teacher,
-                    index
-                  ) => (
-                    <option
-                      key={`${teacher}-${index}`}
-                      value={
-                        teacher
-                      }
-                    >
-                      {
-                        teacher
-                      }
-                    </option>
-                  )
-                )}
-              </select>
-
-              <ChevronDown />
-            </div>
-
-            <div className="zen-session-select-wrap">
-              <Cloud />
-
-              <select
-                name="weather"
-                value={
-                  filters.weather
-                }
-                onChange={
-                  handleFilterChange
-                }
-              >
-                <option value="">
-                  All weather
-                </option>
-
-                {weatherOptions.map(
-                  (
-                    weather,
-                    index
-                  ) => (
-                    <option
-                      key={`${weather}-${index}`}
-                      value={
-                        weather
-                      }
-                    >
-                      {
-                        weather
-                      }
-                    </option>
-                  )
-                )}
-              </select>
-
-              <ChevronDown />
-            </div>
-
-            <div className="zen-session-select-wrap sort">
-              <SlidersHorizontal />
-
-              <select
-                name="sortOrder"
-                value={
-                  sortOrder
-                }
-                onChange={
-                  handleSortChange
-                }
-              >
-                <option value="latest">
-                  Latest to earliest
-                </option>
-
-                <option value="earliest">
-                  Earliest to latest
-                </option>
-              </select>
-
-              <ChevronDown />
-            </div>
-
-            {(activeFilterCount >
-              0 ||
-              sortOrder !==
-                "latest") && (
-              <button
-                type="button"
-                className="zen-session-reset-button"
-                onClick={
-                  clearFilters
-                }
-              >
-                <X />
-
-                <span>
-                  Reset
-                </span>
-              </button>
-            )}
-          </div>
-        </section>
-
-        {errorMessage && (
-          <div className="zen-session-error">
-            <span>
-              {errorMessage}
-            </span>
-
+  const renderSidebar =
+    () => (
+      <>
+        <aside className="zen-session-sidebar">
+          <div className="zen-session-sidebar-inner">
             <button
               type="button"
+              className="zen-session-brand"
               onClick={() =>
-                fetchHistory(
-                  filters,
-                  sortOrder
+                goTo(
+                  "/home"
                 )
               }
             >
-              Try again
+              <span className="zen-session-brand-mark">
+                <img
+                  src={
+                    zenlensLogo
+                  }
+                  alt="ZenLens"
+                />
+              </span>
+
+              <span className="zen-session-brand-copy">
+                <strong>
+                  ZenLens
+                </strong>
+
+                <small>
+                  Classroom Stress Analytics
+                </small>
+              </span>
             </button>
+
+            <div className="zen-session-nav-scroll">
+              <p className="zen-session-nav-label">
+                Workspace
+              </p>
+
+              <nav className="zen-session-navigation">
+                {navigationItems.map(
+                  (item) => {
+                    const Icon =
+                      item.icon;
+
+                    const active =
+                      location
+                        .pathname ===
+                      item.route;
+
+                    return (
+                      <button
+                        type="button"
+                        key={
+                          item.label
+                        }
+                        className={`zen-session-nav-item ${
+                          active
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          goTo(
+                            item.route
+                          )
+                        }
+                      >
+                        <span className="zen-session-nav-icon">
+                          <Icon />
+                        </span>
+
+                        <span>
+                          {
+                            item.label
+                          }
+                        </span>
+                      </button>
+                    );
+                  }
+                )}
+              </nav>
+
+              <div className="zen-session-nav-divider" />
+
+              <p className="zen-session-nav-label">
+                Support
+              </p>
+
+              <nav className="zen-session-navigation">
+                {supportNavigation.map(
+                  (item) => {
+                    const Icon =
+                      item.icon;
+
+                    return (
+                      <button
+                        type="button"
+                        key={
+                          item.label
+                        }
+                        className="zen-session-nav-item"
+                        onClick={() =>
+                          goTo(
+                            item.route
+                          )
+                        }
+                      >
+                        <span className="zen-session-nav-icon">
+                          <Icon />
+                        </span>
+
+                        <span>
+                          {
+                            item.label
+                          }
+                        </span>
+                      </button>
+                    );
+                  }
+                )}
+              </nav>
+            </div>
+
+            <div className="zen-session-sidebar-bottom">
+              <div className="zen-session-user">
+                <span className="zen-session-user-avatar">
+                  {
+                    initials
+                  }
+                </span>
+
+                <div className="zen-session-user-copy">
+                  <strong>
+                    {
+                      fullName
+                    }
+                  </strong>
+
+                  <small>
+                    {
+                      email
+                    }
+                  </small>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="zen-session-signout"
+                onClick={
+                  handleLogout
+                }
+              >
+                <LogOut />
+
+                <span>
+                  Sign out
+                </span>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <header className="zen-session-mobile-header">
+          <button
+            type="button"
+            className="zen-session-mobile-brand"
+            onClick={() =>
+              goTo(
+                "/home"
+              )
+            }
+          >
+            <span>
+              <img
+                src={
+                  zenlensLogo
+                }
+                alt="ZenLens"
+              />
+            </span>
+
+            <strong>
+              ZenLens
+            </strong>
+          </button>
+
+          <button
+            type="button"
+            className="zen-session-mobile-toggle"
+            aria-label="Toggle navigation"
+            onClick={() =>
+              setMobileMenuOpen(
+                (
+                  current
+                ) =>
+                  !current
+              )
+            }
+          >
+            {mobileMenuOpen ? (
+              <X />
+            ) : (
+              <Menu />
+            )}
+          </button>
+        </header>
+
+        {mobileMenuOpen && (
+          <div className="zen-session-mobile-drawer">
+            <div className="zen-session-mobile-user">
+              <span className="zen-session-user-avatar">
+                {
+                  initials
+                }
+              </span>
+
+              <div>
+                <strong>
+                  {
+                    fullName
+                  }
+                </strong>
+
+                <small>
+                  {
+                    email
+                  }
+                </small>
+              </div>
+            </div>
+
+            <nav>
+              {[
+                ...navigationItems,
+                ...supportNavigation,
+              ].map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  const active =
+                    location
+                      .pathname ===
+                    item.route;
+
+                  return (
+                    <button
+                      type="button"
+                      key={
+                        item.label
+                      }
+                      className={
+                        active
+                          ? "active"
+                          : ""
+                      }
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <Icon />
+
+                      <span>
+                        {
+                          item.label
+                        }
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+
+              <button
+                type="button"
+                className="logout"
+                onClick={
+                  handleLogout
+                }
+              >
+                <LogOut />
+
+                <span>
+                  Sign out
+                </span>
+              </button>
+            </nav>
           </div>
         )}
+      </>
+    );
 
-        <section className="zen-session-content">
-          <div className="zen-session-content-head">
+  return (
+    <div className="zen-session-page">
+      {renderSidebar()}
+
+      <main className="zen-session-main">
+        <div className="zen-session-orb orb-one" />
+
+        <div className="zen-session-orb orb-two" />
+
+        <div className="zen-session-main-content">
+          {/* ===============================================
+              HERO
+          =============================================== */}
+
+          <section className="zen-session-intro">
+            <div className="zen-session-intro-copy">
+              <span className="zen-session-eyebrow">
+                <Sparkles />
+
+                ZenLens history workspace
+              </span>
+
+              <p className="zen-session-overline">
+                Classroom analysis archive
+              </p>
+
+              <h1>
+                Session
+                <span>
+                  {" "}
+                  History
+                </span>
+              </h1>
+
+              <p className="zen-session-description">
+                Browse completed classroom analyses, filter by session context, and open individual sessions to review their emotional timeline.
+              </p>
+            </div>
+
+            <div className="zen-session-overview">
+              <div>
+                <span className="zen-session-overview-icon">
+                  <History />
+                </span>
+
+                <p>
+                  <span>
+                    Matching sessions
+                  </span>
+
+                  <strong>
+                    {
+                      history.length
+                    }
+                  </strong>
+
+                  <small>
+                    Current result set
+                  </small>
+                </p>
+              </div>
+
+              <div>
+                <span className="zen-session-overview-icon">
+                  <Filter />
+                </span>
+
+                <p>
+                  <span>
+                    Active filters
+                  </span>
+
+                  <strong>
+                    {
+                      activeFilterCount
+                    }
+                  </strong>
+
+                  <small>
+                    Current selections
+                  </small>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ===============================================
+              FILTER TOOLBAR
+          =============================================== */}
+
+          <section
+            className="zen-session-toolbar zen-session-glow-card"
+            {...glowProps}
+          >
+            <span className="zen-session-card-glow" />
+
+            <div className="zen-session-card-layer toolbar">
+              <div className="zen-session-toolbar-title">
+                <span className="zen-session-toolbar-icon">
+                  <SlidersHorizontal />
+                </span>
+
+                <div>
+                  <span>
+                    FILTER SESSIONS
+                  </span>
+
+                  <strong>
+                    Find a classroom session
+                  </strong>
+                </div>
+              </div>
+
+              <div className="zen-session-toolbar-fields">
+                <div className="zen-session-select-wrap">
+                  <Search />
+
+                  <select
+                    name="subject"
+                    value={
+                      filters.subject
+                    }
+                    onChange={
+                      handleFilterChange
+                    }
+                  >
+                    <option value="">
+                      All subjects
+                    </option>
+
+                    {subjectOptions.map(
+                      (
+                        subject,
+                        index
+                      ) => (
+                        <option
+                          key={`${subject}-${index}`}
+                          value={
+                            subject
+                          }
+                        >
+                          {
+                            subject
+                          }
+                        </option>
+                      )
+                    )}
+                  </select>
+
+                  <ChevronDown />
+                </div>
+
+                <div className="zen-session-select-wrap">
+                  <UserRound />
+
+                  <select
+                    name="teacher"
+                    value={
+                      filters.teacher
+                    }
+                    onChange={
+                      handleFilterChange
+                    }
+                  >
+                    <option value="">
+                      All teachers
+                    </option>
+
+                    {teacherOptions.map(
+                      (
+                        teacher,
+                        index
+                      ) => (
+                        <option
+                          key={`${teacher}-${index}`}
+                          value={
+                            teacher
+                          }
+                        >
+                          {
+                            teacher
+                          }
+                        </option>
+                      )
+                    )}
+                  </select>
+
+                  <ChevronDown />
+                </div>
+
+                <div className="zen-session-select-wrap">
+                  <Cloud />
+
+                  <select
+                    name="weather"
+                    value={
+                      filters.weather
+                    }
+                    onChange={
+                      handleFilterChange
+                    }
+                  >
+                    <option value="">
+                      All weather
+                    </option>
+
+                    {weatherOptions.map(
+                      (
+                        weather,
+                        index
+                      ) => (
+                        <option
+                          key={`${weather}-${index}`}
+                          value={
+                            weather
+                          }
+                        >
+                          {
+                            weather
+                          }
+                        </option>
+                      )
+                    )}
+                  </select>
+
+                  <ChevronDown />
+                </div>
+
+                <div className="zen-session-select-wrap">
+                  <SlidersHorizontal />
+
+                  <select
+                    value={
+                      sortOrder
+                    }
+                    onChange={
+                      handleSortChange
+                    }
+                  >
+                    <option value="latest">
+                      Latest to earliest
+                    </option>
+
+                    <option value="earliest">
+                      Earliest to latest
+                    </option>
+                  </select>
+
+                  <ChevronDown />
+                </div>
+
+                {(activeFilterCount >
+                  0 ||
+                  sortOrder !==
+                    "latest") && (
+                  <button
+                    type="button"
+                    className="zen-session-reset-button"
+                    onClick={
+                      clearFilters
+                    }
+                  >
+                    <X />
+
+                    <span>
+                      Reset
+                    </span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* ===============================================
+              ERROR
+          =============================================== */}
+
+          {errorMessage && (
+            <div className="zen-session-error">
+              <AlertCircle />
+
+              <span>
+                {
+                  errorMessage
+                }
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  fetchHistory(
+                    filters,
+                    sortOrder
+                  )
+                }
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
+          {/* ===============================================
+              CONTENT
+          =============================================== */}
+
+          <section className="zen-session-content">
+            <div className="zen-session-content-head">
+              <div>
+                <span>
+                  CLASSROOM SESSIONS
+                </span>
+
+                <h2>
+                  Completed analyses
+                </h2>
+              </div>
+
+              <p>
+                Open a session to review its classroom context and the recorded emotion timeline.
+              </p>
+            </div>
+
+            {isLoading ? (
+              <div className="zen-session-loading">
+                <div className="zen-session-loading-spinner" />
+
+                <strong>
+                  Loading sessions
+                </strong>
+
+                <span>
+                  Retrieving classroom analysis history.
+                </span>
+              </div>
+            ) : history.length >
+              0 ? (
+              <div className="zen-session-list">
+                <div className="zen-session-list-header">
+                  <span>
+                    Session
+                  </span>
+
+                  <span>
+                    Subject
+                  </span>
+
+                  <span>
+                    Date
+                  </span>
+
+                  <span>
+                    Teacher
+                  </span>
+
+                  <span>
+                    Time
+                  </span>
+
+                  <span />
+                </div>
+
+                {history.map(
+                  (
+                    entry,
+                    index
+                  ) => (
+                    <button
+                      type="button"
+                      className="zen-session-row"
+                      key={
+                        entry.session_id ||
+                        `${entry.subject}-${index}`
+                      }
+                      onClick={() =>
+                        toggleDetails(
+                          index
+                        )
+                      }
+                    >
+                      <div className="zen-session-row-id">
+                        <span className="zen-session-row-icon">
+                          <History />
+                        </span>
+
+                        <div>
+                          <span>
+                            SESSION ID
+                          </span>
+
+                          <strong>
+                            {entry.session_id ||
+                              index +
+                                1}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="zen-session-row-subject">
+                        <span>
+                          SUBJECT
+                        </span>
+
+                        <strong>
+                          {entry.subject ||
+                            "—"}
+                        </strong>
+
+                        <small>
+                          {entry.session
+                            ? `Session ${entry.session}`
+                            : "Classroom analysis"}
+                        </small>
+                      </div>
+
+                      <div className="zen-session-row-meta">
+                        <CalendarDays />
+
+                        <div>
+                          <span>
+                            Date
+                          </span>
+
+                          <strong>
+                            {entry.date ||
+                              "—"}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="zen-session-row-meta">
+                        <UserRound />
+
+                        <div>
+                          <span>
+                            Teacher
+                          </span>
+
+                          <strong>
+                            {entry.teacher ||
+                              "—"}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="zen-session-row-meta">
+                        <Clock3 />
+
+                        <div>
+                          <span>
+                            Time
+                          </span>
+
+                          <strong>
+                            {entry.startTime ||
+                              "—"}
+                            {
+                              " – "
+                            }
+                            {entry.endTime ||
+                              "—"}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <span className="zen-session-row-open">
+                        View
+                      </span>
+                    </button>
+                  )
+                )}
+              </div>
+            ) : (
+              <div className="zen-session-empty">
+                <div className="zen-session-empty-icon">
+                  <History />
+                </div>
+
+                <span>
+                  NO SESSIONS FOUND
+                </span>
+
+                <h3>
+                  No classroom sessions match these filters.
+                </h3>
+
+                <p>
+                  Adjust the current filters or reset them to view all available ZenLens sessions.
+                </p>
+
+                {activeFilterCount >
+                  0 && (
+                  <button
+                    type="button"
+                    onClick={
+                      clearFilters
+                    }
+                  >
+                    Reset filters
+                  </button>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* ===============================================
+              BOTTOM NOTE
+          =============================================== */}
+
+          <section className="zen-session-note">
+            <div className="zen-session-note-icon">
+              <ShieldCheck />
+            </div>
+
             <div>
               <span>
-                CLASSROOM SESSIONS
+                SESSION REVIEW
               </span>
 
               <h2>
-                Completed analyses
+                Each analysis remains connected to its classroom context.
               </h2>
             </div>
 
             <p>
-              Select a session to
-              review its classroom
-              information and
-              emotion timeline.
+              Session history helps compare previous observations without removing the date, teacher, weather, subject, and timing information recorded during analysis.
             </p>
-          </div>
-
-          {isLoading ? (
-            <div className="zen-session-loading">
-              <div className="zen-session-loading-spinner" />
-
-              <strong>
-                Loading sessions
-              </strong>
-
-              <span>
-                Retrieving analysis
-                history.
-              </span>
-            </div>
-          ) : history.length >
-            0 ? (
-            <div className="zen-session-list">
-              <div className="zen-session-list-header">
-                <span>
-                  Session
-                </span>
-
-                <span>
-                  Subject
-                </span>
-
-                <span>
-                  Date
-                </span>
-
-                <span>
-                  Teacher
-                </span>
-
-                <span>
-                  Time
-                </span>
-
-                <span />
-              </div>
-
-              {history.map(
-                (
-                  entry,
-                  index
-                ) => (
-                  <button
-                    type="button"
-                    className="zen-session-row"
-                    key={
-                      entry.session_id ||
-                      `${entry.subject}-${index}`
-                    }
-                    onClick={() =>
-                      toggleDetails(
-                        index
-                      )
-                    }
-                  >
-                    <div className="zen-session-row-id">
-                      <span className="zen-session-row-icon">
-                        <History />
-                      </span>
-
-                      <div>
-                        <span>
-                          SESSION ID
-                        </span>
-
-                        <strong>
-                          {entry.session_id ||
-                            index +
-                              1}
-                        </strong>
-                      </div>
-                    </div>
-
-                    <div className="zen-session-row-subject">
-                      <span>
-                        SUBJECT
-                      </span>
-
-                      <strong>
-                        {entry.subject ||
-                          "—"}
-                      </strong>
-
-                      <small>
-                        {entry.session
-                          ? `Session ${entry.session}`
-                          : "Classroom analysis"}
-                      </small>
-                    </div>
-
-                    <div className="zen-session-row-meta">
-                      <CalendarDays />
-
-                      <div>
-                        <span>
-                          Date
-                        </span>
-
-                        <strong>
-                          {entry.date ||
-                            "—"}
-                        </strong>
-                      </div>
-                    </div>
-
-                    <div className="zen-session-row-meta">
-                      <UserRound />
-
-                      <div>
-                        <span>
-                          Teacher
-                        </span>
-
-                        <strong>
-                          {entry.teacher ||
-                            "—"}
-                        </strong>
-                      </div>
-                    </div>
-
-                    <div className="zen-session-row-meta">
-                      <Clock3 />
-
-                      <div>
-                        <span>
-                          Time
-                        </span>
-
-                        <strong>
-                          {entry.startTime ||
-                            "—"}
-                          {
-                            " – "
-                          }
-                          {entry.endTime ||
-                            "—"}
-                        </strong>
-                      </div>
-                    </div>
-
-                    <span className="zen-session-row-open">
-                      View
-                    </span>
-                  </button>
-                )
-              )}
-            </div>
-          ) : (
-            <div className="zen-session-empty">
-              <div className="zen-session-empty-icon">
-                <History />
-              </div>
-
-              <span>
-                NO SESSIONS FOUND
-              </span>
-
-              <h3>
-                No classroom
-                sessions match
-                these filters.
-              </h3>
-
-              <p>
-                Adjust the current
-                filters or reset
-                them to view all
-                available ZenLens
-                sessions.
-              </p>
-
-              {activeFilterCount >
-                0 && (
-                <button
-                  type="button"
-                  onClick={
-                    clearFilters
-                  }
-                >
-                  Reset filters
-                </button>
-              )}
-            </div>
-          )}
-        </section>
+          </section>
+        </div>
       </main>
+
+      {/* =================================================
+          MODAL
+      ================================================= */}
 
       {selectedSession && (
         <div
@@ -843,9 +1610,8 @@ const SessionHisPage = () => {
               <div>
                 <span>
                   SESSION{" "}
-                  {
-                    selectedSession.session_id
-                  }
+                  {selectedSession.session_id ||
+                    ""}
                 </span>
 
                 <h2>
@@ -854,10 +1620,7 @@ const SessionHisPage = () => {
                 </h2>
 
                 <p>
-                  Review the session
-                  context and
-                  emotional
-                  timeline.
+                  Review the classroom context and emotional changes recorded across this session.
                 </p>
               </div>
 
@@ -877,13 +1640,11 @@ const SessionHisPage = () => {
               <aside className="zen-session-details-panel">
                 <div className="zen-session-details-heading">
                   <span>
-                    SESSION
-                    INFORMATION
+                    SESSION INFORMATION
                   </span>
 
                   <h3>
-                    Classroom
-                    context
+                    Classroom context
                   </h3>
                 </div>
 
@@ -898,6 +1659,7 @@ const SessionHisPage = () => {
 
                       <strong>
                         {selectedSession.session ||
+                          selectedSession.session_id ||
                           "—"}
                       </strong>
                     </p>
@@ -988,16 +1750,12 @@ const SessionHisPage = () => {
                     </span>
 
                     <h3>
-                      Emotional
-                      changes across
-                      the session
+                      Emotional changes across the session
                     </h3>
                   </div>
 
                   <p>
-                    Emotion counts
-                    are shown in
-                    timestamp order.
+                    Emotion counts are displayed in timestamp order.
                   </p>
                 </div>
 
@@ -1007,8 +1765,7 @@ const SessionHisPage = () => {
                       <div className="zen-session-loading-spinner" />
 
                       <strong>
-                        Loading
-                        timeline
+                        Loading timeline
                       </strong>
                     </div>
                   ) : selectedSessionTraces.length >
@@ -1018,13 +1775,14 @@ const SessionHisPage = () => {
                         selectedSessionTraces
                       }
                       layout={{
-                        autosize: true,
+                        autosize:
+                          true,
 
                         margin: {
-                          l: 54,
-                          r: 22,
+                          l: 62,
+                          r: 24,
                           t: 24,
-                          b: 52,
+                          b: 62,
                         },
 
                         paper_bgcolor:
@@ -1038,9 +1796,10 @@ const SessionHisPage = () => {
                             "Inter, sans-serif",
 
                           color:
-                            "#68758a",
+                            "#6d7a92",
 
-                          size: 10,
+                          size:
+                            12,
                         },
 
                         hovermode:
@@ -1053,12 +1812,15 @@ const SessionHisPage = () => {
                           orientation:
                             "h",
 
-                          x: 0,
+                          x:
+                            0,
 
-                          y: -0.25,
+                          y:
+                            -0.25,
 
                           font: {
-                            size: 9,
+                            size:
+                              11,
                           },
                         },
 
@@ -1068,7 +1830,8 @@ const SessionHisPage = () => {
                               "Time",
 
                             font: {
-                              size: 10,
+                              size:
+                                12,
                             },
                           },
 
@@ -1082,7 +1845,8 @@ const SessionHisPage = () => {
                             false,
 
                           tickfont: {
-                            size: 9,
+                            size:
+                              11,
                           },
                         },
 
@@ -1092,7 +1856,8 @@ const SessionHisPage = () => {
                               "Emotion count",
 
                             font: {
-                              size: 10,
+                              size:
+                                12,
                             },
                           },
 
@@ -1106,7 +1871,8 @@ const SessionHisPage = () => {
                             false,
 
                           tickfont: {
-                            size: 9,
+                            size:
+                              11,
                           },
 
                           rangemode:
@@ -1137,16 +1903,11 @@ const SessionHisPage = () => {
                       <BarChart3 />
 
                       <strong>
-                        No timeline
-                        data
+                        No timeline data
                       </strong>
 
                       <span>
-                        No emotional
-                        timeline data
-                        is available
-                        for this
-                        session.
+                        No emotional timeline data is available for this session.
                       </span>
                     </div>
                   )}

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import {
   BarChart3,
   ChevronDown,
@@ -11,16 +12,30 @@ import {
   X,
 } from "lucide-react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
 
-import { auth, db } from "./firebase";
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
+import {
+  auth,
+  db,
+} from "./firebase";
 
 import zenlensLogo from "../image/app.png";
 
 import "./ZenLensHeader.css";
+
 
 const ZenLensHeader = () => {
   const navigate = useNavigate();
@@ -28,69 +43,104 @@ const ZenLensHeader = () => {
 
   const profileRef = useRef(null);
 
-  const [userDetails, setUserDetails] = useState(null);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [userDetails, setUserDetails] =
+    useState(null);
+
+  const [profileOpen, setProfileOpen] =
+    useState(false);
+
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
+
 
   /* ======================================================
      CURRENT USER
   ====================================================== */
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        setUserDetails(null);
-        return;
-      }
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (user) => {
+        if (!user) {
+          setUserDetails(null);
+          return;
+        }
 
-      try {
-        const userReference = doc(db, "Users", user.uid);
+        try {
+          const userReference = doc(
+            db,
+            "Users",
+            user.uid
+          );
 
-        const userSnapshot = await getDoc(userReference);
+          const userSnapshot = await getDoc(
+            userReference
+          );
 
-        if (userSnapshot.exists()) {
-          setUserDetails(userSnapshot.data());
-        } else {
+          if (userSnapshot.exists()) {
+            setUserDetails(
+              userSnapshot.data()
+            );
+          } else {
+            setUserDetails({
+              email:
+                user.email || "",
+              firstName: "",
+              lastName: "",
+            });
+          }
+        } catch (error) {
+          console.error(
+            "Unable to load ZenLens user:",
+            error
+          );
+
           setUserDetails({
-            email: user.email || "",
+            email:
+              user.email || "",
             firstName: "",
             lastName: "",
           });
         }
-      } catch (error) {
-        console.error("Unable to load ZenLens user:", error);
-
-        setUserDetails({
-          email: user.email || "",
-          firstName: "",
-          lastName: "",
-        });
       }
-    });
+    );
 
-    return () => unsubscribe();
+    return () =>
+      unsubscribe();
   }, []);
+
 
   /* ======================================================
      CLOSE PROFILE WHEN CLICKING OUTSIDE
   ====================================================== */
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
+    const handleOutsideClick = (
+      event
+    ) => {
       if (
         profileRef.current &&
-        !profileRef.current.contains(event.target)
+        !profileRef.current.contains(
+          event.target
+        )
       ) {
         setProfileOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
     };
   }, []);
+
 
   /* ======================================================
      CLOSE MENUS WHEN ROUTE CHANGES
@@ -101,12 +151,16 @@ const ZenLensHeader = () => {
     setMobileOpen(false);
   }, [location.pathname]);
 
+
   /* ======================================================
      USER DISPLAY DATA
   ====================================================== */
 
-  const firstName = userDetails?.firstName || "";
-  const lastName = userDetails?.lastName || "";
+  const firstName =
+    userDetails?.firstName || "";
+
+  const lastName =
+    userDetails?.lastName || "";
 
   const email =
     userDetails?.email ||
@@ -119,13 +173,20 @@ const ZenLensHeader = () => {
     "ZenLens User";
 
   const initials = (() => {
-    if (firstName || lastName) {
-      return `${firstName?.[0] || ""}${lastName?.[0] || ""}`
-        .toUpperCase();
+    if (
+      firstName ||
+      lastName
+    ) {
+      return `${firstName?.[0] || ""}${
+        lastName?.[0] || ""
+      }`.toUpperCase();
     }
 
-    return (email?.[0] || "Z").toUpperCase();
+    return (
+      email?.[0] || "Z"
+    ).toUpperCase();
   })();
+
 
   /* ======================================================
      NAVIGATION
@@ -138,36 +199,103 @@ const ZenLensHeader = () => {
     navigate(path);
   };
 
+
+  /* ======================================================
+     NEW ANALYSIS
+  ====================================================== */
+
+  const handleNewAnalysis = () => {
+    /*
+      Remove any saved data from the previous
+      classroom analysis.
+    */
+
+    localStorage.removeItem(
+      "formData"
+    );
+
+    localStorage.removeItem(
+      "analysisResults"
+    );
+
+    /*
+      Close any open header menus.
+    */
+
+    setProfileOpen(false);
+    setMobileOpen(false);
+
+    /*
+      Use a full navigation instead of navigate().
+
+      This is intentional.
+
+      If the user is already on /stressdetection,
+      React Router would otherwise keep the current
+      AnalysisPage component and its existing state.
+
+      Reloading the Analysis route gives us a genuinely
+      fresh session:
+      - empty subject
+      - empty room
+      - empty teacher
+      - empty weather
+      - empty date
+      - empty start/end time
+      - no selected files
+      - no previous results
+    */
+
+    window.location.assign(
+      "/stressdetection"
+    );
+  };
+
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
 
       navigate("/login");
     } catch (error) {
-      console.error("Unable to sign out:", error);
+      console.error(
+        "Unable to sign out:",
+        error
+      );
     }
   };
+
 
   /* ======================================================
      ACTIVE NAV
   ====================================================== */
 
-  const isHomeActive = location.pathname === "/home";
+  const isHomeActive =
+    location.pathname ===
+    "/home";
 
   const isAnalysisActive =
-    location.pathname === "/stressdetection" ||
-    location.pathname === "/stressmonitoring";
+    location.pathname ===
+      "/stressdetection" ||
+    location.pathname ===
+      "/stressmonitoring";
 
   const isHistoryActive =
-    location.pathname === "/sessionhistory" ||
-    location.pathname === "/stresshistory";
+    location.pathname ===
+      "/sessionhistory" ||
+    location.pathname ===
+      "/stresshistory";
 
   const isInsightsActive =
-    location.pathname === "/overallhistory";
+    location.pathname ===
+    "/overallhistory";
 
   const isAboutActive =
-    location.pathname === "/about" ||
-    location.pathname === "/how-it-works";
+    location.pathname ===
+      "/about" ||
+    location.pathname ===
+      "/how-it-works";
+
 
   const navItems = [
     {
@@ -176,36 +304,49 @@ const ZenLensHeader = () => {
       icon: Home,
       active: isHomeActive,
     },
+
     {
       label: "Analysis",
-      route: "/stressdetection",
+      route:
+        "/stressdetection",
       icon: ScanFace,
-      active: isAnalysisActive,
+      active:
+        isAnalysisActive,
     },
+
     {
       label: "History",
-      route: "/sessionhistory",
+      route:
+        "/sessionhistory",
       icon: Clock3,
-      active: isHistoryActive,
+      active:
+        isHistoryActive,
     },
+
     {
       label: "Insights",
-      route: "/overallhistory",
+      route:
+        "/overallhistory",
       icon: BarChart3,
-      active: isInsightsActive,
+      active:
+        isInsightsActive,
     },
+
     {
       label: "About",
       route: "/about",
       icon: Users,
-      active: isAboutActive,
+      active:
+        isAboutActive,
     },
   ];
+
 
   return (
     <>
       <header className="zl-header">
         <div className="zl-header-inner">
+
           {/* ===============================================
               BRAND
           =============================================== */}
@@ -213,7 +354,9 @@ const ZenLensHeader = () => {
           <button
             type="button"
             className="zl-header-brand"
-            onClick={() => goTo("/home")}
+            onClick={() =>
+              goTo("/home")
+            }
             aria-label="Go to ZenLens home"
           >
             <span className="zl-header-brand-mark">
@@ -225,13 +368,16 @@ const ZenLensHeader = () => {
             </span>
 
             <span className="zl-header-brand-copy">
-              <strong>ZenLens</strong>
+              <strong>
+                ZenLens
+              </strong>
 
               <small>
                 Classroom Stress Analytics
               </small>
             </span>
           </button>
+
 
           {/* ===============================================
               DESKTOP NAVIGATION
@@ -241,43 +387,65 @@ const ZenLensHeader = () => {
             className="zl-header-nav"
             aria-label="Main navigation"
           >
-            {navItems.map((item) => {
-              const Icon = item.icon;
+            {navItems.map(
+              (item) => {
+                const Icon =
+                  item.icon;
 
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  className={`zl-header-nav-link ${
-                    item.active ? "active" : ""
-                  }`}
-                  onClick={() => goTo(item.route)}
-                  aria-current={
-                    item.active ? "page" : undefined
-                  }
-                >
-                  <Icon />
+                return (
+                  <button
+                    key={
+                      item.label
+                    }
+                    type="button"
+                    className={`zl-header-nav-link ${
+                      item.active
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      goTo(
+                        item.route
+                      )
+                    }
+                    aria-current={
+                      item.active
+                        ? "page"
+                        : undefined
+                    }
+                  >
+                    <Icon />
 
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
+                    <span>
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              }
+            )}
           </nav>
+
 
           {/* ===============================================
               RIGHT SIDE
           =============================================== */}
 
           <div className="zl-header-actions">
+
             <button
               type="button"
               className="zl-header-analysis-button"
-              onClick={() => goTo("/stressdetection")}
+              onClick={
+                handleNewAnalysis
+              }
             >
               <ScanFace />
 
-              <span>New analysis</span>
+              <span>
+                New analysis
+              </span>
             </button>
+
 
             {/* ===========================================
                 PROFILE
@@ -291,9 +459,14 @@ const ZenLensHeader = () => {
                 type="button"
                 className="zl-header-profile"
                 onClick={() =>
-                  setProfileOpen((current) => !current)
+                  setProfileOpen(
+                    (current) =>
+                      !current
+                  )
                 }
-                aria-expanded={profileOpen}
+                aria-expanded={
+                  profileOpen
+                }
                 aria-haspopup="menu"
               >
                 <span className="zl-header-avatar">
@@ -301,19 +474,28 @@ const ZenLensHeader = () => {
                 </span>
 
                 <span className="zl-header-profile-copy">
-                  <strong>{fullName}</strong>
+                  <strong>
+                    {fullName}
+                  </strong>
 
-                  <small title={email}>
+                  <small
+                    title={
+                      email
+                    }
+                  >
                     {email}
                   </small>
                 </span>
 
                 <ChevronDown
                   className={`zl-header-chevron ${
-                    profileOpen ? "open" : ""
+                    profileOpen
+                      ? "open"
+                      : ""
                   }`}
                 />
               </button>
+
 
               {profileOpen && (
                 <div
@@ -321,32 +503,45 @@ const ZenLensHeader = () => {
                   role="menu"
                 >
                   <div className="zl-header-profile-summary">
+
                     <span className="zl-header-avatar large">
                       {initials}
                     </span>
 
                     <div>
-                      <strong>{fullName}</strong>
+                      <strong>
+                        {fullName}
+                      </strong>
 
-                      <span title={email}>
+                      <span
+                        title={
+                          email
+                        }
+                      >
                         {email}
                       </span>
                     </div>
                   </div>
 
+
                   <button
                     type="button"
                     className="zl-header-logout"
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                     role="menuitem"
                   >
                     <LogOut />
 
-                    <span>Sign out</span>
+                    <span>
+                      Sign out
+                    </span>
                   </button>
                 </div>
               )}
             </div>
+
 
             {/* ===========================================
                 MOBILE BUTTON
@@ -356,20 +551,30 @@ const ZenLensHeader = () => {
               type="button"
               className="zl-header-mobile-toggle"
               onClick={() =>
-                setMobileOpen((current) => !current)
+                setMobileOpen(
+                  (current) =>
+                    !current
+                )
               }
               aria-label={
                 mobileOpen
                   ? "Close navigation"
                   : "Open navigation"
               }
-              aria-expanded={mobileOpen}
+              aria-expanded={
+                mobileOpen
+              }
             >
-              {mobileOpen ? <X /> : <Menu />}
+              {mobileOpen ? (
+                <X />
+              ) : (
+                <Menu />
+              )}
             </button>
           </div>
         </div>
       </header>
+
 
       {/* ==================================================
           MOBILE NAVIGATION
@@ -377,58 +582,90 @@ const ZenLensHeader = () => {
 
       {mobileOpen && (
         <div className="zl-mobile-menu">
+
           <div className="zl-mobile-user">
             <span className="zl-header-avatar">
               {initials}
             </span>
 
             <div>
-              <strong>{fullName}</strong>
+              <strong>
+                {fullName}
+              </strong>
 
-              <span>{email}</span>
+              <span>
+                {email}
+              </span>
             </div>
           </div>
 
-          <nav aria-label="Mobile navigation">
-            {navItems.map((item) => {
-              const Icon = item.icon;
 
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  className={`zl-mobile-nav-link ${
-                    item.active ? "active" : ""
-                  }`}
-                  onClick={() => goTo(item.route)}
-                >
-                  <Icon />
+          <nav
+            aria-label="Mobile navigation"
+          >
+            {navItems.map(
+              (item) => {
+                const Icon =
+                  item.icon;
 
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={
+                      item.label
+                    }
+                    type="button"
+                    className={`zl-mobile-nav-link ${
+                      item.active
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      goTo(
+                        item.route
+                      )
+                    }
+                  >
+                    <Icon />
+
+                    <span>
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              }
+            )}
           </nav>
 
+
           <div className="zl-mobile-menu-footer">
+
             <button
               type="button"
               className="zl-mobile-new-analysis"
-              onClick={() => goTo("/stressdetection")}
+              onClick={
+                handleNewAnalysis
+              }
             >
               <ScanFace />
 
-              <span>New analysis</span>
+              <span>
+                New analysis
+              </span>
             </button>
+
 
             <button
               type="button"
               className="zl-mobile-logout"
-              onClick={handleLogout}
+              onClick={
+                handleLogout
+              }
             >
               <LogOut />
 
-              <span>Sign out</span>
+              <span>
+                Sign out
+              </span>
             </button>
           </div>
         </div>
@@ -436,5 +673,6 @@ const ZenLensHeader = () => {
     </>
   );
 };
+
 
 export default ZenLensHeader;

@@ -1,148 +1,451 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import Plot from "react-plotly.js";
 
 import {
+  Activity,
+  AlertCircle,
   BarChart3,
+  BookOpen,
   CalendarDays,
   ChevronRight,
   Clock3,
+  History,
+  Home,
+  Info,
   Layers3,
   LineChart,
+  LogOut,
+  Menu,
   RefreshCcw,
+  ScanFace,
+  ShieldCheck,
   Sparkles,
   TrendingUp,
   X,
 } from "lucide-react";
 
-import ZenLensHeader from "../components/ZenLensHeader";
+import {
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  auth,
+  db,
+} from "../components/firebase";
+
+import zenlensLogo from "../image/app.png";
 
 import "./OverallHispage.css";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL =
+  "http://127.0.0.1:5001";
+
+const navigationItems = [
+  {
+    label: "Home",
+    icon: Home,
+    route: "/home",
+  },
+  {
+    label: "New Analysis",
+    icon: ScanFace,
+    route: "/stressdetection",
+  },
+  {
+    label: "Monitoring",
+    icon: Activity,
+    route: "/stressmonitoring",
+  },
+  {
+    label: "Session History",
+    icon: Clock3,
+    route: "/sessionhistory",
+  },
+  {
+    label: "Overall Insights",
+    icon: BarChart3,
+    route: "/overallhistory",
+  },
+  {
+    label: "Stress History",
+    icon: History,
+    route: "/stresshistory",
+  },
+];
+
+const supportNavigation = [
+  {
+    label: "About ZenLens",
+    icon: Info,
+    route: "/about",
+  },
+  {
+    label: "How It Works",
+    icon: BookOpen,
+    route: "/how-it-works",
+  },
+];
 
 const DailyWeeklyPage = () => {
-  const [dailyData, setDailyData] = useState([]);
-  const [weeklyData, setWeeklyData] = useState([]);
+  const navigate =
+    useNavigate();
 
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedWeek, setSelectedWeek] = useState(null);
+  const location =
+    useLocation();
 
-  const [view, setView] = useState("daily");
+  const [
+    userDetails,
+    setUserDetails,
+  ] = useState(null);
 
-  const [recommendation, setRecommendation] = useState("");
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] = useState(false);
 
-  const [dailyLoading, setDailyLoading] = useState(false);
-  const [weeklyLoading, setWeeklyLoading] = useState(false);
+  const [
+    dailyData,
+    setDailyData,
+  ] = useState([]);
+
+  const [
+    weeklyData,
+    setWeeklyData,
+  ] = useState([]);
+
+  const [
+    selectedDay,
+    setSelectedDay,
+  ] = useState(null);
+
+  const [
+    selectedWeek,
+    setSelectedWeek,
+  ] = useState(null);
+
+  const [
+    view,
+    setView,
+  ] = useState("daily");
+
+  const [
+    recommendation,
+    setRecommendation,
+  ] = useState("");
+
+  const [
+    dailyLoading,
+    setDailyLoading,
+  ] = useState(false);
+
+  const [
+    weeklyLoading,
+    setWeeklyLoading,
+  ] = useState(false);
 
   const [
     recommendationLoading,
     setRecommendationLoading,
   ] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [
+    errorMessage,
+    setErrorMessage,
+  ] = useState("");
 
-  const fetchDailyData = async () => {
-    setDailyLoading(true);
-    setErrorMessage("");
+  /* ======================================================
+     USER
+  ====================================================== */
 
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/daily-emotion-timeline`
+  useEffect(() => {
+    const unsubscribe =
+      onAuthStateChanged(
+        auth,
+        async (user) => {
+          if (!user) {
+            setUserDetails(
+              null
+            );
+
+            return;
+          }
+
+          try {
+            const userRef =
+              doc(
+                db,
+                "Users",
+                user.uid
+              );
+
+            const snapshot =
+              await getDoc(
+                userRef
+              );
+
+            if (
+              snapshot.exists()
+            ) {
+              setUserDetails(
+                snapshot.data()
+              );
+            } else {
+              setUserDetails({
+                email:
+                  user.email ||
+                  "",
+                firstName: "",
+                lastName: "",
+              });
+            }
+          } catch (error) {
+            console.error(
+              "Unable to load user details:",
+              error
+            );
+
+            setUserDetails({
+              email:
+                user.email ||
+                "",
+              firstName: "",
+              lastName: "",
+            });
+          }
+        }
       );
 
-      if (!response.ok) {
-        throw new Error(
-          `Daily data request failed with status ${response.status}`
-        );
-      }
+    return () =>
+      unsubscribe();
+  }, []);
 
-      const data =
-        await response.json();
+  const firstName =
+    userDetails?.firstName ||
+    "";
 
-      setDailyData(
-        Array.isArray(data)
-          ? data
-          : []
-      );
-    } catch (error) {
-      console.error(
-        "Error fetching daily data:",
-        error
-      );
+  const lastName =
+    userDetails?.lastName ||
+    "";
 
-      setDailyData([]);
+  const email =
+    userDetails?.email ||
+    auth.currentUser?.email ||
+    "";
 
-      if (
-        error instanceof TypeError
-      ) {
-        setErrorMessage(
-          "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
-        );
-      } else {
-        setErrorMessage(
-          error.message ||
-            "Unable to load daily insight data."
-        );
-      }
-    } finally {
-      setDailyLoading(false);
+  const fullName =
+    `${firstName} ${lastName}`.trim() ||
+    email?.split("@")[0] ||
+    "ZenLens User";
+
+  const initials = (() => {
+    if (
+      firstName ||
+      lastName
+    ) {
+      return `${
+        firstName?.[0] ||
+        ""
+      }${
+        lastName?.[0] ||
+        ""
+      }`.toUpperCase();
     }
+
+    return (
+      email?.[0] ||
+      "Z"
+    ).toUpperCase();
+  })();
+
+  const goTo = (
+    route
+  ) => {
+    setMobileMenuOpen(
+      false
+    );
+
+    navigate(route);
   };
 
-  const fetchWeeklyData = async () => {
-    setWeeklyLoading(true);
-    setErrorMessage("");
+  const handleLogout =
+    async () => {
+      try {
+        await signOut(
+          auth
+        );
 
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/weekly-emotion-timeline`
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Weekly data request failed with status ${response.status}`
+        navigate(
+          "/login"
+        );
+      } catch (error) {
+        console.error(
+          "Unable to sign out:",
+          error
         );
       }
+    };
 
-      const data =
-        await response.json();
+  /* ======================================================
+     FETCH DAILY
+  ====================================================== */
 
-      setWeeklyData(
-        Array.isArray(data)
-          ? data
-          : []
-      );
-    } catch (error) {
-      console.error(
-        "Error fetching weekly data:",
-        error
+  const fetchDailyData =
+    async () => {
+      setDailyLoading(
+        true
       );
 
-      setWeeklyData([]);
+      setErrorMessage(
+        ""
+      );
 
-      if (
-        error instanceof TypeError
-      ) {
-        setErrorMessage(
-          "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+      try {
+        const response =
+          await fetch(
+            `${API_BASE_URL}/daily-emotion-timeline`
+          );
+
+        if (
+          !response.ok
+        ) {
+          throw new Error(
+            `Daily data request failed with status ${response.status}`
+          );
+        }
+
+        const data =
+          await response.json();
+
+        setDailyData(
+          Array.isArray(
+            data
+          )
+            ? data
+            : []
         );
-      } else {
-        setErrorMessage(
-          error.message ||
-            "Unable to load weekly insight data."
+      } catch (error) {
+        console.error(
+          "Error fetching daily data:",
+          error
+        );
+
+        setDailyData([]);
+
+        if (
+          error instanceof
+          TypeError
+        ) {
+          setErrorMessage(
+            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+          );
+        } else {
+          setErrorMessage(
+            error.message ||
+              "Unable to load daily insight data."
+          );
+        }
+      } finally {
+        setDailyLoading(
+          false
         );
       }
-    } finally {
+    };
+
+  /* ======================================================
+     FETCH WEEKLY
+  ====================================================== */
+
+  const fetchWeeklyData =
+    async () => {
       setWeeklyLoading(
-        false
+        true
       );
-    }
-  };
+
+      setErrorMessage(
+        ""
+      );
+
+      try {
+        const response =
+          await fetch(
+            `${API_BASE_URL}/weekly-emotion-timeline`
+          );
+
+        if (
+          !response.ok
+        ) {
+          throw new Error(
+            `Weekly data request failed with status ${response.status}`
+          );
+        }
+
+        const data =
+          await response.json();
+
+        setWeeklyData(
+          Array.isArray(
+            data
+          )
+            ? data
+            : []
+        );
+      } catch (error) {
+        console.error(
+          "Error fetching weekly data:",
+          error
+        );
+
+        setWeeklyData([]);
+
+        if (
+          error instanceof
+          TypeError
+        ) {
+          setErrorMessage(
+            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+          );
+        } else {
+          setErrorMessage(
+            error.message ||
+              "Unable to load weekly insight data."
+          );
+        }
+      } finally {
+        setWeeklyLoading(
+          false
+        );
+      }
+    };
+
+  /* ======================================================
+     WEEKLY RECOMMENDATION
+  ====================================================== */
 
   const fetchRecommendation =
     async () => {
-      if (!selectedWeek) {
-        setRecommendation("");
+      if (
+        !selectedWeek
+      ) {
+        setRecommendation(
+          ""
+        );
+
         return;
       }
 
@@ -156,7 +459,9 @@ const DailyWeeklyPage = () => {
             `${API_BASE_URL}/get-weekly-recommendation`
           );
 
-        if (!response.ok) {
+        if (
+          !response.ok
+        ) {
           throw new Error(
             `Recommendation request failed with status ${response.status}`
           );
@@ -166,7 +471,9 @@ const DailyWeeklyPage = () => {
           await response.json();
 
         if (
-          !Array.isArray(data)
+          !Array.isArray(
+            data
+          )
         ) {
           setRecommendation(
             "No recommendation is available for this week."
@@ -225,41 +532,53 @@ const DailyWeeklyPage = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedWeek) {
+    if (
+      selectedWeek
+    ) {
       fetchRecommendation();
     }
   }, [selectedWeek]);
 
+  /* ======================================================
+     PLOT DATA
+  ====================================================== */
+
   const processDailyDataForPlotly = (
     dayData
   ) => {
-    const sortedEntries = [
-      ...(dayData?.entries ||
-        []),
-    ]
-      .map((entry) => ({
-        ...entry,
-        timestamp: new Date(
-          entry.timestamp
-        ),
-      }))
-      .sort(
-        (a, b) =>
-          a.timestamp -
-          b.timestamp
-      );
+    const sortedEntries =
+      [
+        ...(dayData?.entries ||
+          []),
+      ]
+        .map(
+          (entry) => ({
+            ...entry,
 
-    const emotionLabels = [
-      ...new Set(
-        sortedEntries.flatMap(
-          (entry) =>
-            Object.keys(
-              entry.emotion_counts ||
-                {}
-            )
+            timestamp:
+              new Date(
+                entry.timestamp
+              ),
+          })
         )
-      ),
-    ];
+        .sort(
+          (a, b) =>
+            a.timestamp -
+            b.timestamp
+        );
+
+    const emotionLabels =
+      [
+        ...new Set(
+          sortedEntries.flatMap(
+            (entry) =>
+              Object.keys(
+                entry.emotion_counts ||
+                  {}
+              )
+          )
+        ),
+      ];
 
     return emotionLabels.map(
       (emotion) => ({
@@ -293,8 +612,11 @@ const DailyWeeklyPage = () => {
           "<b>%{fullData.name}</b><br>%{x}<br>Count: %{y}<extra></extra>",
 
         line: {
-          shape: "linear",
-          width: 2.2,
+          shape:
+            "linear",
+
+          width:
+            2.4,
         },
       })
     );
@@ -303,30 +625,32 @@ const DailyWeeklyPage = () => {
   const processWeeklyDataForPlotly = (
     weekData
   ) => {
-    const sortedEntries = [
-      ...(weekData?.entries ||
-        []),
-    ].sort(
-      (a, b) =>
-        new Date(
-          a.timestamp
-        ) -
-        new Date(
-          b.timestamp
-        )
-    );
+    const sortedEntries =
+      [
+        ...(weekData?.entries ||
+          []),
+      ].sort(
+        (a, b) =>
+          new Date(
+            a.timestamp
+          ) -
+          new Date(
+            b.timestamp
+          )
+      );
 
-    const emotionLabels = [
-      ...new Set(
-        sortedEntries.flatMap(
-          (entry) =>
-            Object.keys(
-              entry.emotion_counts ||
-                {}
-            )
-        )
-      ),
-    ];
+    const emotionLabels =
+      [
+        ...new Set(
+          sortedEntries.flatMap(
+            (entry) =>
+              Object.keys(
+                entry.emotion_counts ||
+                  {}
+              )
+          )
+        ),
+      ];
 
     return emotionLabels.map(
       (emotion) => ({
@@ -360,28 +684,50 @@ const DailyWeeklyPage = () => {
           "<b>%{fullData.name}</b><br>%{x}<br>Count: %{y}<extra></extra>",
 
         line: {
-          shape: "linear",
-          width: 2.2,
+          shape:
+            "linear",
+
+          width:
+            2.4,
         },
       })
     );
   };
 
+  /* ======================================================
+     VIEW
+  ====================================================== */
+
   const handleViewChange = (
     nextView
   ) => {
-    setView(nextView);
+    setView(
+      nextView
+    );
 
-    setSelectedDay(null);
-    setSelectedWeek(null);
-    setRecommendation("");
+    setSelectedDay(
+      null
+    );
+
+    setSelectedWeek(
+      null
+    );
+
+    setRecommendation(
+      ""
+    );
   };
 
   const toggleDaySelection = (
     day
   ) => {
-    setSelectedWeek(null);
-    setRecommendation("");
+    setSelectedWeek(
+      null
+    );
+
+    setRecommendation(
+      ""
+    );
 
     setSelectedDay(
       (current) =>
@@ -395,7 +741,9 @@ const DailyWeeklyPage = () => {
   const toggleWeekSelection = (
     week
   ) => {
-    setSelectedDay(null);
+    setSelectedDay(
+      null
+    );
 
     setSelectedWeek(
       (current) => {
@@ -415,11 +763,20 @@ const DailyWeeklyPage = () => {
     );
   };
 
-  const closeInfoCard = () => {
-    setSelectedDay(null);
-    setSelectedWeek(null);
-    setRecommendation("");
-  };
+  const closeInfoCard =
+    () => {
+      setSelectedDay(
+        null
+      );
+
+      setSelectedWeek(
+        null
+      );
+
+      setRecommendation(
+        ""
+      );
+    };
 
   const selectedData =
     selectedDay ||
@@ -427,13 +784,17 @@ const DailyWeeklyPage = () => {
 
   const selectedTraces =
     useMemo(() => {
-      if (selectedDay) {
+      if (
+        selectedDay
+      ) {
         return processDailyDataForPlotly(
           selectedDay
         );
       }
 
-      if (selectedWeek) {
+      if (
+        selectedWeek
+      ) {
         return processWeeklyDataForPlotly(
           selectedWeek
         );
@@ -461,23 +822,84 @@ const DailyWeeklyPage = () => {
   const totalTimelinePoints =
     useMemo(() => {
       return currentData.reduce(
-        (total, item) =>
+        (
+          total,
+          item
+        ) =>
           total +
           (item.entries
             ?.length ||
             0),
         0
       );
-    }, [currentData]);
+    }, [
+      currentData,
+    ]);
+
+  /* ======================================================
+     GLOW
+  ====================================================== */
+
+  const handleGlowMove = (
+    event
+  ) => {
+    const element =
+      event.currentTarget;
+
+    const rect =
+      element.getBoundingClientRect();
+
+    element.style.setProperty(
+      "--overall-glow-x",
+      `${
+        event.clientX -
+        rect.left
+      }px`
+    );
+
+    element.style.setProperty(
+      "--overall-glow-y",
+      `${
+        event.clientY -
+        rect.top
+      }px`
+    );
+
+    element.style.setProperty(
+      "--overall-glow-opacity",
+      "1"
+    );
+  };
+
+  const handleGlowLeave = (
+    event
+  ) => {
+    event.currentTarget.style.setProperty(
+      "--overall-glow-opacity",
+      "0"
+    );
+  };
+
+  const glowProps = {
+    onMouseMove:
+      handleGlowMove,
+
+    onMouseLeave:
+      handleGlowLeave,
+  };
+
+  /* ======================================================
+     CHART
+  ====================================================== */
 
   const chartLayout = {
     autosize: true,
 
     margin: {
-      l: 52,
-      r: 22,
-      t: 20,
-      b: 58,
+      l: 62,
+      r: 24,
+      t: 24,
+      b: 68,
     },
 
     paper_bgcolor:
@@ -493,44 +915,49 @@ const DailyWeeklyPage = () => {
       color:
         "#68758a",
 
-      size: 10,
+      size: 12,
     },
 
     hovermode:
       "x unified",
 
-    showlegend: true,
+    showlegend:
+      true,
 
     legend: {
-      orientation: "h",
+      orientation:
+        "h",
 
       x: 0,
 
-      y: -0.28,
+      y: -0.25,
 
       font: {
-        size: 9,
+        size: 11,
       },
     },
 
     xaxis: {
       title: {
-        text: "Time",
+        text:
+          "Time",
 
         font: {
-          size: 10,
+          size: 12,
         },
       },
 
-      showgrid: true,
+      showgrid:
+        true,
 
       gridcolor:
         "#edf0f5",
 
-      zeroline: false,
+      zeroline:
+        false,
 
       tickfont: {
-        size: 9,
+        size: 11,
       },
     },
 
@@ -540,398 +967,800 @@ const DailyWeeklyPage = () => {
           "Emotion count",
 
         font: {
-          size: 10,
+          size: 12,
         },
       },
 
-      showgrid: true,
+      showgrid:
+        true,
 
       gridcolor:
         "#edf0f5",
 
-      zeroline: false,
+      zeroline:
+        false,
 
       rangemode:
         "tozero",
 
       tickfont: {
-        size: 9,
+        size: 11,
       },
     },
   };
 
   return (
     <div className="zen-overall-page">
-      <ZenLensHeader />
+      {/* ===============================================
+          SIDEBAR
+      =============================================== */}
 
-      <main className="zen-overall-main">
-        <section className="zen-overall-intro">
-          <div className="zen-overall-intro-copy">
-            <div className="zen-overall-eyebrow">
-              <TrendingUp />
+      <aside className="zen-overall-sidebar">
+        <div className="zen-overall-sidebar-inner">
+          <button
+            type="button"
+            className="zen-overall-brand"
+            onClick={() =>
+              goTo(
+                "/home"
+              )
+            }
+          >
+            <span className="zen-overall-brand-mark">
+              <img
+                src={
+                  zenlensLogo
+                }
+                alt="ZenLens"
+              />
+            </span>
 
-              <span>
-                Stress insights
-              </span>
-            </div>
+            <span className="zen-overall-brand-copy">
+              <strong>
+                ZenLens
+              </strong>
 
-            <h1>
-              Understand patterns
-              <span>
-                across days and
-                weeks.
-              </span>
-            </h1>
+              <small>
+                Classroom Stress Analytics
+              </small>
+            </span>
+          </button>
 
-            <p>
-              Compare emotional
-              observations across
-              time to review
-              broader classroom
-              stress patterns
-              beyond a single
-              session.
+          <div className="zen-overall-nav-scroll">
+            <p className="zen-overall-nav-label">
+              Workspace
             </p>
+
+            <nav className="zen-overall-navigation">
+              {navigationItems.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  const active =
+                    location
+                      .pathname ===
+                    item.route;
+
+                  return (
+                    <button
+                      type="button"
+                      key={
+                        item.label
+                      }
+                      className={`zen-overall-nav-item ${
+                        active
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <span className="zen-overall-nav-icon">
+                        <Icon />
+                      </span>
+
+                      <span>
+                        {
+                          item.label
+                        }
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </nav>
+
+            <div className="zen-overall-nav-divider" />
+
+            <p className="zen-overall-nav-label">
+              Support
+            </p>
+
+            <nav className="zen-overall-navigation">
+              {supportNavigation.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  const active =
+                    location
+                      .pathname ===
+                    item.route;
+
+                  return (
+                    <button
+                      type="button"
+                      key={
+                        item.label
+                      }
+                      className={`zen-overall-nav-item ${
+                        active
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <span className="zen-overall-nav-icon">
+                        <Icon />
+                      </span>
+
+                      <span>
+                        {
+                          item.label
+                        }
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </nav>
           </div>
 
-          <div className="zen-overall-overview">
-            <div>
-              <span>
-                CURRENT VIEW
+          <div className="zen-overall-sidebar-bottom">
+            <div className="zen-overall-user">
+              <span className="zen-overall-user-avatar">
+                {
+                  initials
+                }
               </span>
 
-              <strong>
-                {view === "daily"
-                  ? "Daily"
-                  : "Weekly"}
-              </strong>
+              <div className="zen-overall-user-copy">
+                <strong>
+                  {
+                    fullName
+                  }
+                </strong>
 
-              <small>
-                Insight level
-              </small>
+                <small>
+                  {
+                    email
+                  }
+                </small>
+              </div>
             </div>
 
-            <div>
+            <button
+              type="button"
+              className="zen-overall-signout"
+              onClick={
+                handleLogout
+              }
+            >
+              <LogOut />
+
               <span>
-                PERIODS
+                Sign out
               </span>
+            </button>
+          </div>
+        </div>
+      </aside>
 
-              <strong>
-                {entryCount}
-              </strong>
+      {/* ===============================================
+          MOBILE
+      =============================================== */}
 
-              <small>
-                Available results
-              </small>
-            </div>
+      <header className="zen-overall-mobile-header">
+        <button
+          type="button"
+          className="zen-overall-mobile-brand"
+          onClick={() =>
+            goTo(
+              "/home"
+            )
+          }
+        >
+          <span>
+            <img
+              src={
+                zenlensLogo
+              }
+              alt="ZenLens"
+            />
+          </span>
+
+          <strong>
+            ZenLens
+          </strong>
+        </button>
+
+        <button
+          type="button"
+          className="zen-overall-mobile-toggle"
+          aria-label="Toggle navigation"
+          onClick={() =>
+            setMobileMenuOpen(
+              (
+                current
+              ) =>
+                !current
+            )
+          }
+        >
+          {mobileMenuOpen ? (
+            <X />
+          ) : (
+            <Menu />
+          )}
+        </button>
+      </header>
+
+      {mobileMenuOpen && (
+        <div className="zen-overall-mobile-drawer">
+          <div className="zen-overall-mobile-user">
+            <span className="zen-overall-user-avatar">
+              {
+                initials
+              }
+            </span>
 
             <div>
-              <span>
-                OBSERVATIONS
-              </span>
-
               <strong>
                 {
-                  totalTimelinePoints
+                  fullName
                 }
               </strong>
 
               <small>
-                Timeline entries
+                {
+                  email
+                }
               </small>
             </div>
           </div>
-        </section>
 
-        <section className="zen-overall-toolbar">
-          <div className="zen-overall-view-switch">
+          <nav>
+            {[
+              ...navigationItems,
+              ...supportNavigation,
+            ].map(
+              (item) => {
+                const Icon =
+                  item.icon;
+
+                const active =
+                  location
+                    .pathname ===
+                  item.route;
+
+                return (
+                  <button
+                    type="button"
+                    key={
+                      item.label
+                    }
+                    className={
+                      active
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      goTo(
+                        item.route
+                      )
+                    }
+                  >
+                    <Icon />
+
+                    <span>
+                      {
+                        item.label
+                      }
+                    </span>
+                  </button>
+                );
+              }
+            )}
+
             <button
               type="button"
-              className={
-                view === "daily"
-                  ? "active"
-                  : ""
+              className="logout"
+              onClick={
+                handleLogout
               }
-              onClick={() =>
-                handleViewChange(
+            >
+              <LogOut />
+
+              <span>
+                Sign out
+              </span>
+            </button>
+          </nav>
+        </div>
+      )}
+
+      {/* ===============================================
+          MAIN
+      =============================================== */}
+
+      <main className="zen-overall-main">
+        <div className="zen-overall-orb orb-one" />
+
+        <div className="zen-overall-orb orb-two" />
+
+        <div className="zen-overall-main-content">
+          {/* =============================================
+              INTRO
+          ============================================= */}
+
+          <section className="zen-overall-intro">
+            <div className="zen-overall-intro-copy">
+              <span className="zen-overall-eyebrow">
+                <Sparkles />
+
+                ZenLens historical insights
+              </span>
+
+              <p className="zen-overall-overline">
+                Daily and weekly classroom patterns
+              </p>
+
+              <h1>
+                Overall
+                <span>
+                  {" "}
+                  Insights
+                </span>
+              </h1>
+
+              <p className="zen-overall-description">
+                Compare emotional observations across days and weeks to review broader classroom patterns beyond a single analysis session.
+              </p>
+            </div>
+
+            <div className="zen-overall-overview">
+              <article>
+                <span className="zen-overall-overview-icon">
+                  {view ===
+                  "daily" ? (
+                    <CalendarDays />
+                  ) : (
+                    <Layers3 />
+                  )}
+                </span>
+
+                <div>
+                  <span>
+                    Current view
+                  </span>
+
+                  <strong>
+                    {view ===
+                    "daily"
+                      ? "Daily"
+                      : "Weekly"}
+                  </strong>
+
+                  <small>
+                    Insight level
+                  </small>
+                </div>
+              </article>
+
+              <article>
+                <span className="zen-overall-overview-icon">
+                  <BarChart3 />
+                </span>
+
+                <div>
+                  <span>
+                    Periods
+                  </span>
+
+                  <strong>
+                    {
+                      entryCount
+                    }
+                  </strong>
+
+                  <small>
+                    Available results
+                  </small>
+                </div>
+              </article>
+
+              <article>
+                <span className="zen-overall-overview-icon">
+                  <LineChart />
+                </span>
+
+                <div>
+                  <span>
+                    Observations
+                  </span>
+
+                  <strong>
+                    {
+                      totalTimelinePoints
+                    }
+                  </strong>
+
+                  <small>
+                    Timeline entries
+                  </small>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          {/* =============================================
+              VIEW SWITCH
+          ============================================= */}
+
+          <section
+            className="zen-overall-toolbar zen-overall-glow-card"
+            {...glowProps}
+          >
+            <span className="zen-overall-card-glow" />
+
+            <div className="zen-overall-card-layer toolbar">
+              <div className="zen-overall-view-switch">
+                <button
+                  type="button"
+                  className={
+                    view ===
+                    "daily"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    handleViewChange(
+                      "daily"
+                    )
+                  }
+                >
+                  <CalendarDays />
+
+                  <div>
+                    <strong>
+                      Daily
+                    </strong>
+
+                    <span>
+                      Day-by-day patterns
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    view ===
+                    "weekly"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    handleViewChange(
+                      "weekly"
+                    )
+                  }
+                >
+                  <Layers3 />
+
+                  <div>
+                    <strong>
+                      Weekly
+                    </strong>
+
+                    <span>
+                      Broader weekly patterns
+                    </span>
+                  </div>
+                </button>
+              </div>
+
+              <div className="zen-overall-toolbar-note">
+                <span className="zen-overall-toolbar-note-icon">
+                  <LineChart />
+                </span>
+
+                <p>
+                  <span>
+                    CURRENTLY VIEWING
+                  </span>
+
+                  <strong>
+                    {view ===
+                    "daily"
+                      ? "Daily emotion history"
+                      : "Weekly emotion history"}
+                  </strong>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* =============================================
+              ERROR
+          ============================================= */}
+
+          {errorMessage && (
+            <div className="zen-overall-error">
+              <AlertCircle />
+
+              <span>
+                {
+                  errorMessage
+                }
+              </span>
+
+              <button
+                type="button"
+                onClick={() => {
+                  fetchDailyData();
+                  fetchWeeklyData();
+                }}
+              >
+                <RefreshCcw />
+
+                <span>
+                  Try again
+                </span>
+              </button>
+            </div>
+          )}
+
+          {/* =============================================
+              PERIODS
+          ============================================= */}
+
+          <section className="zen-overall-content">
+            <div className="zen-overall-content-head">
+              <div>
+                <span>
+                  {view ===
                   "daily"
-                )
-              }
-            >
-              <CalendarDays />
+                    ? "DAILY INSIGHTS"
+                    : "WEEKLY INSIGHTS"}
+                </span>
 
-              <div>
+                <h2>
+                  {view ===
+                  "daily"
+                    ? "Classroom patterns by day"
+                    : "Classroom patterns by week"}
+                </h2>
+              </div>
+
+              <p>
+                {view ===
+                "daily"
+                  ? "Select a day to inspect how emotion counts changed throughout that period."
+                  : "Select a week to inspect the emotional timeline and review its associated recommendation."}
+              </p>
+            </div>
+
+            {currentLoading ? (
+              <div className="zen-overall-loading">
+                <div className="zen-overall-loading-spinner" />
+
                 <strong>
-                  Daily
+                  Loading insights
                 </strong>
 
                 <span>
-                  Day-by-day
-                  patterns
+                  Retrieving ZenLens timeline data.
                 </span>
               </div>
-            </button>
+            ) : currentData.length >
+              0 ? (
+              <div className="zen-overall-period-grid">
+                {view ===
+                "daily"
+                  ? dailyData.map(
+                      (
+                        day,
+                        index
+                      ) => (
+                        <button
+                          type="button"
+                          className="zen-overall-period-card zen-overall-glow-card"
+                          key={
+                            day.date ||
+                            index
+                          }
+                          onClick={() =>
+                            toggleDaySelection(
+                              day
+                            )
+                          }
+                          {...glowProps}
+                        >
+                          <span className="zen-overall-card-glow" />
 
-            <button
-              type="button"
-              className={
-                view === "weekly"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                handleViewChange(
-                  "weekly"
-                )
-              }
-            >
-              <Layers3 />
+                          <div className="zen-overall-card-layer period">
+                            <div className="zen-overall-period-top">
+                              <span className="zen-overall-period-icon">
+                                <CalendarDays />
+                              </span>
 
-              <div>
-                <strong>
-                  Weekly
-                </strong>
+                              <span>
+                                DAILY
+                              </span>
+                            </div>
+
+                            <div className="zen-overall-period-copy">
+                              <span>
+                                DATE
+                              </span>
+
+                              <h3>
+                                {day.date ||
+                                  "Unknown date"}
+                              </h3>
+
+                              <p>
+                                {day.entries
+                                  ?.length ||
+                                  0}{" "}
+                                timeline{" "}
+                                {(day.entries
+                                  ?.length ||
+                                  0) ===
+                                1
+                                  ? "entry"
+                                  : "entries"}
+                              </p>
+                            </div>
+
+                            <div className="zen-overall-period-footer">
+                              <span>
+                                View daily details
+                              </span>
+
+                              <ChevronRight />
+                            </div>
+                          </div>
+                        </button>
+                      )
+                    )
+                  : weeklyData.map(
+                      (
+                        week,
+                        index
+                      ) => (
+                        <button
+                          type="button"
+                          className="zen-overall-period-card zen-overall-glow-card"
+                          key={
+                            week.week ||
+                            index
+                          }
+                          onClick={() =>
+                            toggleWeekSelection(
+                              week
+                            )
+                          }
+                          {...glowProps}
+                        >
+                          <span className="zen-overall-card-glow" />
+
+                          <div className="zen-overall-card-layer period">
+                            <div className="zen-overall-period-top">
+                              <span className="zen-overall-period-icon">
+                                <Layers3 />
+                              </span>
+
+                              <span>
+                                WEEKLY
+                              </span>
+                            </div>
+
+                            <div className="zen-overall-period-copy">
+                              <span>
+                                WEEK
+                              </span>
+
+                              <h3>
+                                {week.week ||
+                                  "Unknown week"}
+                              </h3>
+
+                              <p>
+                                {week.entries
+                                  ?.length ||
+                                  0}{" "}
+                                timeline{" "}
+                                {(week.entries
+                                  ?.length ||
+                                  0) ===
+                                1
+                                  ? "entry"
+                                  : "entries"}
+                              </p>
+                            </div>
+
+                            <div className="zen-overall-period-footer">
+                              <span>
+                                View weekly details
+                              </span>
+
+                              <ChevronRight />
+                            </div>
+                          </div>
+                        </button>
+                      )
+                    )}
+              </div>
+            ) : (
+              <div className="zen-overall-empty">
+                <div className="zen-overall-empty-icon">
+                  <BarChart3 />
+                </div>
 
                 <span>
-                  Broader weekly
-                  patterns
+                  NO INSIGHT DATA
                 </span>
+
+                <h3>
+                  No {view} results are available yet.
+                </h3>
+
+                <p>
+                  ZenLens will display historical patterns here once classroom session data is available.
+                </p>
               </div>
-            </button>
-          </div>
+            )}
+          </section>
 
-          <div className="zen-overall-toolbar-note">
-            <LineChart />
+          {/* =============================================
+              NOTE
+          ============================================= */}
 
-            <p>
-              <span>
-                CURRENTLY VIEWING
-              </span>
+          <section className="zen-overall-note">
+            <div className="zen-overall-note-icon">
+              <ShieldCheck />
+            </div>
 
-              <strong>
-                {view === "daily"
-                  ? "Daily emotion history"
-                  : "Weekly emotion history"}
-              </strong>
-            </p>
-          </div>
-        </section>
-
-        {errorMessage && (
-          <div className="zen-overall-error">
-            <span>
-              {errorMessage}
-            </span>
-
-            <button
-              type="button"
-              onClick={() => {
-                fetchDailyData();
-                fetchWeeklyData();
-              }}
-            >
-              <RefreshCcw />
-
-              <span>
-                Try again
-              </span>
-            </button>
-          </div>
-        )}
-
-        <section className="zen-overall-content">
-          <div className="zen-overall-content-head">
             <div>
               <span>
-                {view === "daily"
-                  ? "DAILY INSIGHTS"
-                  : "WEEKLY INSIGHTS"}
+                LONGITUDINAL REVIEW
               </span>
 
               <h2>
-                {view === "daily"
-                  ? "Classroom patterns by day"
-                  : "Classroom patterns by week"}
+                Patterns across time can add context to individual sessions.
               </h2>
             </div>
 
             <p>
-              {view === "daily"
-                ? "Select a day to inspect how emotion counts changed throughout that period."
-                : "Select a week to inspect the emotional timeline and review its associated recommendation."}
+              Daily and weekly insights are intended to support broader classroom interpretation while keeping the individual session observations available for review.
             </p>
-          </div>
-
-          {currentLoading ? (
-            <div className="zen-overall-loading">
-              <div className="zen-overall-loading-spinner" />
-
-              <strong>
-                Loading insights
-              </strong>
-
-              <span>
-                Retrieving ZenLens
-                timeline data.
-              </span>
-            </div>
-          ) : currentData.length >
-            0 ? (
-            <div className="zen-overall-period-grid">
-              {view === "daily"
-                ? dailyData.map(
-                    (
-                      day,
-                      index
-                    ) => (
-                      <button
-                        type="button"
-                        className="zen-overall-period-card"
-                        key={
-                          day.date ||
-                          index
-                        }
-                        onClick={() =>
-                          toggleDaySelection(
-                            day
-                          )
-                        }
-                      >
-                        <div className="zen-overall-period-top">
-                          <div className="zen-overall-period-icon">
-                            <CalendarDays />
-                          </div>
-
-                          <span>
-                            DAILY
-                          </span>
-                        </div>
-
-                        <div className="zen-overall-period-copy">
-                          <span>
-                            DATE
-                          </span>
-
-                          <h3>
-                            {day.date ||
-                              "Unknown date"}
-                          </h3>
-
-                          <p>
-                            {day.entries
-                              ?.length ||
-                              0}{" "}
-                            timeline{" "}
-                            {(day.entries
-                              ?.length ||
-                              0) ===
-                            1
-                              ? "entry"
-                              : "entries"}
-                          </p>
-                        </div>
-
-                        <div className="zen-overall-period-footer">
-                          <span>
-                            View daily
-                            details
-                          </span>
-
-                          <ChevronRight />
-                        </div>
-                      </button>
-                    )
-                  )
-                : weeklyData.map(
-                    (
-                      week,
-                      index
-                    ) => (
-                      <button
-                        type="button"
-                        className="zen-overall-period-card"
-                        key={
-                          week.week ||
-                          index
-                        }
-                        onClick={() =>
-                          toggleWeekSelection(
-                            week
-                          )
-                        }
-                      >
-                        <div className="zen-overall-period-top">
-                          <div className="zen-overall-period-icon">
-                            <Layers3 />
-                          </div>
-
-                          <span>
-                            WEEKLY
-                          </span>
-                        </div>
-
-                        <div className="zen-overall-period-copy">
-                          <span>
-                            WEEK
-                          </span>
-
-                          <h3>
-                            {week.week ||
-                              "Unknown week"}
-                          </h3>
-
-                          <p>
-                            {week.entries
-                              ?.length ||
-                              0}{" "}
-                            timeline{" "}
-                            {(week.entries
-                              ?.length ||
-                              0) ===
-                            1
-                              ? "entry"
-                              : "entries"}
-                          </p>
-                        </div>
-
-                        <div className="zen-overall-period-footer">
-                          <span>
-                            View weekly
-                            details
-                          </span>
-
-                          <ChevronRight />
-                        </div>
-                      </button>
-                    )
-                  )}
-            </div>
-          ) : (
-            <div className="zen-overall-empty">
-              <div className="zen-overall-empty-icon">
-                <BarChart3 />
-              </div>
-
-              <span>
-                NO INSIGHT DATA
-              </span>
-
-              <h3>
-                No {view} results
-                are available yet.
-              </h3>
-
-              <p>
-                ZenLens will
-                display historical
-                patterns here once
-                classroom session
-                data is available.
-              </p>
-            </div>
-          )}
-        </section>
+          </section>
+        </div>
       </main>
+
+      {/* ===============================================
+          DETAIL MODAL
+      =============================================== */}
 
       {selectedData && (
         <div
@@ -1023,8 +1852,7 @@ const DailyWeeklyPage = () => {
 
                     <p>
                       <span>
-                        Timeline
-                        entries
+                        Timeline entries
                       </span>
 
                       <strong>
@@ -1041,8 +1869,7 @@ const DailyWeeklyPage = () => {
 
                     <p>
                       <span>
-                        Emotion
-                        groups
+                        Emotion groups
                       </span>
 
                       <strong>
@@ -1057,17 +1884,17 @@ const DailyWeeklyPage = () => {
                 {selectedWeek && (
                   <div className="zen-overall-recommendation">
                     <div className="zen-overall-recommendation-heading">
-                      <Sparkles />
+                      <span className="zen-overall-recommendation-icon">
+                        <Sparkles />
+                      </span>
 
                       <div>
                         <span>
-                          WEEKLY
-                          RECOMMENDATION
+                          WEEKLY RECOMMENDATION
                         </span>
 
                         <strong>
-                          ZenLens
-                          insight
+                          ZenLens insight
                         </strong>
                       </div>
                     </div>
@@ -1077,8 +1904,7 @@ const DailyWeeklyPage = () => {
                         <div className="zen-overall-mini-spinner" />
 
                         <span>
-                          Loading
-                          recommendation
+                          Loading recommendation
                         </span>
                       </div>
                     ) : (
@@ -1099,19 +1925,12 @@ const DailyWeeklyPage = () => {
                     </span>
 
                     <h3>
-                      Emotional
-                      patterns over
-                      time
+                      Emotional patterns over time
                     </h3>
                   </div>
 
                   <p>
-                    Each line
-                    represents one
-                    detected emotion
-                    category across
-                    the selected
-                    period.
+                    Each line represents one detected emotion category across the selected period.
                   </p>
                 </div>
 
@@ -1149,16 +1968,11 @@ const DailyWeeklyPage = () => {
                       <LineChart />
 
                       <strong>
-                        No timeline
-                        data
+                        No timeline data
                       </strong>
 
                       <span>
-                        No emotional
-                        timeline data
-                        is available
-                        for this
-                        period.
+                        No emotional timeline data is available for this period.
                       </span>
                     </div>
                   )}

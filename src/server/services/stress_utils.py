@@ -27,22 +27,59 @@ def get_openai_response(average_stress, stress_category):
     try:
         if not OPENAI_API_KEY:
             logger.error("OPENAI_API_KEY is not available.")
-            return "Unable to fetch recommendation because the OpenAI API key is not configured."
+
+            return (
+                "Unable to fetch recommendation because the "
+                "OpenAI API key is not configured."
+            )
 
         if stress_category == "Extremely Severe":
             return (
-                "The average stress level is extremely high. "
-                "It is highly recommended to intervene with the class immediately."
+                "The classroom's average stress level is extremely high. "
+                "Teachers and guidance counselors should review the classroom "
+                "conditions promptly, consider appropriate instructional or "
+                "environmental adjustments, and determine whether additional "
+                "school-based support or professional guidance is appropriate."
             )
 
         category_message = (
-            f"The stress level this week is: {stress_category}.\n\n"
+            f"The classroom stress level this week is: "
+            f"{stress_category}.\n\n"
         )
 
         prompt = (
-            f"The average stress level is {average_stress:.2f}%, "
-            f"which falls under the '{stress_category}' category. "
-            "Provide some recommendations or insights based on this stress level."
+            f"ZenLens detected an average classroom stress level of "
+            f"{average_stress:.2f}%, which falls under the "
+            f"'{stress_category}' category.\n\n"
+
+            "The audience for this recommendation is teachers, educators, "
+            "guidance counselors, and other authorized school staff. "
+            "The recommendation is NOT intended to directly advise students.\n\n"
+
+            "Provide concise and practical recommendations that school staff "
+            "can consider based on this classroom-level stress pattern. "
+            "Focus on areas such as instructional pacing, classroom environment, "
+            "workload, lesson structure, student engagement strategies, "
+            "opportunities for short breaks or classroom check-ins, communication, "
+            "and appropriate referral to guidance or other school support services "
+            "when needed.\n\n"
+
+            "Address teachers and school staff directly. "
+            "Do not address students directly or tell students what they should do. "
+            "Do not diagnose individual students, identify specific students as "
+            "having a mental health condition, or present the ZenLens result as a "
+            "medical or clinical diagnosis. "
+            "Treat the detected stress level as a classroom-level indicator that "
+            "can help school staff decide whether adjustments or further review "
+            "may be useful.\n\n"
+
+            "Return 3 to 5 recommendations as a numbered list. "
+            "Give each item a short descriptive heading followed by one or two "
+            "complete sentences. Keep the full response concise enough for a "
+            "school dashboard, but make every recommendation complete. "
+            "Do not cut off a sentence or end mid-thought. "
+            "Keep the response professional, supportive, specific, and actionable. "
+            "Avoid generic wellness advice intended for students."
         )
 
         url = "https://api.openai.com/v1/chat/completions"
@@ -57,14 +94,21 @@ def get_openai_response(average_stress, stress_category):
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are an empathetic helpful assistant.",
+                    "content": (
+                        "You are ZenLens, a classroom stress-support assistant "
+                        "for teachers, educators, and guidance counselors. "
+                        "Your role is to translate classroom-level stress patterns "
+                        "into practical, non-diagnostic actions that school staff "
+                        "can consider. Your recommendations must be directed toward "
+                        "school staff rather than students."
+                    ),
                 },
                 {
                     "role": "user",
                     "content": prompt,
                 },
             ],
-            "max_tokens": 100,
+            "max_tokens": 450,
             "temperature": 0.7,
         }
 
@@ -94,16 +138,24 @@ def get_openai_response(average_stress, stress_category):
         )
 
         if not response_content:
-            logger.error("Received empty response content from OpenAI API.")
+            logger.error(
+                "Received empty response content from OpenAI API."
+            )
 
             return "OpenAI API returned an empty response."
 
-        return f"{category_message}Advice: {response_content}"
+        return (
+            f"{category_message}"
+            f"Recommendation for school staff: {response_content}"
+        )
 
     except requests.exceptions.Timeout:
         logger.error("Request to OpenAI API timed out.")
 
-        return "The request to OpenAI API timed out. Please try again later."
+        return (
+            "The request to OpenAI API timed out. "
+            "Please try again later."
+        )
 
     except requests.exceptions.RequestException as e:
         logger.error(
@@ -111,7 +163,10 @@ def get_openai_response(average_stress, stress_category):
             str(e),
         )
 
-        return "Unable to fetch recommendation at this time due to a network error."
+        return (
+            "Unable to fetch recommendation at this time "
+            "due to a network error."
+        )
 
     except Exception as e:
         logger.error(

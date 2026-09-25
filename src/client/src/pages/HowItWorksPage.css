@@ -1,29 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap");
 
 :root {
-  --zhw-navy: #0b1735;
-  --zhw-navy-soft: #172747;
+  --zhw-navy: #081935;
+  --zhw-blue: #315ed5;
+  --zhw-blue-bright: #4b78ed;
+  --zhw-blue-light: #edf3ff;
 
-  --zhw-blue: #4b78ed;
-  --zhw-blue-dark: #315ed5;
-  --zhw-blue-soft: #eef3ff;
+  --zhw-text: #142341;
+  --zhw-text-soft: #6d7a92;
+  --zhw-text-muted: #98a4b8;
 
-  --zhw-violet: #7868e8;
+  --zhw-border: #dfe6f1;
+  --zhw-border-strong: #cfd9e8;
 
-  --zhw-text: #1c2a43;
-  --zhw-text-soft: #69768c;
-  --zhw-text-muted: #98a5b8;
+  --zhw-danger: #b64859;
 
-  --zhw-line: #e2e8f1;
-  --zhw-line-dark: #d2ddeb;
-
-  --zhw-white: #ffffff;
-
-  --zl-header-height: 76px;
+  --zhw-sidebar-width: 290px;
 }
 
 /* =========================================================
-   PAGE RESET
+   RESET
 ========================================================= */
 
 .zen-how-page,
@@ -34,8 +30,6 @@
 }
 
 .zen-how-page {
-  position: relative;
-
   width: 100%;
   min-width: 0;
 
@@ -46,25 +40,36 @@
 
   overflow-x: clip;
 
+  color: var(--zhw-text);
+
   font-family:
     "Inter",
     sans-serif;
 
-  color:
-    var(--zhw-text);
+  background: #f4f6fc;
+}
 
-  background:
-    radial-gradient(
-      circle at 82% 3%,
-      rgba(108, 121, 255, 0.07),
-      transparent 22%
-    ),
-    linear-gradient(
-      180deg,
-      #fcfdff 0%,
-      #f7f9fd 58%,
-      #ffffff 100%
-    );
+.zen-how-page button {
+  width: auto;
+  max-width: none;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  color: inherit;
+
+  background: none;
+
+  box-shadow: none;
+
+  font: inherit;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .zen-how-page a {
@@ -72,25 +77,720 @@
 }
 
 /* =========================================================
+   SIDEBAR
+========================================================= */
+
+.zen-how-sidebar {
+  position: fixed;
+
+  inset:
+    0
+    auto
+    0
+    0;
+
+  z-index: 1000;
+
+  width:
+    var(--zhw-sidebar-width);
+
+  height: 100vh;
+  height: 100dvh;
+
+  border-right:
+    1px solid
+    var(--zhw-border);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    8px
+    0
+    35px
+    rgba(
+      30,
+      50,
+      95,
+      0.025
+    );
+}
+
+.zen-how-sidebar-inner {
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+
+  padding:
+    27px
+    20px
+    18px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.zen-how-brand {
+  width:
+    100% !important;
+
+  flex:
+    0
+    0
+    auto;
+
+  padding:
+    0
+    7px
+    23px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    13px !important;
+
+  text-align:
+    left !important;
+}
+
+.zen-how-brand-mark {
+  width: 47px;
+  height: 47px;
+
+  min-width: 47px;
+
+  padding: 9px;
+
+  display: grid;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3b74f2 0%,
+      #556ee9 50%,
+      #7866e8 100%
+    );
+
+  box-shadow:
+    0
+    12px
+    26px
+    rgba(
+      57,
+      94,
+      220,
+      0.2
+    );
+}
+
+.zen-how-brand-mark img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+
+  filter:
+    brightness(0)
+    invert(1);
+}
+
+.zen-how-brand-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-how-brand-copy strong {
+  color:
+    var(--zhw-navy);
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 21px;
+
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.045em;
+}
+
+.zen-how-brand-copy small {
+  color:
+    var(--zhw-text-muted);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.zen-how-nav-scroll {
+  flex:
+    1
+    1
+    auto;
+
+  min-height: 0;
+
+  padding-right: 3px;
+  padding-bottom: 18px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #dce4ef
+    transparent;
+}
+
+.zen-how-nav-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.zen-how-nav-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: #dce4ef;
+}
+
+.zen-how-nav-label {
+  margin:
+    19px
+    10px
+    10px;
+
+  color: #98a4b6;
+
+  font-size: 11px;
+
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.zen-how-navigation {
+  display: grid;
+
+  gap: 4px;
+}
+
+.zen-how-nav-item {
+  width:
+    100% !important;
+
+  min-height: 52px;
+
+  padding:
+    0
+    13px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    12px !important;
+
+  border-radius:
+    13px !important;
+
+  color:
+    #69768c !important;
+
+  font-size:
+    15px !important;
+
+  font-weight: 500;
+
+  text-align:
+    left !important;
+
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.zen-how-nav-icon {
+  width: 31px;
+  height: 31px;
+
+  min-width: 31px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 9px;
+}
+
+.zen-how-nav-item svg {
+  width: 19px;
+  height: 19px;
+
+  stroke-width: 1.8;
+}
+
+.zen-how-nav-item:hover {
+  transform:
+    translateX(2px);
+
+  color:
+    var(--zhw-blue) !important;
+
+  background:
+    #f4f7fd !important;
+}
+
+.zen-how-nav-item.active {
+  color:
+    var(--zhw-blue) !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef3ff,
+      #e8efff
+    ) !important;
+}
+
+.zen-how-nav-item.active
+.zen-how-nav-icon {
+  background: #ffffff;
+
+  box-shadow:
+    0
+    6px
+    15px
+    rgba(
+      49,
+      94,
+      213,
+      0.09
+    );
+}
+
+.zen-how-nav-divider {
+  height: 1px;
+
+  margin:
+    18px
+    8px
+    12px;
+
+  background:
+    var(--zhw-border);
+}
+
+/* =========================================================
+   USER
+========================================================= */
+
+.zen-how-sidebar-bottom {
+  flex:
+    0
+    0
+    auto;
+
+  padding-top: 13px;
+
+  border-top:
+    1px solid
+    var(--zhw-border);
+
+  background: #ffffff;
+}
+
+.zen-how-user {
+  min-width: 0;
+
+  padding: 8px;
+
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.zen-how-user-avatar {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+
+  color:
+    var(--zhw-blue);
+
+  background:
+    linear-gradient(
+      145deg,
+      #eef3ff,
+      #e5edff
+    );
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.zen-how-user-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-how-user-copy strong,
+.zen-how-user-copy small {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.zen-how-user-copy strong {
+  color:
+    var(--zhw-navy);
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.zen-how-user-copy small {
+  color:
+    var(--zhw-text-muted);
+
+  font-size: 10px;
+}
+
+.zen-how-signout {
+  width:
+    100% !important;
+
+  min-height: 44px;
+
+  margin-top:
+    3px !important;
+
+  padding:
+    0
+    11px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    11px !important;
+
+  border-radius:
+    11px !important;
+
+  color:
+    #788497 !important;
+
+  font-size:
+    13px !important;
+
+  font-weight: 600;
+}
+
+.zen-how-signout svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zen-how-signout:hover {
+  color:
+    var(--zhw-danger) !important;
+
+  background:
+    #fff2f4 !important;
+}
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+.zen-how-mobile-header,
+.zen-how-mobile-drawer {
+  display: none;
+}
+
+/* =========================================================
    MAIN
 ========================================================= */
 
 .zen-how-main {
+  position: relative;
+
+  min-height:
+    100vh;
+  min-height:
+    100dvh;
+
+  margin-left:
+    var(--zhw-sidebar-width);
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 14% 8%,
+      rgba(
+        144,
+        220,
+        255,
+        0.16
+      ),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 89% 5%,
+      rgba(
+        192,
+        132,
+        255,
+        0.15
+      ),
+      transparent 29%
+    ),
+    radial-gradient(
+      circle at 54% 48%,
+      rgba(
+        83,
+        99,
+        225,
+        0.08
+      ),
+      transparent 41%
+    ),
+    linear-gradient(
+      145deg,
+      #f6f9ff 0%,
+      #f2f4fd 47%,
+      #f8f6ff 100%
+    );
+}
+
+.zen-how-orb {
+  position: absolute;
+
+  z-index: 0;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(15px);
+}
+
+.zen-how-orb.orb-one {
+  width: 480px;
+  height: 480px;
+
+  top: -270px;
+  right: 0;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        105,
+        177,
+        255,
+        0.15
+      ),
+      transparent 70%
+    );
+}
+
+.zen-how-orb.orb-two {
+  width: 540px;
+  height: 540px;
+
+  bottom: -330px;
+  left: 10%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        123,
+        98,
+        230,
+        0.1
+      ),
+      transparent 70%
+    );
+}
+
+.zen-how-content {
+  position: relative;
+
+  z-index: 2;
+
   width:
     min(
-      1320px,
-      calc(100% - 48px)
+      1420px,
+      calc(
+        100% - 78px
+      )
     );
 
-  margin:
-    var(--zl-header-height)
-    auto
-    0;
+  margin: 0 auto;
 
   padding:
-    24px
+    50px
     0
-    90px;
+    64px;
+}
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.zen-how-glow-card {
+  --how-glow-x: 50%;
+  --how-glow-y: 50%;
+  --how-glow-opacity: 0;
+
+  position: relative;
+
+  isolation: isolate;
+
+  overflow: hidden;
+}
+
+.zen-how-card-glow {
+  position: absolute;
+
+  z-index: 0;
+
+  left:
+    var(
+      --how-glow-x
+    );
+
+  top:
+    var(
+      --how-glow-y
+    );
+
+  width: 440px;
+  height: 440px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity:
+    var(
+      --how-glow-opacity
+    );
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        113,
+        171,
+        255,
+        0.25
+      ),
+      rgba(
+        112,
+        140,
+        244,
+        0.11
+      ) 37%,
+      rgba(
+        151,
+        113,
+        235,
+        0.05
+      ) 55%,
+      transparent 72%
+    );
+
+  filter: blur(5px);
+
+  transition:
+    opacity 220ms ease;
+}
+
+.zen-how-card-layer {
+  position: relative;
+
+  z-index: 2;
+
+  height: 100%;
 }
 
 /* =========================================================
@@ -98,39 +798,40 @@
 ========================================================= */
 
 .zen-how-hero {
-  min-height: 520px;
-
-  padding:
-    18px
-    0
-    54px;
+  min-height: 570px;
 
   display: grid;
 
   grid-template-columns:
-    minmax(0, 0.88fr)
-    minmax(480px, 1.12fr);
+    minmax(
+      0,
+      0.95fr
+    )
+    minmax(
+      440px,
+      1.05fr
+    );
 
   align-items: center;
 
-  gap: 70px;
+  gap: 52px;
 }
 
 .zen-how-hero-copy {
-  width: 100%;
-  max-width: 650px;
+  max-width: 780px;
 }
 
 .zen-how-eyebrow {
   width: fit-content;
 
-  margin-bottom: 18px;
+  margin-bottom: 19px;
 
   padding:
-    7px
-    10px;
+    8px
+    11px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
@@ -138,83 +839,99 @@
 
   border:
     1px solid
-    #dce5f2;
+    rgba(
+      200,
+      213,
+      235,
+      0.82
+    );
 
   border-radius: 999px;
 
-  background:
-    rgba(255, 255, 255, 0.8);
-
   color:
-    #58677f;
+    var(--zhw-blue);
 
-  font-size: 9px;
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.68
+    );
 
-  line-height: 1;
+  font-size: 12px;
 
   font-weight: 700;
+
+  backdrop-filter:
+    blur(14px);
 }
 
 .zen-how-eyebrow svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
+}
+
+.zen-how-overline {
+  margin:
+    0
+    0
+    8px;
 
   color:
-    var(--zhw-violet);
+    var(--zhw-text-soft);
+
+  font-size: 17px;
+
+  font-weight: 500;
 }
 
 .zen-how-hero h1 {
-  max-width: 620px;
+  max-width: 780px;
 
   margin: 0;
+
+  color:
+    var(--zhw-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zhw-navy);
-
   font-size:
     clamp(
-      47px,
-      4.2vw,
-      64px
+      53px,
+      5vw,
+      74px
     );
 
-  line-height: 1.015;
+  line-height: 0.98;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.063em;
-
-  text-wrap: balance;
+    -0.064em;
 }
 
 .zen-how-hero h1 span {
-  display: block;
-
-  margin-top: 4px;
-
   color:
     var(--zhw-blue);
 }
 
-.zen-how-hero-copy > p {
-  max-width: 560px;
+.zen-how-description {
+  max-width: 680px;
 
   margin:
-    21px
+    23px
     0
     0;
 
   color:
     var(--zhw-text-soft);
 
-  font-size: 12px;
+  font-size: 16px;
 
-  line-height: 1.72;
+  line-height: 1.74;
 }
 
 /* =========================================================
@@ -222,7 +939,7 @@
 ========================================================= */
 
 .zen-how-hero-actions {
-  margin-top: 27px;
+  margin-top: 28px;
 
   display: flex;
 
@@ -230,49 +947,59 @@
 
   flex-wrap: wrap;
 
-  gap: 9px;
+  gap: 10px;
 }
 
 .zen-how-primary-link,
 .zen-how-secondary-link {
-  min-height: 45px;
+  min-height: 50px;
 
   padding:
     0
-    15px;
+    17px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
   justify-content: center;
 
-  gap: 8px;
+  gap: 9px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
-  font-size: 9px;
+  font-size: 13px;
 
   font-weight: 700;
 
   transition:
     transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .zen-how-primary-link {
-  background:
-    var(--zhw-navy);
+  color: #ffffff;
 
-  color:
-    #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #315ed5,
+      #537bea 65%,
+      #696fe5
+    );
 
   box-shadow:
     0
-    12px
-    25px
-    rgba(11, 23, 53, 0.14);
+    15px
+    29px
+    rgba(
+      49,
+      94,
+      213,
+      0.2
+    );
 }
 
 .zen-how-primary-link:hover {
@@ -281,35 +1008,47 @@
 
   box-shadow:
     0
-    16px
-    32px
-    rgba(11, 23, 53, 0.19);
+    20px
+    36px
+    rgba(
+      49,
+      94,
+      213,
+      0.27
+    );
 }
 
 .zen-how-secondary-link {
   border:
     1px solid
-    var(--zhw-line);
-
-  background:
-    #ffffff;
+    var(--zhw-border);
 
   color:
-    #59677e;
+    var(--zhw-navy);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.78
+    );
 }
 
 .zen-how-secondary-link:hover {
-  border-color:
-    #cad7e8;
-
   transform:
-    translateY(-1px);
+    translateY(-2px);
+
+  border-color:
+    #bdcbe0;
+
+  background: #ffffff;
 }
 
 .zen-how-primary-link svg,
 .zen-how-secondary-link svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* =========================================================
@@ -317,69 +1056,68 @@
 ========================================================= */
 
 .zen-how-hero-visual {
-  position: relative;
-
-  width: 100%;
-  min-height: 400px;
-
-  display: grid;
-
-  place-items: center;
-
-  overflow: hidden;
+  min-height: 440px;
 
   border:
     1px solid
-    var(--zhw-line);
+    var(--zhw-border);
 
   border-radius: 24px;
 
   background:
     radial-gradient(
-      circle at 50% 45%,
-      rgba(75, 120, 237, 0.15),
-      transparent 31%
+      circle at 50% 48%,
+      rgba(
+        94,
+        143,
+        247,
+        0.15
+      ),
+      transparent 32%
     ),
     linear-gradient(
       145deg,
-      #ffffff,
-      #f5f8ff
+      rgba(
+        255,
+        255,
+        255,
+        0.97
+      ),
+      rgba(
+        245,
+        248,
+        255,
+        0.95
+      )
     );
 
   box-shadow:
     0
     22px
-    56px
-    rgba(29, 49, 90, 0.06);
+    55px
+    rgba(
+      30,
+      49,
+      90,
+      0.065
+    );
 }
 
-.zen-how-hero-visual::before,
-.zen-how-hero-visual::after {
-  content: "";
+.zen-how-hero-visual
+.zen-how-card-layer {
+  position: relative;
 
-  position: absolute;
+  min-height: 440px;
 
-  border-radius: 50%;
+  display: grid;
 
-  border:
-    1px solid
-    rgba(94, 122, 190, 0.12);
-}
-
-.zen-how-hero-visual::before {
-  width: 330px;
-  height: 330px;
-}
-
-.zen-how-hero-visual::after {
-  width: 245px;
-  height: 245px;
+  place-items: center;
 }
 
 .zen-how-visual-core {
   position: relative;
 
-  z-index: 3;
+  z-index: 5;
 
   width: 195px;
   height: 195px;
@@ -390,6 +1128,8 @@
 
   flex-direction: column;
 
+  align-items: center;
+
   justify-content: center;
 
   border:
@@ -399,150 +1139,248 @@
   border-radius: 50%;
 
   background:
-    rgba(255, 255, 255, 0.92);
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
 
   box-shadow:
     0
-    18px
-    45px
-    rgba(45, 70, 128, 0.1);
+    20px
+    46px
+    rgba(
+      45,
+      70,
+      128,
+      0.11
+    );
 
   text-align: center;
 }
 
-.zen-how-visual-icon {
-  width: 42px;
-  height: 42px;
+.zen-how-visual-core-icon {
+  width: 45px;
+  height: 45px;
 
-  margin:
-    0
-    auto
-    11px;
+  margin-bottom: 10px;
 
   display: grid;
 
   place-items: center;
 
-  border-radius: 12px;
+  border-radius: 13px;
+
+  color:
+    var(--zhw-blue);
 
   background:
-    var(--zhw-blue-soft);
-
-  color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue-light);
 }
 
-.zen-how-visual-icon svg {
-  width: 18px;
-  height: 18px;
+.zen-how-visual-core-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
-.zen-how-visual-core > span {
-  margin-bottom: 7px;
+.zen-how-visual-core > span:not(
+  .zen-how-visual-core-icon
+) {
+  margin-bottom: 6px;
 
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
 
-  font-size: 6.5px;
+  font-size: 9px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.1em;
+  letter-spacing: 0.1em;
 }
 
-.zen-how-visual-core > strong {
+.zen-how-visual-core strong {
+  color:
+    var(--zhw-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zhw-navy);
+  font-size: 21px;
 
-  font-size: 18px;
-
-  line-height: 1.25;
+  line-height: 1.16;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.03em;
+    -0.035em;
 }
 
-/* =========================================================
-   HERO NODES
-========================================================= */
+.zen-how-visual-core small {
+  margin-top: 7px;
+
+  color:
+    var(--zhw-text-muted);
+
+  font-size: 10px;
+}
 
 .zen-how-visual-node {
   position: absolute;
 
-  z-index: 4;
+  z-index: 6;
 
-  min-width: 90px;
+  min-width: 125px;
 
-  min-height: 38px;
+  min-height: 58px;
 
   padding:
-    0
+    9px
     12px;
 
-  display: flex;
+  display: grid;
+
+  grid-template-columns:
+    33px
+    minmax(0, 1fr);
 
   align-items: center;
 
-  justify-content: center;
-
-  gap: 6px;
+  gap: 9px;
 
   border:
     1px solid
-    var(--zhw-line);
+    var(--zhw-border);
 
-  border-radius: 10px;
+  border-radius: 13px;
 
   background:
-    rgba(255, 255, 255, 0.92);
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
 
   box-shadow:
     0
-    10px
-    26px
-    rgba(31, 54, 100, 0.07);
+    11px
+    28px
+    rgba(
+      31,
+      54,
+      100,
+      0.075
+    );
+}
+
+.zen-how-visual-node > svg {
+  width: 33px;
+  height: 33px;
+
+  padding: 8px;
+
+  border-radius: 9px;
 
   color:
-    #59677e;
+    var(--zhw-blue);
+
+  background:
+    var(--zhw-blue-light);
+}
+
+.zen-how-visual-node > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.zen-how-visual-node span {
+  color:
+    var(--zhw-text-muted);
 
   font-size: 8px;
+
+  font-weight: 800;
+}
+
+.zen-how-visual-node strong {
+  color:
+    var(--zhw-navy);
+
+  font-size: 12px;
 
   font-weight: 700;
 }
 
-.zen-how-visual-node svg {
-  width: 13px;
-  height: 13px;
-
-  color:
-    var(--zhw-blue-dark);
-}
-
 .zen-how-visual-node.node-one {
-  top: 56px;
-  left: 68px;
+  top: 52px;
+  left: 48px;
 }
 
 .zen-how-visual-node.node-two {
-  top: 88px;
-  right: 52px;
+  top: 75px;
+  right: 41px;
 }
 
 .zen-how-visual-node.node-three {
-  bottom: 78px;
-  left: 55px;
+  bottom: 75px;
+  left: 42px;
 }
 
 .zen-how-visual-node.node-four {
-  right: 67px;
-  bottom: 55px;
+  right: 54px;
+  bottom: 48px;
+}
+
+.zen-how-visual-lines {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+}
+
+.zen-how-visual-lines::before,
+.zen-how-visual-lines::after {
+  content: "";
+
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  border:
+    1px solid
+    rgba(
+      70,
+      102,
+      180,
+      0.11
+    );
+
+  border-radius: 50%;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+}
+
+.zen-how-visual-lines::before {
+  width: 310px;
+  height: 310px;
+}
+
+.zen-how-visual-lines::after {
+  width: 255px;
+  height: 255px;
 }
 
 /* =========================================================
@@ -550,25 +1388,24 @@
 ========================================================= */
 
 .zen-how-summary {
-  width: 100%;
+  margin:
+    15px
+    0
+    80px;
 
-  margin-bottom: 70px;
-
-  padding:
-    20px
-    22px;
+  padding: 20px;
 
   display: grid;
 
   grid-template-columns:
     minmax(0, 1fr)
-    22px
+    20px
     minmax(0, 1fr)
-    22px
+    20px
     minmax(0, 1fr)
-    22px
+    20px
     minmax(0, 1fr)
-    22px
+    20px
     minmax(0, 1fr);
 
   align-items: center;
@@ -577,18 +1414,28 @@
 
   border:
     1px solid
-    var(--zhw-line);
+    var(--zhw-border);
 
-  border-radius: 17px;
+  border-radius: 19px;
 
   background:
-    #ffffff;
+    rgba(
+      255,
+      255,
+      255,
+      0.86
+    );
 
   box-shadow:
     0
-    10px
-    30px
-    rgba(28, 49, 89, 0.035);
+    13px
+    34px
+    rgba(
+      28,
+      49,
+      89,
+      0.04
+    );
 }
 
 .zen-how-summary > div {
@@ -597,17 +1444,19 @@
   display: grid;
 
   grid-template-columns:
-    29px
+    35px
     minmax(0, 1fr);
 
   align-items: center;
 
-  gap: 9px;
+  gap: 10px;
 }
 
-.zen-how-summary > div > span {
-  width: 29px;
-  height: 29px;
+.zen-how-summary
+> div
+> span {
+  width: 35px;
+  height: 35px;
 
   display: grid;
 
@@ -615,18 +1464,20 @@
 
   border-radius: 50%;
 
-  background:
-    var(--zhw-blue-soft);
-
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
 
-  font-size: 7px;
+  background:
+    var(--zhw-blue-light);
+
+  font-size: 10px;
 
   font-weight: 800;
 }
 
 .zen-how-summary p {
+  min-width: 0;
+
   margin: 0;
 
   display: flex;
@@ -640,78 +1491,89 @@
   color:
     var(--zhw-navy);
 
-  font-size: 8.5px;
+  font-size: 12px;
 
   font-weight: 700;
 }
 
 .zen-how-summary small {
+  overflow: hidden;
+
   color:
     var(--zhw-text-muted);
 
-  font-size: 6.7px;
+  font-size: 9px;
+
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
 }
 
 .zen-how-summary > svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
 
-  color:
-    #adb8c9;
+  color: #aab5c6;
 }
 
 /* =========================================================
-   SECTION HEADING
+   WORKFLOW HEADING
 ========================================================= */
 
 .zen-how-section-head {
-  margin-bottom: 35px;
+  margin-bottom: 32px;
 
   display: grid;
 
   grid-template-columns:
     minmax(0, 1fr)
-    minmax(300px, 390px);
+    minmax(
+      300px,
+      420px
+    );
 
   align-items: end;
 
   gap: 55px;
 }
 
-.zen-how-section-head span {
+.zen-how-section-head
+> div
+> span {
   display: block;
 
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.11em;
+  letter-spacing: 0.1em;
 }
 
 .zen-how-section-head h2 {
   margin: 0;
 
+  color:
+    var(--zhw-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zhw-navy);
-
   font-size:
     clamp(
-      33px,
-      3.3vw,
-      47px
+      34px,
+      3.4vw,
+      48px
     );
 
-  line-height: 1.05;
+  line-height: 1.06;
 
   font-weight: 800;
 
@@ -720,15 +1582,12 @@
 }
 
 .zen-how-section-head > p {
-  margin:
-    0
-    0
-    4px;
+  margin: 0;
 
   color:
     var(--zhw-text-soft);
 
-  font-size: 9px;
+  font-size: 13px;
 
   line-height: 1.65;
 }
@@ -740,44 +1599,78 @@
 .zen-how-steps {
   display: grid;
 
-  gap: 22px;
+  gap: 20px;
 }
 
 .zen-how-step {
-  min-height: 390px;
+  border:
+    1px solid
+    var(--zhw-border);
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.98
+      ),
+      rgba(
+        248,
+        250,
+        255,
+        0.95
+      )
+    );
+
+  box-shadow:
+    0
+    16px
+    43px
+    rgba(
+      28,
+      49,
+      89,
+      0.045
+    );
+}
+
+.zen-how-card-layer.step {
+  min-height: 430px;
 
   padding: 18px;
 
   display: grid;
 
   grid-template-columns:
-    minmax(390px, 0.95fr)
-    minmax(0, 1.05fr);
+    minmax(
+      390px,
+      0.95fr
+    )
+    minmax(
+      0,
+      1.05fr
+    );
 
   align-items: stretch;
 
-  gap: 40px;
-
-  border:
-    1px solid
-    var(--zhw-line);
-
-  border-radius: 21px;
-
-  background:
-    #ffffff;
-
-  box-shadow:
-    0
-    14px
-    42px
-    rgba(28, 49, 89, 0.04);
+  gap: 36px;
 }
 
-.zen-how-step.reverse {
+.zen-how-step.reverse
+.zen-how-card-layer.step {
   grid-template-columns:
-    minmax(0, 1.05fr)
-    minmax(390px, 0.95fr);
+    minmax(
+      0,
+      1.05fr
+    )
+    minmax(
+      390px,
+      0.95fr
+    );
 }
 
 .zen-how-step.reverse
@@ -791,7 +1684,7 @@
 }
 
 /* =========================================================
-   STEP VISUAL
+   STEP IMAGE
 ========================================================= */
 
 .zen-how-step-visual {
@@ -805,18 +1698,18 @@
 
   width: 100%;
   height: 100%;
-  min-height: 350px;
+
+  min-height: 394px;
 
   overflow: hidden;
 
   border:
     1px solid
-    var(--zhw-line);
+    var(--zhw-border);
 
-  border-radius: 16px;
+  border-radius: 17px;
 
-  background:
-    #f3f6fb;
+  background: #edf2fa;
 }
 
 .zen-how-step-image {
@@ -828,7 +1721,13 @@
   object-fit: cover;
 
   transition:
-    transform 320ms ease;
+    transform 400ms
+    cubic-bezier(
+      0.2,
+      0.8,
+      0.2,
+      1
+    );
 }
 
 .zen-how-step:hover
@@ -837,87 +1736,119 @@
     scale(1.025);
 }
 
+.zen-how-step-image-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent 50%,
+      rgba(
+        7,
+        20,
+        44,
+        0.2
+      ) 100%
+    );
+}
+
 .zen-how-step-image-label {
   position: absolute;
 
-  left: 14px;
-  bottom: 14px;
+  left: 15px;
+  bottom: 15px;
 
-  min-height: 34px;
+  min-height: 38px;
 
   padding:
     0
-    11px;
+    12px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
-  gap: 6px;
+  gap: 7px;
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.25);
+    rgba(
+      255,
+      255,
+      255,
+      0.28
+    );
 
-  border-radius: 9px;
+  border-radius: 10px;
+
+  color: #ffffff;
 
   background:
-    rgba(9, 20, 46, 0.74);
-
-  color:
-    #ffffff;
+    rgba(
+      8,
+      25,
+      53,
+      0.72
+    );
 
   backdrop-filter:
-    blur(8px);
+    blur(10px);
 
-  -webkit-backdrop-filter:
-    blur(8px);
-
-  font-size: 7px;
+  font-size: 10px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.08em;
+  letter-spacing: 0.09em;
 }
 
 .zen-how-step-image-label svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 }
 
-.zen-how-step-number {
+.zen-how-step-image-number {
   position: absolute;
 
-  top: -5px;
-  right: -5px;
+  top: 15px;
+  right: 15px;
 
-  z-index: 3;
-
-  width: 49px;
-  height: 49px;
+  width: 48px;
+  height: 48px;
 
   display: grid;
 
   place-items: center;
 
   border:
-    5px solid
-    #ffffff;
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.3
+    );
 
-  border-radius: 50%;
+  border-radius: 14px;
+
+  color: #ffffff;
 
   background:
-    var(--zhw-blue-dark);
+    rgba(
+      8,
+      25,
+      53,
+      0.66
+    );
 
-  color:
-    #ffffff;
+  backdrop-filter:
+    blur(10px);
 
-  font-family:
-    "Manrope",
-    sans-serif;
-
-  font-size: 10px;
+  font-size: 11px;
 
   font-weight: 800;
 }
@@ -928,9 +1859,9 @@
 
 .zen-how-step-copy {
   padding:
-    35px
+    36px
     33px
-    35px
+    36px
     5px;
 
   display: flex;
@@ -943,134 +1874,150 @@
 .zen-how-step.reverse
 .zen-how-step-copy {
   padding:
-    35px
+    36px
     5px
-    35px
+    36px
     33px;
 }
 
 .zen-how-step-kicker {
-  margin-bottom: 14px;
+  margin-bottom: 17px;
 
   display: flex;
 
   align-items: center;
 
-  gap: 7px;
+  gap: 9px;
 
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
 }
 
-.zen-how-step-kicker svg {
-  width: 14px;
-  height: 14px;
+.zen-how-step-kicker-icon {
+  width: 37px;
+  height: 37px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 10px;
+
+  color:
+    var(--zhw-blue);
+
+  background:
+    var(--zhw-blue-light);
 }
 
-.zen-how-step-kicker span {
-  font-size: 7px;
+.zen-how-step-kicker-icon svg {
+  width: 16px;
+  height: 16px;
+}
 
-  line-height: 1;
+.zen-how-step-kicker
+> span:last-child {
+  font-size: 10px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.1em;
+  letter-spacing: 0.1em;
 }
 
 .zen-how-step-copy h3 {
-  max-width: 500px;
+  max-width: 530px;
 
   margin: 0;
+
+  color:
+    var(--zhw-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zhw-navy);
-
   font-size:
     clamp(
-      28px,
-      2.8vw,
-      40px
+      30px,
+      3vw,
+      43px
     );
 
-  line-height: 1.07;
+  line-height: 1.06;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.05em;
+    -0.052em;
 }
 
 .zen-how-step-copy > p {
-  max-width: 510px;
+  max-width: 540px;
 
   margin:
-    18px
+    19px
     0
     0;
 
   color:
     var(--zhw-text-soft);
 
-  font-size: 10px;
+  font-size: 14px;
 
-  line-height: 1.7;
+  line-height: 1.72;
 }
 
-/* =========================================================
-   DETAIL PILLS
-========================================================= */
-
 .zen-how-step-details {
-  margin-top: 24px;
+  margin-top: 26px;
 
   display: flex;
 
   flex-wrap: wrap;
 
-  gap: 7px;
+  gap: 8px;
 }
 
 .zen-how-step-details > div {
-  min-height: 34px;
+  min-height: 39px;
 
   padding:
     0
-    10px;
+    11px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
-  gap: 6px;
+  gap: 7px;
 
   border:
     1px solid
-    var(--zhw-line);
+    var(--zhw-border);
 
-  border-radius: 9px;
+  border-radius: 10px;
+
+  color: #647187;
 
   background:
-    #fafbfe;
+    rgba(
+      255,
+      255,
+      255,
+      0.84
+    );
 
-  color:
-    #647187;
-
-  font-size: 7.5px;
+  font-size: 11px;
 
   font-weight: 600;
 }
 
 .zen-how-step-details svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
 }
 
 /* =========================================================
@@ -1080,16 +2027,20 @@
 .zen-how-interpretation {
   margin-top: 28px;
 
-  padding:
-    29px
-    30px;
+  padding: 30px;
 
   display: grid;
 
   grid-template-columns:
-    45px
-    minmax(0, 1.05fr)
-    minmax(300px, 0.95fr);
+    52px
+    minmax(
+      0,
+      1fr
+    )
+    minmax(
+      300px,
+      0.72fr
+    );
 
   align-items: center;
 
@@ -1097,71 +2048,74 @@
 
   border:
     1px solid
-    var(--zhw-line);
+    var(--zhw-border);
 
-  border-radius: 18px;
+  border-radius: 20px;
 
   background:
     linear-gradient(
       145deg,
       #ffffff,
-      #f8faff
+      #f7f9ff
     );
 }
 
 .zen-how-interpretation-icon {
-  width: 45px;
-  height: 45px;
+  width: 52px;
+  height: 52px;
 
   display: grid;
 
   place-items: center;
 
-  border-radius: 13px;
-
-  background:
-    var(--zhw-blue-soft);
+  border-radius: 14px;
 
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
+
+  background:
+    var(--zhw-blue-light);
 }
 
 .zen-how-interpretation-icon svg {
-  width: 19px;
-  height: 19px;
+  width: 22px;
+  height: 22px;
 }
 
-.zen-how-interpretation > div:nth-child(2) span {
+.zen-how-interpretation
+> div:nth-child(2)
+> span {
   display: block;
 
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 
   color:
-    var(--zhw-blue-dark);
+    var(--zhw-blue);
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.1em;
+  letter-spacing: 0.1em;
 }
 
 .zen-how-interpretation h2 {
+  max-width: 680px;
+
   margin: 0;
+
+  color:
+    var(--zhw-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zhw-navy);
-
-  font-size: 19px;
+  font-size: 22px;
 
   line-height: 1.25;
 
-  font-weight: 700;
+  font-weight: 800;
 
   letter-spacing:
     -0.03em;
@@ -1173,7 +2127,7 @@
   color:
     var(--zhw-text-soft);
 
-  font-size: 8.8px;
+  font-size: 13px;
 
   line-height: 1.65;
 }
@@ -1183,74 +2137,85 @@
 ========================================================= */
 
 .zen-how-cta {
-  margin-top: 30px;
+  margin-top: 28px;
 
   padding:
-    36px
-    38px;
+    39px;
 
   display: flex;
 
   align-items: center;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   gap: 40px;
 
-  border-radius: 20px;
+  border-radius: 22px;
+
+  color: #ffffff;
 
   background:
     linear-gradient(
       135deg,
-      #0b1735,
-      #172d5d
+      #274fc0 0%,
+      #3565db 46%,
+      #587ae9 76%,
+      #6c6fe7 100%
     );
-
-  color:
-    #ffffff;
 
   box-shadow:
     0
-    20px
-    45px
-    rgba(11, 23, 53, 0.13);
+    22px
+    48px
+    rgba(
+      49,
+      94,
+      213,
+      0.18
+    );
 }
 
 .zen-how-cta > div {
-  max-width: 700px;
+  max-width: 750px;
 }
 
-.zen-how-cta > div > span {
+.zen-how-cta
+> div
+> span {
   display: block;
 
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 
   color:
-    #a9c2ff;
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.11em;
+  letter-spacing: 0.11em;
 }
 
 .zen-how-cta h2 {
   margin: 0;
 
+  color: #ffffff;
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    #ffffff;
-
   font-size:
     clamp(
-      28px,
+      30px,
       3vw,
-      39px
+      42px
     );
 
   line-height: 1.08;
@@ -1262,36 +2227,42 @@
 }
 
 .zen-how-cta p {
-  max-width: 570px;
+  max-width: 610px;
 
   margin:
-    11px
+    12px
     0
     0;
 
   color:
-    rgba(255, 255, 255, 0.68);
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
 
-  font-size: 9px;
+  font-size: 13px;
 
   line-height: 1.65;
 }
 
 .zen-how-cta-button {
-  min-width: 166px;
-
-  min-height: 46px;
-
-  padding:
-    0
-    15px;
-
   flex:
     0
     0
     auto;
 
-  display: inline-flex;
+  min-width: 175px;
+
+  min-height: 51px;
+
+  padding:
+    0
+    17px;
+
+  display:
+    inline-flex;
 
   align-items: center;
 
@@ -1299,15 +2270,25 @@
 
   gap: 8px;
 
-  border-radius: 10px;
-
-  background:
-    #ffffff;
+  border-radius: 12px;
 
   color:
     var(--zhw-navy);
 
-  font-size: 9px;
+  background: #ffffff;
+
+  box-shadow:
+    0
+    13px
+    28px
+    rgba(
+      11,
+      23,
+      53,
+      0.12
+    );
+
+  font-size: 13px;
 
   font-weight: 700;
 
@@ -1322,58 +2303,414 @@
 
   box-shadow:
     0
-    10px
-    24px
-    rgba(0, 0, 0, 0.14);
+    18px
+    34px
+    rgba(
+      11,
+      23,
+      53,
+      0.17
+    );
 }
 
 .zen-how-cta-button svg {
-  width: 14px;
-  height: 14px;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 1120px) {
-  .zen-how-hero {
-    grid-template-columns:
-      minmax(0, 0.9fr)
-      minmax(430px, 1.1fr);
-
-    gap: 45px;
-  }
-
-  .zen-how-step,
-  .zen-how-step.reverse {
-    grid-template-columns:
-      minmax(350px, 0.9fr)
-      minmax(0, 1.1fr);
-  }
+  width: 16px;
+  height: 16px;
 }
 
 /* =========================================================
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (
+  max-width:
+  1280px
+) {
   :root {
-    --zl-header-height: 68px;
+    --zhw-sidebar-width:
+      255px;
   }
 
-  .zen-how-main {
-    width:
-      calc(100% - 28px);
-
+  .zen-how-sidebar-inner {
     padding:
-      22px
-      0
-      70px;
+      23px
+      15px
+      16px;
+  }
+
+  .zen-how-nav-item {
+    min-height: 48px;
+
+    font-size:
+      14px !important;
+  }
+
+  .zen-how-content {
+    width:
+      calc(
+        100% - 52px
+      );
   }
 
   .zen-how-hero {
-    min-height: 0;
+    grid-template-columns:
+      minmax(
+        0,
+        0.9fr
+      )
+      minmax(
+        390px,
+        1.1fr
+      );
+
+    gap: 35px;
+  }
+
+  .zen-how-card-layer.step,
+  .zen-how-step.reverse
+  .zen-how-card-layer.step {
+    grid-template-columns:
+      minmax(
+        340px,
+        0.9fr
+      )
+      minmax(
+        0,
+        1.1fr
+      );
+  }
+}
+
+/* =========================================================
+   MOBILE SHELL
+========================================================= */
+
+@media (
+  max-width:
+  980px
+) {
+  .zen-how-sidebar {
+    display: none;
+  }
+
+  .zen-how-mobile-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 1100;
+
+    height: 72px;
+
+    padding:
+      0
+      18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+      space-between;
+
+    border-bottom:
+      1px solid
+      var(--zhw-border);
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      );
+
+    backdrop-filter:
+      blur(18px);
+  }
+
+  .zen-how-mobile-brand {
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      10px !important;
+
+    color:
+      var(--zhw-navy) !important;
+
+    font-family:
+      "Manrope",
+      sans-serif !important;
+
+    font-size:
+      19px !important;
+  }
+
+  .zen-how-mobile-brand
+  > span {
+    width: 38px;
+    height: 38px;
+
+    padding: 7px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    background:
+      linear-gradient(
+        145deg,
+        #315ed5,
+        #756ae7
+      );
+  }
+
+  .zen-how-mobile-brand img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    filter:
+      brightness(0)
+      invert(1);
+  }
+
+  .zen-how-mobile-toggle {
+    width:
+      44px !important;
+
+    height:
+      44px !important;
+
+    display:
+      grid !important;
+
+    place-items:
+      center !important;
+
+    border:
+      1px solid
+      var(--zhw-border) !important;
+
+    border-radius:
+      12px !important;
+
+    color:
+      var(--zhw-navy) !important;
+
+    background:
+      #ffffff !important;
+  }
+
+  .zen-how-mobile-toggle svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .zen-how-mobile-drawer {
+    position: fixed;
+
+    z-index: 1080;
+
+    top: 82px;
+
+    left: 14px;
+    right: 14px;
+
+    max-height:
+      calc(
+        100dvh - 98px
+      );
+
+    padding: 14px;
+
+    display: block;
+
+    overflow-y: auto;
+
+    border:
+      1px solid
+      var(--zhw-border);
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0
+      25px
+      60px
+      rgba(
+        23,
+        42,
+        82,
+        0.16
+      );
+  }
+
+  .zen-how-mobile-user {
+    padding:
+      10px
+      8px
+      15px;
+
+    display: grid;
+
+    grid-template-columns:
+      42px
+      minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 11px;
+
+    border-bottom:
+      1px solid
+      var(--zhw-border);
+  }
+
+  .zen-how-mobile-user > div {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+  }
+
+  .zen-how-mobile-user strong,
+  .zen-how-mobile-user small {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+  }
+
+  .zen-how-mobile-user strong {
+    color:
+      var(--zhw-navy);
+
+    font-size: 14px;
+  }
+
+  .zen-how-mobile-user small {
+    color:
+      var(--zhw-text-muted);
+
+    font-size: 11px;
+  }
+
+  .zen-how-mobile-drawer nav {
+    padding-top: 9px;
+
+    display: grid;
+
+    gap: 3px;
+  }
+
+  .zen-how-mobile-drawer
+  nav
+  button {
+    width:
+      100% !important;
+
+    min-height: 49px;
+
+    padding:
+      0
+      12px !important;
+
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      11px !important;
+
+    border-radius:
+      11px !important;
+
+    color:
+      #667287 !important;
+
+    font-size:
+      14px !important;
+
+    font-weight:
+      600 !important;
+
+    text-align:
+      left !important;
+  }
+
+  .zen-how-mobile-drawer
+  nav
+  button
+  svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .zen-how-mobile-drawer
+  nav
+  button.active {
+    color:
+      var(--zhw-blue) !important;
+
+    background:
+      var(--zhw-blue-light) !important;
+  }
+
+  .zen-how-mobile-drawer
+  nav
+  button.logout {
+    margin-top:
+      7px !important;
+
+    color:
+      var(--zhw-danger) !important;
+
+    border-top:
+      1px solid
+      var(--zhw-border) !important;
+
+    border-radius:
+      0 !important;
+  }
+
+  .zen-how-main {
+    margin-left: 0;
+
+    padding-top: 72px;
+  }
+
+  .zen-how-content {
+    width:
+      calc(
+        100% - 34px
+      );
+
+    padding:
+      38px
+      0
+      50px;
+  }
+
+  .zen-how-hero {
+    min-height: auto;
 
     grid-template-columns:
       1fr;
@@ -1381,22 +2718,21 @@
     gap: 30px;
   }
 
-  .zen-how-hero-copy {
-    max-width: 720px;
-  }
-
   .zen-how-hero-visual {
-    min-height: 390px;
+    max-width: 760px;
   }
 
   .zen-how-summary {
     grid-template-columns:
       repeat(
         5,
-        minmax(0, 1fr)
+        minmax(
+          0,
+          1fr
+        )
       );
 
-    gap: 8px;
+    gap: 10px;
   }
 
   .zen-how-summary > svg {
@@ -1416,15 +2752,16 @@
     grid-template-columns:
       1fr;
 
-    gap: 12px;
+    gap: 11px;
   }
 
   .zen-how-section-head > p {
-    max-width: 560px;
+    max-width: 600px;
   }
 
-  .zen-how-step,
-  .zen-how-step.reverse {
+  .zen-how-card-layer.step,
+  .zen-how-step.reverse
+  .zen-how-card-layer.step {
     grid-template-columns:
       1fr;
 
@@ -1438,27 +2775,36 @@
     order: initial;
   }
 
-  .zen-how-step-image-wrap {
-    min-height: 360px;
-  }
-
   .zen-how-step-copy,
   .zen-how-step.reverse
   .zen-how-step-copy {
     padding:
       31px
       18px
-      24px;
+      20px;
+  }
+
+  .zen-how-step-image-wrap {
+    min-height: 390px;
   }
 
   .zen-how-interpretation {
     grid-template-columns:
-      45px
-      1fr;
+      52px
+      minmax(
+        0,
+        1fr
+      );
   }
 
   .zen-how-interpretation > p {
     grid-column: 2;
+  }
+
+  .zen-how-cta {
+    align-items: flex-start;
+
+    flex-direction: column;
   }
 }
 
@@ -1466,45 +2812,63 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 620px) {
-  :root {
-    --zl-header-height: 64px;
+@media (
+  max-width:
+  680px
+) {
+  .zen-how-mobile-header {
+    height: 66px;
+
+    padding:
+      0
+      12px;
   }
 
   .zen-how-main {
-    width:
-      calc(100% - 16px);
-
-    padding:
-      18px
-      0
-      50px;
+    padding-top: 66px;
   }
 
-  .zen-how-hero {
-    padding-top: 3px;
+  .zen-how-content {
+    width:
+      calc(
+        100% - 20px
+      );
 
-    padding-bottom: 35px;
+    padding:
+      28px
+      0
+      40px;
+  }
+
+  .zen-how-eyebrow {
+    margin-bottom: 15px;
+
+    font-size: 11px;
+  }
+
+  .zen-how-overline {
+    font-size: 15px;
   }
 
   .zen-how-hero h1 {
     font-size:
       clamp(
-        38px,
-        11.5vw,
-        50px
+        40px,
+        12vw,
+        55px
       );
   }
 
-  .zen-how-hero-copy > p {
-    font-size: 11px;
+  .zen-how-description {
+    margin-top: 17px;
+
+    font-size: 15px;
   }
 
   .zen-how-hero-actions {
-    display: grid;
+    align-items: stretch;
 
-    grid-template-columns:
-      1fr;
+    flex-direction: column;
   }
 
   .zen-how-primary-link,
@@ -1512,133 +2876,164 @@
     width: 100%;
   }
 
-  .zen-how-hero-visual {
-    min-height: 345px;
-
-    border-radius: 18px;
-  }
-
-  .zen-how-hero-visual::before {
-    width: 270px;
-    height: 270px;
-  }
-
-  .zen-how-hero-visual::after {
-    width: 205px;
-    height: 205px;
+  .zen-how-hero-visual,
+  .zen-how-hero-visual
+  .zen-how-card-layer {
+    min-height: 390px;
   }
 
   .zen-how-visual-core {
-    width: 170px;
-    height: 170px;
+    width: 165px;
+    height: 165px;
+
+    padding: 20px;
+  }
+
+  .zen-how-visual-core strong {
+    font-size: 18px;
+  }
+
+  .zen-how-visual-lines::before {
+    width: 260px;
+    height: 260px;
+  }
+
+  .zen-how-visual-lines::after {
+    width: 210px;
+    height: 210px;
   }
 
   .zen-how-visual-node {
-    min-width: 78px;
+    min-width: 105px;
 
-    font-size: 7px;
+    min-height: 51px;
+
+    grid-template-columns:
+      28px
+      minmax(0, 1fr);
+
+    padding:
+      7px
+      9px;
+  }
+
+  .zen-how-visual-node > svg {
+    width: 28px;
+    height: 28px;
+
+    padding: 7px;
   }
 
   .zen-how-visual-node.node-one {
-    top: 37px;
-    left: 22px;
+    top: 38px;
+    left: 14px;
   }
 
   .zen-how-visual-node.node-two {
-    top: 68px;
-    right: 18px;
+    top: 57px;
+    right: 13px;
   }
 
   .zen-how-visual-node.node-three {
-    bottom: 62px;
-    left: 19px;
+    bottom: 58px;
+    left: 12px;
   }
 
   .zen-how-visual-node.node-four {
-    right: 23px;
-    bottom: 36px;
+    right: 14px;
+    bottom: 34px;
   }
 
   .zen-how-summary {
-    margin-bottom: 50px;
+    margin-bottom: 60px;
 
-    padding: 16px;
+    padding: 14px;
 
     grid-template-columns:
-      1fr
       1fr;
 
-    gap: 10px;
+    gap: 4px;
   }
 
   .zen-how-summary > div {
-    min-height: 86px;
+    min-height: 59px;
 
-    padding: 13px;
+    padding:
+      5px
+      4px;
 
-    align-content: center;
+    grid-template-columns:
+      35px
+      1fr;
 
-    border:
+    justify-items: initial;
+
+    text-align: left;
+
+    border-bottom:
       1px solid
-      var(--zhw-line);
-
-    border-radius: 11px;
-
-    background:
-      #fafbfe;
+      var(--zhw-border);
   }
 
-  .zen-how-summary > div:last-child {
-    grid-column:
-      1 / -1;
+  .zen-how-summary > div:nth-last-child(1) {
+    border-bottom: 0;
   }
 
-  .zen-how-section-head h2 {
-    font-size: 31px;
+  .zen-how-summary small {
+    white-space: normal;
   }
 
-  .zen-how-step {
-    padding: 10px;
-
-    border-radius: 17px;
+  .zen-how-card-layer.step {
+    padding: 12px;
   }
 
   .zen-how-step-image-wrap {
-    min-height: 260px;
-
-    border-radius: 13px;
-  }
-
-  .zen-how-step-number {
-    width: 44px;
-    height: 44px;
+    min-height: 270px;
   }
 
   .zen-how-step-copy,
   .zen-how-step.reverse
   .zen-how-step-copy {
     padding:
-      26px
+      28px
       9px
-      18px;
+      14px;
   }
 
   .zen-how-step-copy h3 {
-    font-size: 29px;
+    font-size:
+      clamp(
+        28px,
+        9vw,
+        38px
+      );
   }
 
   .zen-how-step-copy > p {
-    font-size: 9.5px;
+    font-size: 13px;
+  }
+
+  .zen-how-step-details {
+    margin-top: 21px;
   }
 
   .zen-how-interpretation {
-    padding: 20px;
+    padding: 23px;
 
     grid-template-columns:
-      40px
+      46px
       1fr;
 
-    gap: 14px;
+    gap: 15px;
+  }
+
+  .zen-how-interpretation-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .zen-how-interpretation h2 {
+    font-size: 19px;
   }
 
   .zen-how-interpretation > p {
@@ -1647,11 +3042,7 @@
   }
 
   .zen-how-cta {
-    padding: 26px 22px;
-
-    align-items: stretch;
-
-    flex-direction: column;
+    padding: 25px;
   }
 
   .zen-how-cta-button {
@@ -1663,38 +3054,31 @@
    SMALL MOBILE
 ========================================================= */
 
-@media (max-width: 390px) {
-  .zen-how-main {
+@media (
+  max-width:
+  390px
+) {
+  .zen-how-content {
     width:
-      calc(100% - 12px);
+      calc(
+        100% - 16px
+      );
   }
 
   .zen-how-hero h1 {
-    font-size: 37px;
+    font-size: 38px;
+  }
+
+  .zen-how-visual-node {
+    min-width: 93px;
   }
 
   .zen-how-visual-node span {
     display: none;
   }
 
-  .zen-how-visual-node {
-    min-width: 38px;
-    width: 38px;
-
-    padding: 0;
-  }
-
-  .zen-how-summary {
-    grid-template-columns:
-      1fr;
-  }
-
-  .zen-how-summary > div:last-child {
-    grid-column: auto;
-  }
-
   .zen-how-step-image-wrap {
-    min-height: 230px;
+    min-height: 235px;
   }
 }
 
@@ -1702,11 +3086,28 @@
    REDUCED MOTION
 ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
-  .zen-how-step-image,
-  .zen-how-primary-link,
-  .zen-how-secondary-link,
-  .zen-how-cta-button {
-    transition: none !important;
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+  .zen-how-card-glow {
+    display: none;
+  }
+
+  .zen-how-step-image {
+    transition: none;
+  }
+
+  .zen-how-page *,
+  .zen-how-page *::before,
+  .zen-how-page *::after {
+    transition-duration:
+      0.01ms !important;
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
   }
 }

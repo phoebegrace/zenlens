@@ -1,588 +1,1016 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
 import {
+  Activity,
   ArrowRight,
   BarChart3,
+  BookOpen,
   Brain,
-  ChevronDown,
+  ChevronRight,
   Clock3,
+  FileText,
   History,
   Home,
+  Info,
   LineChart,
   LogOut,
   Menu,
   ScanFace,
+  ShieldCheck,
   Sparkles,
   Upload,
-  Users,
   X,
 } from "lucide-react";
 
 import { auth, db } from "../components/firebase";
-import "./Homepage.css";
 import zenlensLogo from "../image/app.png";
+
+import "./Homepage.css";
+
+const navigationItems = [
+  {
+    label: "Home",
+    icon: Home,
+    route: "/home",
+    active: true,
+  },
+  {
+    label: "New Analysis",
+    icon: ScanFace,
+    route: "/stressdetection",
+  },
+  {
+    label: "Monitoring",
+    icon: Activity,
+    route: "/stressmonitoring",
+  },
+  {
+    label: "Session History",
+    icon: Clock3,
+    route: "/sessionhistory",
+  },
+  {
+    label: "Overall Insights",
+    icon: BarChart3,
+    route: "/overallhistory",
+  },
+  {
+    label: "Stress History",
+    icon: History,
+    route: "/stresshistory",
+  },
+];
+
+const supportNavigation = [
+  {
+    label: "About ZenLens",
+    icon: Info,
+    route: "/about",
+  },
+  {
+    label: "How It Works",
+    icon: BookOpen,
+    route: "/how-it-works",
+  },
+];
+
+const actionCards = [
+  {
+    title: "New Analysis",
+    description:
+      "Upload classroom images and session information to begin a new emotion and stress analysis.",
+    eyebrow: "Analyze",
+    icon: Upload,
+    route: "/stressdetection",
+    action: "Start analysis",
+    featured: true,
+  },
+  {
+    title: "Monitoring",
+    description:
+      "Review analyzed classroom emotions and examine the stress patterns detected during a session.",
+    eyebrow: "Review",
+    icon: Activity,
+    route: "/stressmonitoring",
+    action: "Open monitoring",
+  },
+  {
+    title: "Session History",
+    description:
+      "Return to previous classroom analyses and review results by session, subject, and date.",
+    eyebrow: "History",
+    icon: Clock3,
+    route: "/sessionhistory",
+    action: "View sessions",
+  },
+  {
+    title: "Weekly Insights",
+    description:
+      "Compare daily and weekly classroom stress patterns and review generated recommendations.",
+    eyebrow: "Insights",
+    icon: LineChart,
+    route: "/overallhistory",
+    action: "View insights",
+  },
+];
+
+const emotionLabels = [
+  "Happiness",
+  "Surprise",
+  "Neutral",
+  "Sadness",
+  "Anger",
+  "Fear",
+  "Disgust",
+];
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const visualRef = useRef(null);
 
   const [userDetails, setUserDetails] = useState(null);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        setUserDetails(null);
-        return;
-      }
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (user) => {
+        if (!user) {
+          setUserDetails(null);
+          return;
+        }
 
-      try {
-        const userRef = doc(db, "Users", user.uid);
-        const userSnapshot = await getDoc(userRef);
+        try {
+          const userRef = doc(db, "Users", user.uid);
+          const userSnapshot = await getDoc(userRef);
 
-        if (userSnapshot.exists()) {
-          setUserDetails(userSnapshot.data());
-        } else {
+          if (userSnapshot.exists()) {
+            setUserDetails(userSnapshot.data());
+          } else {
+            setUserDetails({
+              email: user.email,
+              firstName: "",
+              lastName: "",
+            });
+          }
+        } catch (error) {
+          console.error(
+            "Unable to load user details:",
+            error
+          );
+
           setUserDetails({
             email: user.email,
             firstName: "",
             lastName: "",
           });
         }
-      } catch (error) {
-        console.error("Unable to load user details:", error);
       }
-    });
+    );
 
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/login");
-    } catch (error) {
-      console.error("Unable to sign out:", error);
-    }
-  };
+  const firstName =
+    userDetails?.firstName || "";
 
-  const firstName = userDetails?.firstName || "";
-  const lastName = userDetails?.lastName || "";
-  const email = userDetails?.email || auth.currentUser?.email || "";
+  const lastName =
+    userDetails?.lastName || "";
+
+  const email =
+    userDetails?.email ||
+    auth.currentUser?.email ||
+    "";
 
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
     "ZenLens User";
 
+  const displayFirstName =
+    firstName ||
+    fullName?.split(" ")[0] ||
+    "there";
+
   const initials = (() => {
     if (firstName || lastName) {
-      return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
+      return `${firstName?.[0] || ""}${
+        lastName?.[0] || ""
+      }`.toUpperCase();
     }
 
     return (email?.[0] || "Z").toUpperCase();
   })();
 
-  const goTo = (path) => {
-    setMobileOpen(false);
-    setProfileOpen(false);
-    navigate(path);
+  const goTo = (route) => {
+    setMobileMenuOpen(false);
+    navigate(route);
   };
 
-  const handleVisualMove = (event) => {
-    const element = visualRef.current;
-
-    if (!element) return;
-
-    const rect = element.getBoundingClientRect();
-
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    element.style.setProperty("--home-mouse-x", `${x}px`);
-    element.style.setProperty("--home-mouse-y", `${y}px`);
-    element.style.setProperty("--home-light-opacity", "1");
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error(
+        "Unable to sign out:",
+        error
+      );
+    }
   };
 
-  const handleVisualLeave = () => {
-    const element = visualRef.current;
+  const handleGlowMove = (event) => {
+    const element =
+      event.currentTarget;
 
-    if (!element) return;
+    const rect =
+      element.getBoundingClientRect();
 
-    element.style.setProperty("--home-light-opacity", "0");
+    const x =
+      event.clientX - rect.left;
+
+    const y =
+      event.clientY - rect.top;
+
+    element.style.setProperty(
+      "--glow-x",
+      `${x}px`
+    );
+
+    element.style.setProperty(
+      "--glow-y",
+      `${y}px`
+    );
+
+    element.style.setProperty(
+      "--glow-opacity",
+      "1"
+    );
   };
 
-  const mainActions = [
-    {
-      title: "Analyze a classroom session",
-      description:
-        "Upload classroom images and session information to begin emotion and stress analysis.",
-      icon: Upload,
-      route: "/stressdetection",
-      action: "Start analysis",
-    },
-    {
-      title: "Review session history",
-      description:
-        "Access completed analyses and review classroom results by session, subject, and date.",
-      icon: History,
-      route: "/sessionhistory",
-      action: "View sessions",
-    },
-    {
-      title: "Explore stress insights",
-      description:
-        "Compare daily and weekly results to understand emotional and stress patterns across sessions.",
-      icon: LineChart,
-      route: "/overallhistory",
-      action: "View insights",
-    },
-  ];
+  const handleGlowLeave = (event) => {
+    event.currentTarget.style.setProperty(
+      "--glow-opacity",
+      "0"
+    );
+  };
+
+  const glowProps = {
+    onMouseMove: handleGlowMove,
+    onMouseLeave: handleGlowLeave,
+  };
 
   return (
-    <div className="zen-home-page">
-      <header className="zen-home-header">
-        <div className="zen-home-header-inner">
+    <div className="zen-dashboard-page">
+      <aside className="zen-dashboard-sidebar">
+        <div className="zen-sidebar-inner">
           <button
             type="button"
-            className="zen-home-brand"
+            className="zen-sidebar-brand"
             onClick={() => goTo("/home")}
           >
-            <span className="zen-home-brand-mark">
-              <img src={zenlensLogo} alt="ZenLens" />
+            <span className="zen-sidebar-brand-mark">
+              <img
+                src={zenlensLogo}
+                alt="ZenLens"
+              />
             </span>
 
-            <span className="zen-home-brand-copy">
+            <span className="zen-sidebar-brand-copy">
               <strong>ZenLens</strong>
-              <small>Classroom Stress Analytics</small>
+
+              <small>
+                Classroom Stress Analytics
+              </small>
             </span>
           </button>
 
-          <nav
-            className="zen-home-desktop-nav"
-            aria-label="Main navigation"
-          >
-            <button
-              type="button"
-              className="zen-home-nav-link active"
-              onClick={() => goTo("/home")}
+          <div className="zen-sidebar-nav-wrap">
+            <p className="zen-sidebar-section-label">
+              Workspace
+            </p>
+
+            <nav
+              className="zen-sidebar-navigation"
+              aria-label="ZenLens navigation"
             >
-              <Home />
-              <span>Home</span>
-            </button>
+              {navigationItems.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
 
-            <button
-              type="button"
-              className="zen-home-nav-link"
-              onClick={() => goTo("/stressdetection")}
-            >
-              <ScanFace />
-              <span>Analysis</span>
-            </button>
+                  return (
+                    <button
+                      type="button"
+                      key={item.label}
+                      className={`zen-sidebar-nav-item ${
+                        item.active
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <span className="zen-sidebar-nav-icon">
+                        <Icon />
+                      </span>
 
-            <button
-              type="button"
-              className="zen-home-nav-link"
-              onClick={() => goTo("/sessionhistory")}
-            >
-              <Clock3 />
-              <span>History</span>
-            </button>
-
-            <button
-              type="button"
-              className="zen-home-nav-link"
-              onClick={() => goTo("/overallhistory")}
-            >
-              <BarChart3 />
-              <span>Insights</span>
-            </button>
-
-            <button
-              type="button"
-              className="zen-home-nav-link"
-              onClick={() => goTo("/about")}
-            >
-              <Users />
-              <span>About</span>
-            </button>
-          </nav>
-
-          <div className="zen-home-header-actions">
-            <button
-              type="button"
-              className="zen-home-new-analysis"
-              onClick={() => goTo("/stressdetection")}
-            >
-              <ScanFace />
-              <span>New analysis</span>
-            </button>
-
-            <div className="zen-home-profile-wrap">
-              <button
-                type="button"
-                className="zen-home-profile-button"
-                onClick={() => setProfileOpen((open) => !open)}
-                aria-expanded={profileOpen}
-              >
-                <span className="zen-home-profile-avatar">
-                  {initials}
-                </span>
-
-                <span className="zen-home-profile-meta">
-                  <strong>{fullName}</strong>
-                  <small>{email}</small>
-                </span>
-
-                <ChevronDown
-                  className={`zen-home-profile-chevron ${
-                    profileOpen ? "open" : ""
-                  }`}
-                />
-              </button>
-
-              {profileOpen && (
-                <div className="zen-home-profile-menu">
-                  <div className="zen-home-profile-menu-head">
-                    <span className="zen-home-profile-avatar large">
-                      {initials}
-                    </span>
-
-                    <div>
-                      <strong>{fullName}</strong>
-                      <span>{email}</span>
-                    </div>
-                  </div>
-
-                  <button type="button" onClick={handleLogout}>
-                    <LogOut />
-                    <span>Sign out</span>
-                  </button>
-                </div>
+                      <span>
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                }
               )}
+            </nav>
+
+            <div className="zen-sidebar-divider" />
+
+            <p className="zen-sidebar-section-label">
+              Support
+            </p>
+
+            <nav
+              className="zen-sidebar-navigation"
+              aria-label="ZenLens information"
+            >
+              {supportNavigation.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  return (
+                    <button
+                      type="button"
+                      key={item.label}
+                      className="zen-sidebar-nav-item"
+                      onClick={() =>
+                        goTo(
+                          item.route
+                        )
+                      }
+                    >
+                      <span className="zen-sidebar-nav-icon">
+                        <Icon />
+                      </span>
+
+                      <span>
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </nav>
+          </div>
+
+          <div className="zen-sidebar-bottom">
+            <div className="zen-sidebar-user">
+              <span className="zen-user-avatar">
+                {initials}
+              </span>
+
+              <div className="zen-user-copy">
+                <strong>
+                  {fullName}
+                </strong>
+
+                <small>
+                  {email}
+                </small>
+              </div>
             </div>
 
             <button
               type="button"
-              className="zen-home-mobile-toggle"
-              onClick={() => setMobileOpen((open) => !open)}
-              aria-label="Toggle navigation"
+              className="zen-sidebar-signout"
+              onClick={
+                handleLogout
+              }
             >
-              {mobileOpen ? <X /> : <Menu />}
+              <LogOut />
+
+              <span>
+                Sign out
+              </span>
             </button>
           </div>
         </div>
+      </aside>
+
+      <header className="zen-mobile-header">
+        <button
+          type="button"
+          className="zen-mobile-brand"
+          onClick={() =>
+            goTo("/home")
+          }
+        >
+          <span className="zen-mobile-brand-mark">
+            <img
+              src={zenlensLogo}
+              alt="ZenLens"
+            />
+          </span>
+
+          <span>
+            ZenLens
+          </span>
+        </button>
+
+        <button
+          type="button"
+          className="zen-mobile-toggle"
+          aria-label="Toggle navigation"
+          aria-expanded={
+            mobileMenuOpen
+          }
+          onClick={() =>
+            setMobileMenuOpen(
+              (current) =>
+                !current
+            )
+          }
+        >
+          {mobileMenuOpen ? (
+            <X />
+          ) : (
+            <Menu />
+          )}
+        </button>
       </header>
 
-      {mobileOpen && (
-        <div className="zen-home-mobile-menu">
-          <button type="button" onClick={() => goTo("/home")}>
-            Home
-          </button>
-
-          <button type="button" onClick={() => goTo("/stressdetection")}>
-            Analysis
-          </button>
-
-          <button type="button" onClick={() => goTo("/sessionhistory")}>
-            History
-          </button>
-
-          <button type="button" onClick={() => goTo("/overallhistory")}>
-            Insights
-          </button>
-
-          <button type="button" onClick={() => goTo("/about")}>
-            About
-          </button>
-
-          <button
-            type="button"
-            className="zen-home-mobile-logout"
-            onClick={handleLogout}
-          >
-            Sign out
-          </button>
-        </div>
-      )}
-
-      <main className="zen-home-main">
-        <section className="zen-home-hero">
-          <div className="zen-home-hero-copy">
-            <div className="zen-home-hero-label">
-              <Brain />
-              <span>Classroom stress analysis</span>
-            </div>
-
-            <h1>
-              Understand the patterns
-              <span>behind classroom stress.</span>
-            </h1>
-
-            <p className="zen-home-hero-description">
-              ZenLens analyzes emotional patterns from classroom images
-              to help users review stress signals within individual
-              sessions and across time.
-            </p>
-
-            <div className="zen-home-hero-actions">
-              <button
-                type="button"
-                className="zen-home-primary-button"
-                onClick={() => goTo("/stressdetection")}
-              >
-                <span>Analyze a session</span>
-                <ArrowRight />
-              </button>
-
-              <button
-                type="button"
-                className="zen-home-secondary-button"
-                onClick={() => goTo("/how-it-works")}
-              >
-                <span>How ZenLens works</span>
-              </button>
-            </div>
-
-            <div className="zen-home-hero-process">
-              <div>
-                <span>01</span>
-                <p>
-                  <strong>Classroom images</strong>
-                  <small>Session observations</small>
-                </p>
-              </div>
-
-              <div className="zen-home-process-arrow">
-                <ArrowRight />
-              </div>
-
-              <div>
-                <span>02</span>
-                <p>
-                  <strong>Emotion analysis</strong>
-                  <small>Pattern classification</small>
-                </p>
-              </div>
-
-              <div className="zen-home-process-arrow">
-                <ArrowRight />
-              </div>
-
-              <div>
-                <span>03</span>
-                <p>
-                  <strong>Stress insights</strong>
-                  <small>Session interpretation</small>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            ref={visualRef}
-            className="zen-home-psychology-visual"
-            onMouseMove={handleVisualMove}
-            onMouseLeave={handleVisualLeave}
-          >
-            <div className="zen-home-visual-light" />
-            <div className="zen-home-visual-liquid" />
-            <div className="zen-home-visual-grid" />
-
-            <div className="zen-home-visual-orbit orbit-one" />
-            <div className="zen-home-visual-orbit orbit-two" />
-
-            <div className="zen-home-visual-header">
-              <div>
-                <span>SESSION VIEW</span>
-                <strong>Emotional pattern field</strong>
-              </div>
-
-              <span className="zen-home-visual-status">
-                <i />
-                Image-based analysis
-              </span>
-            </div>
-
-            <div className="zen-home-emotion-field">
-              <div className="zen-home-emotion-ring ring-one" />
-              <div className="zen-home-emotion-ring ring-two" />
-              <div className="zen-home-emotion-ring ring-three" />
-
-              <div className="zen-home-emotion-core">
-                <Brain />
-
-                <div>
-                  <span>Emotion distribution</span>
-                  <strong>Session pattern</strong>
-                </div>
-              </div>
-
-              <span className="zen-home-signal signal-one" />
-              <span className="zen-home-signal signal-two" />
-              <span className="zen-home-signal signal-three" />
-              <span className="zen-home-signal signal-four" />
-              <span className="zen-home-signal signal-five" />
-            </div>
-
-            <div className="zen-home-emotion-list">
-              <span>Happiness</span>
-              <span>Surprise</span>
-              <span>Neutral</span>
-              <span>Sadness</span>
-              <span>Anger</span>
-              <span>Fear</span>
-              <span>Disgust</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="zen-home-method-section">
-          <div className="zen-home-method-copy">
-            <span className="zen-home-section-label">
-              HOW ZENLENS INTERPRETS A SESSION
+      {mobileMenuOpen && (
+        <div className="zen-mobile-drawer">
+          <div className="zen-mobile-user">
+            <span className="zen-user-avatar mobile">
+              {initials}
             </span>
 
-            <h2>
-              One image shows a moment. A session reveals a pattern.
-            </h2>
-
-            <p>
-              ZenLens reviews emotional observations across a classroom
-              session so changes and recurring responses can be examined
-              together rather than treated as isolated expressions.
-            </p>
-          </div>
-
-          <div className="zen-home-method-flow">
-            <div className="zen-home-method-item">
-              <div className="zen-home-method-icon">
-                <ScanFace />
-              </div>
-
-              <span>Step 1</span>
-
-              <strong>Observe expressions</strong>
-
-              <p>
-                Classroom images provide facial observations from
-                different moments in the session.
-              </p>
-            </div>
-
-            <div className="zen-home-method-arrow">
-              <ArrowRight />
-            </div>
-
-            <div className="zen-home-method-item">
-              <div className="zen-home-method-icon">
-                <Brain />
-              </div>
-
-              <span>Step 2</span>
-
-              <strong>Classify emotions</strong>
-
-              <p>
-                Detected expressions are organized into recognized
-                emotional categories.
-              </p>
-            </div>
-
-            <div className="zen-home-method-arrow">
-              <ArrowRight />
-            </div>
-
-            <div className="zen-home-method-item">
-              <div className="zen-home-method-icon">
-                <LineChart />
-              </div>
-
-              <span>Step 3</span>
-
-              <strong>Interpret patterns</strong>
-
-              <p>
-                Results are reviewed across the session to understand
-                broader stress patterns.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="zen-home-actions-section">
-          <div className="zen-home-actions-heading">
             <div>
-              <span className="zen-home-section-label">
-                ZENLENS TOOLS
-              </span>
+              <strong>
+                {fullName}
+              </strong>
 
-              <h2>What would you like to do?</h2>
+              <small>
+                {email}
+              </small>
             </div>
-
-            <p>
-              Analyze a new classroom session, return to previous results,
-              or review stress patterns over time.
-            </p>
           </div>
 
-          <div className="zen-home-action-grid">
-            {mainActions.map((item) => {
-              const Icon = item.icon;
+          <nav className="zen-mobile-navigation">
+            {[
+              ...navigationItems,
+              ...supportNavigation,
+            ].map((item) => {
+              const Icon =
+                item.icon;
 
               return (
                 <button
                   type="button"
-                  className="zen-home-action-card"
-                  key={item.title}
-                  onClick={() => goTo(item.route)}
+                  key={item.label}
+                  className={
+                    item.active
+                      ? "zen-mobile-nav-item active"
+                      : "zen-mobile-nav-item"
+                  }
+                  onClick={() =>
+                    goTo(
+                      item.route
+                    )
+                  }
                 >
-                  <div className="zen-home-action-icon">
-                    <Icon />
-                  </div>
+                  <Icon />
 
-                  <div className="zen-home-action-content">
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                  </div>
-
-                  <div className="zen-home-action-footer">
-                    <span>{item.action}</span>
-
-                    <span className="zen-home-action-arrow">
-                      <ArrowRight />
-                    </span>
-                  </div>
+                  <span>
+                    {item.label}
+                  </span>
                 </button>
               );
             })}
-          </div>
-        </section>
 
-        <section className="zen-home-notice">
-          <div className="zen-home-notice-icon">
-            <Sparkles />
-          </div>
+            <button
+              type="button"
+              className="zen-mobile-nav-item logout"
+              onClick={
+                handleLogout
+              }
+            >
+              <LogOut />
 
-          <div className="zen-home-notice-copy">
-            <span>INTERPRETATION SUPPORT</span>
+              <span>
+                Sign out
+              </span>
+            </button>
+          </nav>
+        </div>
+      )}
 
-            <h2>
-              ZenLens supports stress assessment. It does not replace
-              professional judgment.
-            </h2>
-          </div>
+      <main className="zen-dashboard-main">
+        <div className="zen-dashboard-background-orb orb-one" />
 
-          <p>
-            Results are intended to help organize and visualize classroom
-            emotional patterns. They should be interpreted within the
-            appropriate educational and psychological context.
-          </p>
-        </section>
+        <div className="zen-dashboard-background-orb orb-two" />
+
+        <div className="zen-dashboard-content">
+          <section className="zen-dashboard-intro">
+            <div className="zen-dashboard-intro-copy">
+              <span className="zen-dashboard-eyebrow">
+                <Sparkles />
+
+                ZenLens workspace
+              </span>
+
+              <p className="zen-dashboard-welcome">
+                Welcome back,{" "}
+                {displayFirstName}.
+              </p>
+
+              <h1>
+                Classroom Stress
+                <span>
+                  {" "}
+                  Dashboard
+                </span>
+              </h1>
+
+              <p className="zen-dashboard-description">
+                Analyze classroom
+                emotions, review
+                stress patterns, and
+                understand changes
+                across individual
+                sessions and over
+                time.
+              </p>
+            </div>
+
+            <div className="zen-dashboard-intro-actions">
+              <button
+                type="button"
+                className="zen-dashboard-primary-button"
+                onClick={() =>
+                  goTo(
+                    "/stressdetection"
+                  )
+                }
+              >
+                <ScanFace />
+
+                <span>
+                  New analysis
+                </span>
+
+                <ArrowRight />
+              </button>
+            </div>
+          </section>
+
+          <section className="zen-dashboard-action-grid">
+            {actionCards.map(
+              (card) => {
+                const Icon =
+                  card.icon;
+
+                return (
+                  <button
+                    type="button"
+                    key={
+                      card.title
+                    }
+                    className={`zen-dashboard-action-card zen-glow-card ${
+                      card.featured
+                        ? "featured"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      goTo(
+                        card.route
+                      )
+                    }
+                    {...glowProps}
+                  >
+                    <span className="zen-card-glow" />
+
+                    <div className="zen-card-content-layer">
+                      <div className="zen-action-card-top">
+                        <span className="zen-action-card-icon">
+                          <Icon />
+                        </span>
+
+                        <span className="zen-action-card-eyebrow">
+                          {
+                            card.eyebrow
+                          }
+                        </span>
+                      </div>
+
+                      <div className="zen-action-card-copy">
+                        <h2>
+                          {
+                            card.title
+                          }
+                        </h2>
+
+                        <p>
+                          {
+                            card.description
+                          }
+                        </p>
+                      </div>
+
+                      <div className="zen-action-card-footer">
+                        <span>
+                          {
+                            card.action
+                          }
+                        </span>
+
+                        <span className="zen-action-card-arrow">
+                          <ArrowRight />
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              }
+            )}
+          </section>
+
+          <section className="zen-dashboard-overview-grid">
+            <article
+              className="zen-overview-card zen-overview-workflow zen-glow-card"
+              {...glowProps}
+            >
+              <span className="zen-card-glow" />
+
+              <div className="zen-card-content-layer">
+                <div className="zen-card-heading">
+                  <div>
+                    <span className="zen-card-label">
+                      Analysis workflow
+                    </span>
+
+                    <h2>
+                      From classroom
+                      images to useful
+                      insight.
+                    </h2>
+                  </div>
+
+                  <span className="zen-heading-icon">
+                    <Brain />
+                  </span>
+                </div>
+
+                <div className="zen-workflow-list">
+                  <div className="zen-workflow-row">
+                    <span className="zen-workflow-number">
+                      01
+                    </span>
+
+                    <span className="zen-workflow-icon">
+                      <Upload />
+                    </span>
+
+                    <div>
+                      <strong>
+                        Upload classroom
+                        observations
+                      </strong>
+
+                      <p>
+                        Add classroom
+                        images together
+                        with the session
+                        information
+                        required for
+                        analysis.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="zen-workflow-connector" />
+
+                  <div className="zen-workflow-row">
+                    <span className="zen-workflow-number">
+                      02
+                    </span>
+
+                    <span className="zen-workflow-icon">
+                      <ScanFace />
+                    </span>
+
+                    <div>
+                      <strong>
+                        Detect emotional
+                        responses
+                      </strong>
+
+                      <p>
+                        ZenLens processes
+                        visible facial
+                        expressions and
+                        organizes
+                        predictions into
+                        supported emotion
+                        classes.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="zen-workflow-connector" />
+
+                  <div className="zen-workflow-row">
+                    <span className="zen-workflow-number">
+                      03
+                    </span>
+
+                    <span className="zen-workflow-icon">
+                      <LineChart />
+                    </span>
+
+                    <div>
+                      <strong>
+                        Review classroom
+                        patterns
+                      </strong>
+
+                      <p>
+                        Examine session
+                        results and
+                        longer-term stress
+                        trends through
+                        ZenLens.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="zen-workflow-link"
+                  onClick={() =>
+                    goTo(
+                      "/how-it-works"
+                    )
+                  }
+                >
+                  <span>
+                    Learn how ZenLens
+                    works
+                  </span>
+
+                  <ChevronRight />
+                </button>
+              </div>
+            </article>
+
+            <article
+              className="zen-overview-card zen-overview-emotions zen-glow-card"
+              {...glowProps}
+            >
+              <span className="zen-card-glow" />
+
+              <div className="zen-card-content-layer">
+                <div className="zen-card-heading">
+                  <div>
+                    <span className="zen-card-label">
+                      Emotion framework
+                    </span>
+
+                    <h2>
+                      Seven recognized
+                      categories.
+                    </h2>
+                  </div>
+
+                  <span className="zen-heading-icon">
+                    <ScanFace />
+                  </span>
+                </div>
+
+                <p className="zen-emotion-description">
+                  ZenLens organizes
+                  detected facial
+                  expressions into seven
+                  emotion categories
+                  used by the classroom
+                  stress analysis
+                  workflow.
+                </p>
+
+                <div className="zen-emotion-list">
+                  {emotionLabels.map(
+                    (
+                      emotion,
+                      index
+                    ) => (
+                      <div
+                        className="zen-emotion-row"
+                        key={
+                          emotion
+                        }
+                      >
+                        <span className="zen-emotion-index">
+                          {String(
+                            index +
+                              1
+                          ).padStart(
+                            2,
+                            "0"
+                          )}
+                        </span>
+
+                        <strong>
+                          {
+                            emotion
+                          }
+                        </strong>
+
+                        <span className="zen-emotion-dot" />
+                      </div>
+                    )
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="zen-emotion-link"
+                  onClick={() =>
+                    goTo(
+                      "/stressmonitoring"
+                    )
+                  }
+                >
+                  <span>
+                    Open stress
+                    monitoring
+                  </span>
+
+                  <ArrowRight />
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <section className="zen-dashboard-lower-grid">
+            <article
+              className="zen-lower-card zen-glow-card"
+              {...glowProps}
+            >
+              <span className="zen-card-glow" />
+
+              <div className="zen-card-content-layer lower">
+                <div className="zen-lower-card-icon">
+                  <FileText />
+                </div>
+
+                <div>
+                  <span className="zen-card-label">
+                    Previous sessions
+                  </span>
+
+                  <h3>
+                    Return to your
+                    analysis history.
+                  </h3>
+
+                  <p>
+                    Access previously
+                    completed classroom
+                    sessions and review
+                    their analysis
+                    results whenever you
+                    need them.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    goTo(
+                      "/sessionhistory"
+                    )
+                  }
+                >
+                  View session history
+
+                  <ArrowRight />
+                </button>
+              </div>
+            </article>
+
+            <article
+              className="zen-lower-card zen-glow-card"
+              {...glowProps}
+            >
+              <span className="zen-card-glow" />
+
+              <div className="zen-card-content-layer lower">
+                <div className="zen-lower-card-icon">
+                  <BarChart3 />
+                </div>
+
+                <div>
+                  <span className="zen-card-label">
+                    Trends and
+                    recommendations
+                  </span>
+
+                  <h3>
+                    Review stress
+                    patterns over time.
+                  </h3>
+
+                  <p>
+                    Compare daily and
+                    weekly results and
+                    review the
+                    recommendation
+                    generated for the
+                    selected analysis
+                    period.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    goTo(
+                      "/overallhistory"
+                    )
+                  }
+                >
+                  Open overall insights
+
+                  <ArrowRight />
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <section
+            className="zen-dashboard-notice zen-glow-card"
+            {...glowProps}
+          >
+            <span className="zen-card-glow" />
+
+            <div className="zen-card-content-layer notice">
+              <div className="zen-notice-icon">
+                <ShieldCheck />
+              </div>
+
+              <div className="zen-notice-main">
+                <span className="zen-card-label">
+                  Interpretation
+                  support
+                </span>
+
+                <h2>
+                  ZenLens supports
+                  classroom stress
+                  assessment.
+                </h2>
+              </div>
+
+              <p>
+                Results help organize
+                and visualize classroom
+                emotional patterns.
+                They should be
+                interpreted together
+                with appropriate
+                educational and
+                professional judgment.
+              </p>
+            </div>
+          </section>
+
+          <footer className="zen-dashboard-footer">
+            <div>
+              <img
+                src={zenlensLogo}
+                alt=""
+              />
+
+              <span>
+                ZenLens
+              </span>
+            </div>
+
+            <p>
+              Image-Based Stress
+              Detection and Classroom
+              Stress Analytics
+            </p>
+          </footer>
+        </div>
       </main>
     </div>
   );

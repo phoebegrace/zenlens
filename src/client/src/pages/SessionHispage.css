@@ -1,25 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap");
 
 :root {
-  --zsh-navy: #0b1735;
-  --zsh-navy-soft: #172747;
+  --zs-navy: #081935;
+  --zs-blue: #315ed5;
+  --zs-blue-bright: #4b78ed;
+  --zs-blue-light: #edf3ff;
 
-  --zsh-blue: #4b78ed;
-  --zsh-blue-dark: #315ed5;
-  --zsh-blue-soft: #eef3ff;
+  --zs-text: #142341;
+  --zs-text-soft: #6d7a92;
+  --zs-text-muted: #98a4b8;
 
-  --zsh-violet: #7868e8;
+  --zs-border: #dfe6f1;
+  --zs-border-strong: #cfd9e8;
 
-  --zsh-text: #1c2a43;
-  --zsh-text-soft: #69768c;
-  --zsh-text-muted: #98a5b8;
+  --zs-danger: #b64859;
+  --zs-danger-bg: #fff1f4;
 
-  --zsh-line: #e2e8f1;
-  --zsh-line-dark: #d2ddeb;
-
-  --zsh-white: #ffffff;
-
-  --zl-header-height: 76px;
+  --zs-sidebar-width: 290px;
 }
 
 /* =========================================================
@@ -34,8 +31,6 @@
 }
 
 .zen-session-page {
-  position: relative;
-
   width: 100%;
   min-width: 0;
 
@@ -46,48 +41,31 @@
 
   overflow-x: clip;
 
+  color: var(--zs-text);
+
   font-family:
     "Inter",
     sans-serif;
 
-  color:
-    var(--zsh-text);
-
-  background:
-    radial-gradient(
-      circle at 83% 2%,
-      rgba(105, 120, 255, 0.065),
-      transparent 22%
-    ),
-    linear-gradient(
-      180deg,
-      #fcfdff 0%,
-      #f7f9fd 58%,
-      #ffffff 100%
-    );
+  background: #f4f6fc;
 }
 
 .zen-session-page button {
   width: auto;
   max-width: none;
 
-  height: auto;
-
   margin: 0;
   padding: 0;
 
   border: 0;
-  border-radius: 0;
-  outline: 0;
-
-  background: none;
-  box-shadow: none;
 
   color: inherit;
 
-  font: inherit;
+  background: none;
 
-  text-align: inherit;
+  box-shadow: none;
+
+  font: inherit;
 
   cursor: pointer;
 
@@ -96,69 +74,649 @@
 }
 
 /* =========================================================
-   MAIN
+   SIDEBAR
 ========================================================= */
 
-.zen-session-main {
-  width:
-    min(
-      1320px,
-      calc(100% - 48px)
-    );
+.zen-session-sidebar {
+  position: fixed;
 
-  margin:
-    var(--zl-header-height)
+  inset:
+    0
     auto
+    0
     0;
 
-  padding:
-    22px
+  z-index: 1000;
+
+  width:
+    var(--zs-sidebar-width);
+
+  height: 100vh;
+  height: 100dvh;
+
+  border-right:
+    1px solid
+    var(--zs-border);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    8px
     0
-    90px;
+    35px
+    rgba(
+      30,
+      50,
+      95,
+      0.025
+    );
+}
+
+.zen-session-sidebar-inner {
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+
+  padding:
+    27px
+    20px
+    18px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
 }
 
 /* =========================================================
-   INTRO
+   BRAND
 ========================================================= */
 
-.zen-session-intro {
-  width: 100%;
+.zen-session-brand {
+  width:
+    100% !important;
+
+  flex:
+    0
+    0
+    auto;
 
   padding:
-    9px
     0
-    34px;
+    7px
+    23px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    13px !important;
+
+  text-align:
+    left !important;
+}
+
+.zen-session-brand-mark {
+  width: 47px;
+  height: 47px;
+
+  min-width: 47px;
+
+  padding: 9px;
+
+  display: grid;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3b74f2,
+      #556ee9 50%,
+      #7866e8
+    );
+
+  box-shadow:
+    0
+    12px
+    26px
+    rgba(
+      57,
+      94,
+      220,
+      0.2
+    );
+}
+
+.zen-session-brand-mark img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  filter:
+    brightness(0)
+    invert(1);
+}
+
+.zen-session-brand-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-session-brand-copy strong {
+  color:
+    var(--zs-navy);
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 21px;
+
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.045em;
+}
+
+.zen-session-brand-copy small {
+  color:
+    var(--zs-text-muted);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.zen-session-nav-scroll {
+  flex:
+    1
+    1
+    auto;
+
+  min-height: 0;
+
+  padding-right: 3px;
+  padding-bottom: 18px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.zen-session-nav-label {
+  margin:
+    19px
+    10px
+    10px;
+
+  color: #98a4b6;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.zen-session-navigation {
+  display: grid;
+
+  gap: 4px;
+}
+
+.zen-session-nav-item {
+  width:
+    100% !important;
+
+  min-height: 52px;
+
+  padding:
+    0
+    13px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    12px !important;
+
+  border-radius:
+    13px !important;
+
+  color:
+    #69768c !important;
+
+  font-size:
+    15px !important;
+
+  font-weight: 500;
+
+  text-align:
+    left !important;
+
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.zen-session-nav-icon {
+  width: 31px;
+  height: 31px;
+
+  min-width: 31px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 9px;
+}
+
+.zen-session-nav-item svg {
+  width: 19px;
+  height: 19px;
+}
+
+.zen-session-nav-item:hover {
+  transform:
+    translateX(2px);
+
+  color:
+    var(--zs-blue) !important;
+
+  background:
+    #f4f7fd !important;
+}
+
+.zen-session-nav-item.active {
+  color:
+    var(--zs-blue) !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef3ff,
+      #e8efff
+    ) !important;
+}
+
+.zen-session-nav-item.active
+.zen-session-nav-icon {
+  background: #ffffff;
+
+  box-shadow:
+    0
+    6px
+    15px
+    rgba(
+      49,
+      94,
+      213,
+      0.09
+    );
+}
+
+.zen-session-nav-divider {
+  height: 1px;
+
+  margin:
+    18px
+    8px
+    12px;
+
+  background:
+    var(--zs-border);
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.zen-session-sidebar-bottom {
+  flex:
+    0
+    0
+    auto;
+
+  padding-top: 13px;
+
+  border-top:
+    1px solid
+    var(--zs-border);
+
+  background: #ffffff;
+}
+
+.zen-session-user {
+  min-width: 0;
+
+  padding: 8px;
 
   display: grid;
 
   grid-template-columns:
-    minmax(0, 0.92fr)
-    minmax(320px, 0.68fr);
+    42px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.zen-session-user-avatar {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+
+  color:
+    var(--zs-blue);
+
+  background:
+    linear-gradient(
+      145deg,
+      #eef3ff,
+      #e5edff
+    );
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.zen-session-user-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-session-user-copy strong,
+.zen-session-user-copy small {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.zen-session-user-copy strong {
+  color:
+    var(--zs-navy);
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.zen-session-user-copy small {
+  color:
+    var(--zs-text-muted);
+
+  font-size: 10px;
+}
+
+.zen-session-signout {
+  width:
+    100% !important;
+
+  min-height: 44px;
+
+  margin-top:
+    3px !important;
+
+  padding:
+    0
+    11px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    11px !important;
+
+  border-radius:
+    11px !important;
+
+  color:
+    #788497 !important;
+
+  font-size:
+    13px !important;
+
+  font-weight: 600;
+}
+
+.zen-session-signout svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zen-session-signout:hover {
+  color:
+    var(--zs-danger) !important;
+
+  background:
+    #fff2f4 !important;
+}
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+.zen-session-mobile-header,
+.zen-session-mobile-drawer {
+  display: none;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.zen-session-main {
+  position: relative;
+
+  min-height:
+    100vh;
+  min-height:
+    100dvh;
+
+  margin-left:
+    var(--zs-sidebar-width);
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 14% 10%,
+      rgba(
+        144,
+        220,
+        255,
+        0.16
+      ),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 89% 5%,
+      rgba(
+        192,
+        132,
+        255,
+        0.15
+      ),
+      transparent 29%
+    ),
+    radial-gradient(
+      circle at 54% 48%,
+      rgba(
+        83,
+        99,
+        225,
+        0.08
+      ),
+      transparent 41%
+    ),
+    linear-gradient(
+      145deg,
+      #f6f9ff 0%,
+      #f2f4fd 47%,
+      #f8f6ff 100%
+    );
+}
+
+.zen-session-orb {
+  position: absolute;
+
+  z-index: 0;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(15px);
+}
+
+.zen-session-orb.orb-one {
+  width: 450px;
+  height: 450px;
+
+  top: -260px;
+  right: 0;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        105,
+        177,
+        255,
+        0.16
+      ),
+      transparent 70%
+    );
+}
+
+.zen-session-orb.orb-two {
+  width: 520px;
+  height: 520px;
+
+  left: 10%;
+  bottom: -330px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        123,
+        98,
+        230,
+        0.1
+      ),
+      transparent 70%
+    );
+}
+
+.zen-session-main-content {
+  position: relative;
+
+  z-index: 2;
+
+  width:
+    min(
+      1420px,
+      calc(
+        100% - 78px
+      )
+    );
+
+  margin: 0 auto;
+
+  padding:
+    50px
+    0
+    60px;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.zen-session-intro {
+  margin-bottom: 34px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(
+      380px,
+      0.65fr
+    );
 
   align-items: end;
 
-  justify-content: space-between;
-
-  gap: 60px;
+  gap: 48px;
 }
 
 .zen-session-intro-copy {
-  width: 100%;
-  max-width: 630px;
-
-  min-width: 0;
+  max-width: 760px;
 }
 
 .zen-session-eyebrow {
   width: fit-content;
 
-  margin-bottom: 17px;
+  margin-bottom: 19px;
 
   padding:
-    7px
-    10px;
+    8px
+    11px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
@@ -166,71 +724,84 @@
 
   border:
     1px solid
-    #dce5f2;
+    rgba(
+      200,
+      213,
+      235,
+      0.82
+    );
 
   border-radius: 999px;
 
-  background:
-    rgba(255, 255, 255, 0.78);
-
   color:
-    #58677f;
+    var(--zs-blue);
 
-  font-size: 9px;
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.68
+    );
 
-  line-height: 1;
+  font-size: 12px;
 
   font-weight: 700;
+
+  backdrop-filter: blur(14px);
 }
 
 .zen-session-eyebrow svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
+}
+
+.zen-session-overline {
+  margin:
+    0
+    0
+    7px;
 
   color:
-    var(--zsh-violet);
+    var(--zs-text-soft);
+
+  font-size: 17px;
+
+  font-weight: 500;
 }
 
 .zen-session-intro h1 {
-  max-width: 610px;
-
   margin: 0;
+
+  color:
+    var(--zs-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zsh-navy);
-
   font-size:
     clamp(
-      45px,
-      4vw,
-      61px
+      49px,
+      4.4vw,
+      67px
     );
 
-  line-height: 1.015;
+  line-height: 0.99;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.062em;
-
-  text-wrap: balance;
+    -0.06em;
 }
 
 .zen-session-intro h1 span {
-  display: block;
-
-  margin-top: 4px;
-
   color:
-    var(--zsh-blue);
+    var(--zs-blue);
 }
 
-.zen-session-intro-copy > p {
-  max-width: 545px;
+.zen-session-description {
+  max-width: 700px;
 
   margin:
     20px
@@ -238,9 +809,9 @@
     0;
 
   color:
-    var(--zsh-text-soft);
+    var(--zs-text-soft);
 
-  font-size: 12px;
+  font-size: 16px;
 
   line-height: 1.72;
 }
@@ -250,14 +821,7 @@
 ========================================================= */
 
 .zen-session-overview {
-  width: 100%;
-  max-width: 470px;
-
-  justify-self: end;
-
-  padding:
-    22px
-    24px;
+  padding: 20px;
 
   display: grid;
 
@@ -267,156 +831,93 @@
       minmax(0, 1fr)
     );
 
-  gap: 0;
+  gap: 12px;
 
   border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
-  border-radius: 18px;
+  border-radius: 20px;
 
   background:
-    rgba(255, 255, 255, 0.83);
+    rgba(
+      255,
+      255,
+      255,
+      0.8
+    );
 
   box-shadow:
     0
-    12px
-    36px
-    rgba(28, 49, 89, 0.04);
+    15px
+    38px
+    rgba(
+      30,
+      49,
+      90,
+      0.04
+    );
 
-  backdrop-filter:
-    blur(14px);
-
-  -webkit-backdrop-filter:
-    blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 .zen-session-overview > div {
   min-width: 0;
 
-  padding:
-    2px
-    22px;
+  padding: 16px;
 
-  display: flex;
+  display: grid;
 
-  flex-direction: column;
-
-  gap: 5px;
-
-  border-right:
-    1px solid
-    var(--zsh-line);
-}
-
-.zen-session-overview > div:first-child {
-  padding-left: 0;
-}
-
-.zen-session-overview > div:last-child {
-  padding-right: 0;
-
-  border-right: 0;
-}
-
-.zen-session-overview span {
-  color:
-    var(--zsh-text-muted);
-
-  font-size: 7px;
-
-  line-height: 1;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.11em;
-}
-
-.zen-session-overview strong {
-  overflow: hidden;
-
-  color:
-    var(--zsh-navy);
-
-  font-family:
-    "Manrope",
-    sans-serif;
-
-  font-size: 17px;
-
-  line-height: 1.2;
-
-  font-weight: 800;
-
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-}
-
-.zen-session-overview small {
-  color:
-    var(--zsh-text-muted);
-
-  font-size: 7px;
-
-  line-height: 1.25;
-}
-
-/* =========================================================
-   TOOLBAR
-========================================================= */
-
-.zen-session-toolbar {
-  width: 100%;
-
-  padding:
-    13px
-    14px;
-
-  display: flex;
+  grid-template-columns:
+    44px
+    minmax(0, 1fr);
 
   align-items: center;
 
-  justify-content: space-between;
-
-  gap: 20px;
+  gap: 11px;
 
   border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
-  border-radius: 17px;
+  border-radius: 13px;
 
   background:
-    #ffffff;
-
-  box-shadow:
-    0
-    9px
-    28px
-    rgba(29, 49, 90, 0.035);
+    rgba(
+      255,
+      255,
+      255,
+      0.78
+    );
 }
 
-.zen-session-toolbar-title {
-  min-width: 180px;
+.zen-session-overview-icon {
+  width: 44px;
+  height: 44px;
 
-  display: flex;
+  display: grid;
 
-  align-items: center;
+  place-items: center;
 
-  gap: 10px;
-}
-
-.zen-session-toolbar-title > svg {
-  width: 16px;
-  height: 16px;
+  border-radius: 11px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
+
+  background:
+    var(--zs-blue-light);
 }
 
-.zen-session-toolbar-title > div {
+.zen-session-overview-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zen-session-overview p {
+  min-width: 0;
+
+  margin: 0;
+
   display: flex;
 
   flex-direction: column;
@@ -424,72 +925,284 @@
   gap: 3px;
 }
 
-.zen-session-toolbar-title span {
+.zen-session-overview p span {
   color:
-    var(--zsh-blue-dark);
+    var(--zs-text-muted);
 
-  font-size: 6.5px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.09em;
-}
-
-.zen-session-toolbar-title strong {
-  color:
-    var(--zsh-navy);
-
-  font-size: 9px;
+  font-size: 10px;
 
   font-weight: 700;
 }
 
+.zen-session-overview strong {
+  color:
+    var(--zs-navy);
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 23px;
+
+  line-height: 1;
+
+  font-weight: 800;
+}
+
+.zen-session-overview small {
+  color:
+    var(--zs-text-muted);
+
+  font-size: 10px;
+}
+
 /* =========================================================
-   TOOLBAR FIELDS
+   GLOW
 ========================================================= */
+
+.zen-session-glow-card {
+  --session-glow-x: 50%;
+  --session-glow-y: 50%;
+  --session-glow-opacity: 0;
+
+  position: relative;
+
+  isolation: isolate;
+
+  overflow: hidden;
+}
+
+.zen-session-card-glow {
+  position: absolute;
+
+  z-index: 0;
+
+  left:
+    var(
+      --session-glow-x
+    );
+
+  top:
+    var(
+      --session-glow-y
+    );
+
+  width: 430px;
+  height: 430px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity:
+    var(
+      --session-glow-opacity
+    );
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        113,
+        171,
+        255,
+        0.25
+      ),
+      rgba(
+        112,
+        140,
+        244,
+        0.11
+      ) 37%,
+      rgba(
+        151,
+        113,
+        235,
+        0.05
+      ) 55%,
+      transparent 72%
+    );
+
+  filter: blur(5px);
+
+  transition:
+    opacity 220ms ease;
+}
+
+.zen-session-card-layer {
+  position: relative;
+
+  z-index: 2;
+
+  height: 100%;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.zen-session-toolbar {
+  border:
+    1px solid
+    var(--zs-border);
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.97
+      ),
+      rgba(
+        249,
+        251,
+        255,
+        0.95
+      )
+    );
+
+  box-shadow:
+    0
+    15px
+    38px
+    rgba(
+      30,
+      49,
+      90,
+      0.045
+    );
+}
+
+.zen-session-card-layer.toolbar {
+  padding: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    230px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 18px;
+}
+
+.zen-session-toolbar-title {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    44px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+.zen-session-toolbar-icon {
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 11px;
+
+  color:
+    var(--zs-blue);
+
+  background:
+    var(--zs-blue-light);
+}
+
+.zen-session-toolbar-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zen-session-toolbar-title > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-session-toolbar-title
+> div
+> span {
+  color:
+    var(--zs-blue);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+}
+
+.zen-session-toolbar-title strong {
+  color:
+    var(--zs-navy);
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
 
 .zen-session-toolbar-fields {
   min-width: 0;
-
-  flex:
-    1
-    1
-    auto;
 
   display: grid;
 
   grid-template-columns:
     repeat(
       4,
-      minmax(130px, 1fr)
+      minmax(
+        130px,
+        1fr
+      )
     )
     auto;
 
-  align-items: center;
-
-  gap: 8px;
+  gap: 9px;
 }
 
 .zen-session-select-wrap {
   position: relative;
 
-  width: 100%;
   min-width: 0;
 
-  height: 40px;
+  height: 46px;
 }
 
-.zen-session-select-wrap > svg:first-child {
+.zen-session-select-wrap
+> svg:first-child {
   position: absolute;
-
-  top: 50%;
-  left: 11px;
 
   z-index: 2;
 
-  width: 13px;
-  height: 13px;
+  top: 50%;
+  left: 13px;
+
+  width: 15px;
+  height: 15px;
 
   transform:
     translateY(-50%);
@@ -500,16 +1213,17 @@
   pointer-events: none;
 }
 
-.zen-session-select-wrap > svg:last-child {
+.zen-session-select-wrap
+> svg:last-child {
   position: absolute;
-
-  top: 50%;
-  right: 10px;
 
   z-index: 2;
 
-  width: 12px;
-  height: 12px;
+  top: 50%;
+  right: 11px;
+
+  width: 13px;
+  height: 13px;
 
   transform:
     translateY(-50%);
@@ -524,44 +1238,37 @@
   width: 100%;
   height: 100%;
 
-  margin: 0;
-
   padding:
     0
-    30px
+    31px
     0
-    33px;
+    38px;
 
   border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
-  border-radius: 10px;
+  border-radius: 11px;
 
-  outline: none;
+  outline: 0;
 
   appearance: none;
-  -webkit-appearance: none;
-
-  background:
-    #ffffff;
 
   color:
     #5e6b80;
+
+  background:
+    #ffffff;
 
   font-family:
     "Inter",
     sans-serif;
 
-  font-size: 8.5px;
+  font-size: 12px;
 
   font-weight: 600;
 
   cursor: pointer;
-
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease;
 }
 
 .zen-session-select-wrap select:focus {
@@ -573,57 +1280,56 @@
     0
     0
     4px
-    rgba(75, 120, 237, 0.08);
+    rgba(
+      75,
+      120,
+      237,
+      0.08
+    );
 }
 
-/* =========================================================
-   RESET BUTTON
-========================================================= */
-
-.zen-session-page
 .zen-session-reset-button {
   min-height:
-    40px !important;
+    46px !important;
 
   padding:
     0
-    11px !important;
+    14px !important;
 
   display:
     inline-flex !important;
 
-  align-items: center;
+  align-items:
+    center !important;
 
-  justify-content: center;
+  justify-content:
+    center !important;
 
-  gap: 6px;
+  gap:
+    7px !important;
 
   border:
     1px solid
-    var(--zsh-line) !important;
+    var(--zs-border) !important;
 
   border-radius:
-    10px !important;
+    11px !important;
+
+  color:
+    #667287 !important;
 
   background:
     #ffffff !important;
 
-  color:
-    #69758a !important;
-
-  box-shadow:
-    none !important;
-
   font-size:
-    8px !important;
+    12px !important;
 
-  font-weight:
-    700;
+  font-weight: 700;
 }
 
 .zen-session-reset-button svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 }
 
 /* =========================================================
@@ -631,63 +1337,65 @@
 ========================================================= */
 
 .zen-session-error {
-  margin-top: 12px;
+  margin-top: 16px;
 
   padding:
-    13px
-    14px;
+    15px
+    17px;
 
-  display: flex;
+  display: grid;
+
+  grid-template-columns:
+    20px
+    minmax(0, 1fr)
+    auto;
 
   align-items: center;
 
-  justify-content: space-between;
-
-  gap: 20px;
+  gap: 11px;
 
   border:
     1px solid
-    #efdadd;
+    #f0d7dc;
 
-  border-radius: 11px;
-
-  background:
-    #fff5f6;
+  border-radius: 14px;
 
   color:
-    #b85462;
+    var(--zs-danger);
 
-  font-size: 9px;
+  background:
+    var(--zs-danger-bg);
+
+  font-size: 13px;
 }
 
-.zen-session-page
-.zen-session-error button {
-  flex:
-    0
-    0
-    auto;
+.zen-session-error > svg {
+  width: 19px;
+  height: 19px;
+}
 
-  min-height: 31px;
+.zen-session-error button {
+  min-height: 36px;
 
   padding:
     0
-    10px !important;
+    12px !important;
 
   border:
     1px solid
-    #efdadd !important;
+    #eed8dc !important;
 
   border-radius:
-    8px !important;
+    9px !important;
+
+  color:
+    var(--zs-danger) !important;
 
   background:
     #ffffff !important;
 
-  color:
-    #b85462 !important;
-
   font-size:
-    7.5px !important;
+    11px !important;
 
   font-weight: 700;
 }
@@ -697,88 +1405,81 @@
 ========================================================= */
 
 .zen-session-content {
-  width: 100%;
-
-  margin-top: 26px;
-
-  padding-top: 30px;
-
-  border-top:
-    1px solid
-    var(--zsh-line);
+  margin-top: 30px;
 }
 
 .zen-session-content-head {
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 
   display: grid;
 
   grid-template-columns:
     minmax(0, 1fr)
-    minmax(280px, 370px);
+    minmax(
+      280px,
+      410px
+    );
 
   align-items: end;
 
-  gap: 50px;
+  gap: 40px;
 }
 
-.zen-session-content-head span {
+.zen-session-content-head
+> div
+> span {
   display: block;
 
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 
-  font-size: 7.5px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.11em;
+  letter-spacing: 0.1em;
 }
 
 .zen-session-content-head h2 {
   margin: 0;
 
+  color:
+    var(--zs-navy);
+
   font-family:
     "Manrope",
     sans-serif;
-
-  color:
-    var(--zsh-navy);
 
   font-size:
     clamp(
       31px,
       3vw,
-      43px
+      42px
     );
 
-  line-height: 1.05;
+  line-height: 1.07;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.052em;
+    -0.05em;
 }
 
 .zen-session-content-head > p {
-  margin:
-    0
-    0
-    3px;
+  margin: 0;
 
   color:
-    var(--zsh-text-soft);
+    var(--zs-text-soft);
 
-  font-size: 9px;
+  font-size: 13px;
 
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
 /* =========================================================
-   SESSION LIST
+   LIST
 ========================================================= */
 
 .zen-session-list {
@@ -788,134 +1489,125 @@
 
   border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
-  border-radius: 18px;
+  border-radius: 19px;
 
   background:
-    #ffffff;
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
 
   box-shadow:
     0
-    11px
-    34px
-    rgba(28, 49, 89, 0.04);
+    14px
+    36px
+    rgba(
+      28,
+      49,
+      89,
+      0.04
+    );
+}
+
+.zen-session-list-header,
+.zen-session-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      150px,
+      0.8fr
+    )
+    minmax(
+      190px,
+      1.2fr
+    )
+    minmax(
+      130px,
+      0.7fr
+    )
+    minmax(
+      160px,
+      0.95fr
+    )
+    minmax(
+      160px,
+      0.9fr
+    )
+    52px;
+
+  align-items: center;
+
+  gap: 14px;
 }
 
 .zen-session-list-header {
-  min-height: 45px;
+  min-height: 50px;
 
   padding:
     0
     20px;
 
-  display: grid;
-
-  grid-template-columns:
-    minmax(150px, 0.8fr)
-    minmax(190px, 1.25fr)
-    minmax(120px, 0.75fr)
-    minmax(150px, 0.95fr)
-    minmax(145px, 0.9fr)
-    50px;
-
-  align-items: center;
-
-  gap: 14px;
-
   border-bottom:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
   background:
-    #f8fafe;
+    #f7f9fd;
 }
 
 .zen-session-list-header span {
   color:
     #8f9aac;
 
-  font-size: 6.8px;
+  font-size: 10px;
 
   font-weight: 800;
 
   letter-spacing:
-    0.07em;
+    0.06em;
 
   text-transform: uppercase;
 }
 
-/* =========================================================
-   SESSION ROW
-========================================================= */
-
-.zen-session-page
 .zen-session-row {
   width:
     100% !important;
 
   min-height:
-    86px !important;
+    88px !important;
 
   padding:
     14px
     20px !important;
 
-  display:
-    grid !important;
-
-  grid-template-columns:
-    minmax(150px, 0.8fr)
-    minmax(190px, 1.25fr)
-    minmax(120px, 0.75fr)
-    minmax(150px, 0.95fr)
-    minmax(145px, 0.9fr)
-    50px;
-
-  align-items: center;
-
-  gap: 14px;
-
-  border:
-    0 !important;
-
   border-bottom:
     1px solid
-    var(--zsh-line) !important;
-
-  border-radius:
-    0 !important;
+    var(--zs-border) !important;
 
   background:
     #ffffff !important;
-
-  color:
-    var(--zsh-text) !important;
-
-  box-shadow:
-    none !important;
 
   text-align:
     left !important;
 
   transition:
-    background 160ms ease;
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .zen-session-row:last-child {
-  border-bottom:
-    0 !important;
+  border-bottom: 0 !important;
 }
 
-.zen-session-page
 .zen-session-row:hover {
   background:
     #f8faff !important;
 }
-
-/* =========================================================
-   ID
-========================================================= */
 
 .zen-session-row-id {
   min-width: 0;
@@ -923,7 +1615,7 @@
   display: grid;
 
   grid-template-columns:
-    38px
+    40px
     minmax(0, 1fr);
 
   align-items: center;
@@ -932,8 +1624,8 @@
 }
 
 .zen-session-row-icon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
 
   display: grid;
 
@@ -941,56 +1633,19 @@
 
   border-radius: 11px;
 
-  background:
-    var(--zsh-blue-soft);
-
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
+
+  background:
+    var(--zs-blue-light);
 }
 
 .zen-session-row-icon svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }
 
-.zen-session-row-id > div {
-  min-width: 0;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 3px;
-}
-
-.zen-session-row-id span:not(.zen-session-row-icon) {
-  color:
-    var(--zsh-text-muted);
-
-  font-size: 6.5px;
-
-  font-weight: 700;
-}
-
-.zen-session-row-id strong {
-  overflow: hidden;
-
-  color:
-    var(--zsh-navy);
-
-  font-size: 9px;
-
-  font-weight: 700;
-
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-}
-
-/* =========================================================
-   SUBJECT
-========================================================= */
-
+.zen-session-row-id > div,
 .zen-session-row-subject {
   min-width: 0;
 
@@ -1001,6 +1656,33 @@
   gap: 3px;
 }
 
+.zen-session-row-id
+span:not(
+  .zen-session-row-icon
+) {
+  color:
+    var(--zs-text-muted);
+
+  font-size: 9px;
+
+  font-weight: 700;
+}
+
+.zen-session-row-id strong {
+  overflow: hidden;
+
+  color:
+    var(--zs-navy);
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
 .zen-session-row-subject > span {
   display: none;
 }
@@ -1009,15 +1691,13 @@
   overflow: hidden;
 
   color:
-    var(--zsh-navy);
+    var(--zs-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  font-size: 11px;
-
-  line-height: 1.2;
+  font-size: 14px;
 
   font-weight: 700;
 
@@ -1028,14 +1708,10 @@
 
 .zen-session-row-subject small {
   color:
-    var(--zsh-text-muted);
+    var(--zs-text-muted);
 
-  font-size: 7px;
+  font-size: 10px;
 }
-
-/* =========================================================
-   META
-========================================================= */
 
 .zen-session-row-meta {
   min-width: 0;
@@ -1052,8 +1728,8 @@
 }
 
 .zen-session-row-meta > svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
 
   color:
     #8794a8;
@@ -1076,12 +1752,9 @@
 .zen-session-row-meta strong {
   overflow: hidden;
 
-  color:
-    #536077;
+  color: #536077;
 
-  font-size: 8px;
-
-  line-height: 1.2;
+  font-size: 12px;
 
   font-weight: 600;
 
@@ -1094,86 +1767,20 @@
   justify-self: end;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 
-  font-size: 7.5px;
+  font-size: 11px;
 
   font-weight: 700;
 }
 
 /* =========================================================
-   LOADING
+   LOADING / EMPTY
 ========================================================= */
 
-.zen-session-loading {
-  min-height: 280px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border:
-    1px solid
-    var(--zsh-line);
-
-  border-radius: 18px;
-
-  background:
-    #ffffff;
-
-  text-align: center;
-}
-
-.zen-session-loading-spinner {
-  width: 34px;
-  height: 34px;
-
-  margin-bottom: 14px;
-
-  border:
-    3px solid
-    #e2e8f4;
-
-  border-top-color:
-    var(--zsh-blue-dark);
-
-  border-radius: 50%;
-
-  animation:
-    zenSessionSpin
-    0.9s
-    linear
-    infinite;
-}
-
-.zen-session-loading strong {
-  color:
-    var(--zsh-navy);
-
-  font-size: 12px;
-
-  font-weight: 700;
-}
-
-.zen-session-loading span {
-  margin-top: 4px;
-
-  color:
-    var(--zsh-text-muted);
-
-  font-size: 8px;
-}
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
+.zen-session-loading,
 .zen-session-empty {
-  min-height: 340px;
+  min-height: 330px;
 
   padding: 35px;
 
@@ -1187,19 +1794,62 @@
 
   border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
-  border-radius: 18px;
+  border-radius: 19px;
 
   background:
-    #ffffff;
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
 
   text-align: center;
 }
 
+.zen-session-loading-spinner {
+  width: 38px;
+  height: 38px;
+
+  margin-bottom: 15px;
+
+  border:
+    3px solid
+    #e2e8f4;
+
+  border-top-color:
+    var(--zs-blue);
+
+  border-radius: 50%;
+
+  animation:
+    zenSessionSpin
+    0.9s
+    linear
+    infinite;
+}
+
+.zen-session-loading strong {
+  color:
+    var(--zs-navy);
+
+  font-size: 15px;
+}
+
+.zen-session-loading span {
+  margin-top: 5px;
+
+  color:
+    var(--zs-text-muted);
+
+  font-size: 12px;
+}
+
 .zen-session-empty-icon {
-  width: 56px;
-  height: 56px;
+  width: 62px;
+  height: 62px;
 
   margin-bottom: 18px;
 
@@ -1207,103 +1857,214 @@
 
   place-items: center;
 
-  border-radius: 16px;
-
-  background:
-    var(--zsh-blue-soft);
+  border-radius: 17px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
+
+  background:
+    var(--zs-blue-light);
 }
 
 .zen-session-empty-icon svg {
-  width: 23px;
-  height: 23px;
+  width: 25px;
+  height: 25px;
 }
 
 .zen-session-empty > span {
   margin-bottom: 8px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 
-  font-size: 7px;
+  font-size: 10px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.1em;
+  letter-spacing: 0.1em;
 }
 
 .zen-session-empty h3 {
-  max-width: 430px;
+  max-width: 450px;
 
   margin: 0;
+
+  color:
+    var(--zs-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zsh-navy);
+  font-size: 25px;
 
-  font-size: 23px;
-
-  line-height: 1.18;
+  line-height: 1.2;
 
   font-weight: 800;
-
-  letter-spacing:
-    -0.04em;
 }
 
 .zen-session-empty p {
-  max-width: 420px;
+  max-width: 430px;
 
   margin:
-    10px
+    11px
     0
     0;
 
   color:
-    var(--zsh-text-soft);
+    var(--zs-text-soft);
 
-  font-size: 9px;
+  font-size: 13px;
 
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
-.zen-session-page
 .zen-session-empty button {
-  min-height: 39px;
+  min-height: 42px;
 
   margin-top:
     18px !important;
 
   padding:
     0
-    13px !important;
-
-  border:
-    0 !important;
+    15px !important;
 
   border-radius:
     10px !important;
 
-  background:
-    var(--zsh-navy) !important;
-
   color:
     #ffffff !important;
 
+  background:
+    var(--zs-blue) !important;
+
   font-size:
-    8.5px !important;
+    12px !important;
 
   font-weight: 700;
 }
 
 /* =========================================================
-   OVERLAY
+   NOTE
+========================================================= */
+
+.zen-session-note {
+  margin-top: 28px;
+
+  padding:
+    29px
+    31px;
+
+  display: grid;
+
+  grid-template-columns:
+    50px
+    minmax(0, 1fr)
+    minmax(
+      300px,
+      0.72fr
+    );
+
+  align-items: center;
+
+  gap: 22px;
+
+  border:
+    1px solid
+    var(--zs-border);
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      ),
+      rgba(
+        245,
+        248,
+        255,
+        0.94
+      )
+    );
+}
+
+.zen-session-note-icon {
+  width: 50px;
+  height: 50px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 14px;
+
+  color:
+    var(--zs-blue);
+
+  background:
+    var(--zs-blue-light);
+}
+
+.zen-session-note-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.zen-session-note
+> div:nth-child(2)
+> span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--zs-blue);
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.09em;
+}
+
+.zen-session-note h2 {
+  margin: 0;
+
+  color:
+    var(--zs-navy);
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 22px;
+
+  line-height: 1.22;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.03em;
+}
+
+.zen-session-note > p {
+  margin: 0;
+
+  color:
+    var(--zs-text-soft);
+
+  font-size: 13px;
+
+  line-height: 1.65;
+}
+
+/* =========================================================
+   MODAL OVERLAY
 ========================================================= */
 
 .zen-session-overlay {
@@ -1313,8 +2074,7 @@
 
   z-index: 20000;
 
-  padding:
-    28px;
+  padding: 28px;
 
   display: grid;
 
@@ -1323,19 +2083,18 @@
   overflow-y: auto;
 
   background:
-    rgba(7, 17, 38, 0.54);
+    rgba(
+      7,
+      17,
+      38,
+      0.58
+    );
 
   backdrop-filter:
-    blur(8px);
+    blur(9px);
 
   -webkit-backdrop-filter:
-    blur(8px);
-
-  animation:
-    zenSessionFadeIn
-    170ms
-    ease
-    both;
+    blur(9px);
 }
 
 /* =========================================================
@@ -1345,20 +2104,27 @@
 .zen-session-modal {
   width:
     min(
-      1180px,
+      1200px,
       100%
     );
 
   max-height:
-    calc(100dvh - 56px);
+    calc(
+      100dvh - 56px
+    );
 
   overflow: auto;
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.4);
+    rgba(
+      255,
+      255,
+      255,
+      0.4
+    );
 
-  border-radius: 22px;
+  border-radius: 24px;
 
   background:
     #ffffff;
@@ -1367,18 +2133,12 @@
     0
     38px
     90px
-    rgba(5, 16, 42, 0.24);
-
-  animation:
-    zenSessionModalIn
-    220ms
-    cubic-bezier(
-      0.2,
-      0.8,
-      0.2,
-      1
-    )
-    both;
+    rgba(
+      5,
+      16,
+      42,
+      0.24
+    );
 }
 
 .zen-session-modal-head {
@@ -1389,230 +2149,233 @@
   z-index: 5;
 
   padding:
-    24px
-    26px;
+    25px
+    28px;
 
   display: flex;
 
-  align-items: flex-start;
+  align-items:
+    flex-start;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
-  gap: 30px;
+  gap: 28px;
 
   border-bottom:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
   background:
-    rgba(255, 255, 255, 0.96);
+    rgba(
+      255,
+      255,
+      255,
+      0.97
+    );
 
   backdrop-filter:
-    blur(15px);
-
-  -webkit-backdrop-filter:
-    blur(15px);
+    blur(18px);
 }
 
-.zen-session-modal-head > div {
-  min-width: 0;
-}
-
-.zen-session-modal-head > div > span {
+.zen-session-modal-head
+> div
+> span {
   display: block;
 
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 
-  font-size: 7px;
+  font-size: 10px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.11em;
+  letter-spacing: 0.1em;
 }
 
 .zen-session-modal-head h2 {
   margin: 0;
 
+  color:
+    var(--zs-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zsh-navy);
+  font-size: 30px;
 
-  font-size: 27px;
-
-  line-height: 1.12;
+  line-height: 1.08;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.045em;
+    -0.04em;
 }
 
 .zen-session-modal-head p {
   margin:
-    7px
+    9px
     0
     0;
 
   color:
-    var(--zsh-text-soft);
+    var(--zs-text-soft);
 
-  font-size: 9px;
+  font-size: 13px;
+
+  line-height: 1.55;
 }
 
-.zen-session-page
 .zen-session-modal-close {
   width:
-    36px !important;
+    42px !important;
 
   height:
-    36px !important;
+    42px !important;
 
-  flex:
-    0
-    0
-    36px;
+  min-width: 42px;
 
   display:
     grid !important;
 
-  place-items: center;
+  place-items:
+    center !important;
 
   border:
     1px solid
-    var(--zsh-line) !important;
+    var(--zs-border) !important;
 
   border-radius:
-    10px !important;
+    12px !important;
+
+  color:
+    var(--zs-navy) !important;
 
   background:
     #ffffff !important;
-
-  color:
-    #647187 !important;
-
-  box-shadow:
-    none !important;
 }
 
 .zen-session-modal-close svg {
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
 }
 
-/* =========================================================
-   MODAL BODY
-========================================================= */
-
 .zen-session-modal-body {
-  min-width: 0;
+  padding: 24px;
 
   display: grid;
 
   grid-template-columns:
-    280px
-    minmax(0, 1fr);
+    minmax(
+      260px,
+      0.34fr
+    )
+    minmax(
+      0,
+      1fr
+    );
 
-  align-items: stretch;
+  gap: 20px;
 }
+
+/* =========================================================
+   DETAIL PANEL
+========================================================= */
 
 .zen-session-details-panel {
-  min-width: 0;
+  padding: 22px;
 
-  padding:
-    25px;
-
-  border-right:
+  border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
+
+  border-radius: 18px;
 
   background:
-    #fafbfe;
+    linear-gradient(
+      145deg,
+      #f9fbff,
+      #ffffff
+    );
 }
 
-.zen-session-details-heading {
-  margin-bottom: 21px;
-}
-
-.zen-session-details-heading span {
+.zen-session-details-heading
+span {
   display: block;
 
-  margin-bottom: 5px;
+  margin-bottom: 7px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 
-  font-size: 7px;
+  font-size: 10px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.09em;
+  letter-spacing: 0.09em;
 }
 
 .zen-session-details-heading h3 {
   margin: 0;
 
+  color:
+    var(--zs-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zsh-navy);
-
-  font-size: 18px;
+  font-size: 22px;
 
   font-weight: 800;
-
-  letter-spacing:
-    -0.035em;
 }
 
 .zen-session-detail-list {
+  margin-top: 22px;
+
   display: grid;
 
   gap: 9px;
 }
 
 .zen-session-detail-list > div {
-  min-width: 0;
+  min-height: 64px;
 
-  padding:
-    11px
-    12px;
+  padding: 12px;
 
   display: grid;
 
   grid-template-columns:
-    31px
+    37px
     minmax(0, 1fr);
 
   align-items: center;
 
-  gap: 9px;
+  gap: 10px;
 
   border:
     1px solid
-    var(--zsh-line);
+    #e7ecf3;
 
-  border-radius: 10px;
+  border-radius: 11px;
 
   background:
     #ffffff;
 }
 
-.zen-session-detail-list > div > svg {
-  width: 14px;
-  height: 14px;
+.zen-session-detail-list
+> div
+> svg {
+  width: 17px;
+  height: 17px;
+
+  justify-self: center;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 }
 
 .zen-session-detail-list p {
@@ -1629,22 +2392,18 @@
 
 .zen-session-detail-list span {
   color:
-    var(--zsh-text-muted);
+    var(--zs-text-muted);
 
-  font-size: 6.5px;
-
-  font-weight: 600;
+  font-size: 10px;
 }
 
 .zen-session-detail-list strong {
   overflow: hidden;
 
   color:
-    #47556d;
+    var(--zs-navy);
 
-  font-size: 8.5px;
-
-  line-height: 1.25;
+  font-size: 13px;
 
   font-weight: 700;
 
@@ -1660,102 +2419,111 @@
 .zen-session-chart-panel {
   min-width: 0;
 
-  padding:
-    25px;
-}
-
-.zen-session-chart-head {
-  margin-bottom: 17px;
-
-  display: grid;
-
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(220px, 310px);
-
-  align-items: end;
-
-  gap: 30px;
-}
-
-.zen-session-chart-head span {
-  display: block;
-
-  margin-bottom: 5px;
-
-  color:
-    var(--zsh-blue-dark);
-
-  font-size: 7px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.09em;
-}
-
-.zen-session-chart-head h3 {
-  margin: 0;
-
-  font-family:
-    "Manrope",
-    sans-serif;
-
-  color:
-    var(--zsh-navy);
-
-  font-size: 21px;
-
-  line-height: 1.15;
-
-  font-weight: 800;
-
-  letter-spacing:
-    -0.04em;
-}
-
-.zen-session-chart-head > p {
-  margin: 0;
-
-  color:
-    var(--zsh-text-soft);
-
-  font-size: 8.5px;
-
-  line-height: 1.55;
-}
-
-.zen-session-chart {
-  width: 100%;
-  height: 440px;
-
-  min-width: 0;
-
-  overflow: hidden;
+  padding: 22px;
 
   border:
     1px solid
-    var(--zsh-line);
+    var(--zs-border);
 
-  border-radius: 14px;
+  border-radius: 18px;
 
   background:
     #ffffff;
 }
 
-.zen-session-chart .js-plotly-plot,
-.zen-session-chart .plot-container,
-.zen-session-chart .svg-container {
-  width:
-    100% !important;
+.zen-session-chart-head {
+  margin-bottom: 18px;
 
-  height:
-    100% !important;
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(
+      200px,
+      300px
+    );
+
+  align-items: end;
+
+  gap: 25px;
+}
+
+.zen-session-chart-head
+> div
+> span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--zs-blue);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.09em;
+}
+
+.zen-session-chart-head h3 {
+  margin: 0;
+
+  color:
+    var(--zs-navy);
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 25px;
+
+  line-height: 1.12;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.035em;
+}
+
+.zen-session-chart-head p {
+  margin: 0;
+
+  color:
+    var(--zs-text-soft);
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+.zen-session-chart {
+  width: 100%;
+
+  min-height: 480px;
+
+  height: 480px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    #e7ecf3;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #fbfcff
+    );
 }
 
 .zen-session-chart-state {
   width: 100%;
   height: 100%;
+
+  min-height: 420px;
 
   padding: 30px;
 
@@ -1770,59 +2538,97 @@
   text-align: center;
 }
 
-.zen-session-chart-state > svg {
-  width: 28px;
-  height: 28px;
+.zen-session-chart-state
+> svg {
+  width: 32px;
+  height: 32px;
 
-  margin-bottom: 13px;
+  margin-bottom: 12px;
 
   color:
-    var(--zsh-blue-dark);
+    var(--zs-blue);
 }
 
 .zen-session-chart-state strong {
   color:
-    var(--zsh-navy);
+    var(--zs-navy);
 
-  font-size: 11px;
-
-  font-weight: 700;
+  font-size: 15px;
 }
 
 .zen-session-chart-state span {
-  max-width: 350px;
+  max-width: 340px;
 
   margin-top: 5px;
 
   color:
-    var(--zsh-text-muted);
+    var(--zs-text-muted);
 
-  font-size: 8px;
+  font-size: 12px;
 
   line-height: 1.5;
 }
 
 /* =========================================================
-   RESPONSIVE
+   TABLET
 ========================================================= */
 
-@media (max-width: 1120px) {
-  .zen-session-intro {
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(320px, 0.72fr);
-
-    gap: 36px;
+@media (
+  max-width:
+  1280px
+) {
+  :root {
+    --zs-sidebar-width:
+      255px;
   }
 
-  .zen-session-toolbar {
-    align-items: flex-start;
+  .zen-session-sidebar-inner {
+    padding:
+      23px
+      15px
+      16px;
+  }
 
-    flex-direction: column;
+  .zen-session-nav-item {
+    min-height: 48px;
+
+    font-size:
+      14px !important;
+  }
+
+  .zen-session-main-content {
+    width:
+      calc(
+        100% - 52px
+      );
+  }
+
+  .zen-session-intro {
+    grid-template-columns:
+      1fr;
+
+    gap: 28px;
+  }
+
+  .zen-session-overview {
+    max-width: 600px;
+  }
+
+  .zen-session-card-layer.toolbar {
+    grid-template-columns:
+      1fr;
   }
 
   .zen-session-toolbar-fields {
-    width: 100%;
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      )
+      auto;
   }
 
   .zen-session-list {
@@ -1830,65 +2636,356 @@
   }
 
   .zen-session-list-header,
-  .zen-session-page
   .zen-session-row {
-    min-width: 900px;
+    min-width: 940px;
   }
 }
 
 /* =========================================================
-   TABLET
+   MOBILE SHELL
 ========================================================= */
 
-@media (max-width: 900px) {
-  :root {
-    --zl-header-height: 68px;
+@media (
+  max-width:
+  980px
+) {
+  .zen-session-sidebar {
+    display: none;
+  }
+
+  .zen-session-mobile-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 1100;
+
+    height: 72px;
+
+    padding:
+      0
+      18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+      space-between;
+
+    border-bottom:
+      1px solid
+      var(--zs-border);
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      );
+
+    backdrop-filter:
+      blur(18px);
+  }
+
+  .zen-session-mobile-brand {
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      10px !important;
+
+    color:
+      var(--zs-navy) !important;
+
+    font-family:
+      "Manrope",
+      sans-serif !important;
+
+    font-size:
+      19px !important;
+  }
+
+  .zen-session-mobile-brand
+  > span {
+    width: 38px;
+    height: 38px;
+
+    padding: 7px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    background:
+      linear-gradient(
+        145deg,
+        #315ed5,
+        #756ae7
+      );
+  }
+
+  .zen-session-mobile-brand img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    filter:
+      brightness(0)
+      invert(1);
+  }
+
+  .zen-session-mobile-toggle {
+    width:
+      44px !important;
+
+    height:
+      44px !important;
+
+    display:
+      grid !important;
+
+    place-items:
+      center !important;
+
+    border:
+      1px solid
+      var(--zs-border) !important;
+
+    border-radius:
+      12px !important;
+
+    color:
+      var(--zs-navy) !important;
+
+    background:
+      #ffffff !important;
+  }
+
+  .zen-session-mobile-toggle svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .zen-session-mobile-drawer {
+    position: fixed;
+
+    z-index: 1080;
+
+    top: 82px;
+
+    left: 14px;
+    right: 14px;
+
+    max-height:
+      calc(
+        100dvh - 98px
+      );
+
+    padding: 14px;
+
+    display: block;
+
+    overflow-y: auto;
+
+    border:
+      1px solid
+      var(--zs-border);
+
+    border-radius: 18px;
+
+    background:
+      #ffffff;
+
+    box-shadow:
+      0
+      25px
+      60px
+      rgba(
+        23,
+        42,
+        82,
+        0.16
+      );
+  }
+
+  .zen-session-mobile-user {
+    padding:
+      10px
+      8px
+      15px;
+
+    display: grid;
+
+    grid-template-columns:
+      42px
+      minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 11px;
+
+    border-bottom:
+      1px solid
+      var(--zs-border);
+  }
+
+  .zen-session-mobile-user
+  > div {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+  }
+
+  .zen-session-mobile-user strong,
+  .zen-session-mobile-user small {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+  }
+
+  .zen-session-mobile-user strong {
+    color:
+      var(--zs-navy);
+
+    font-size: 14px;
+  }
+
+  .zen-session-mobile-user small {
+    color:
+      var(--zs-text-muted);
+
+    font-size: 11px;
+  }
+
+  .zen-session-mobile-drawer nav {
+    padding-top: 9px;
+
+    display: grid;
+
+    gap: 3px;
+  }
+
+  .zen-session-mobile-drawer
+  nav
+  button {
+    width:
+      100% !important;
+
+    min-height: 49px;
+
+    padding:
+      0
+      12px !important;
+
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      11px !important;
+
+    border-radius:
+      11px !important;
+
+    color:
+      #667287 !important;
+
+    font-size:
+      14px !important;
+
+    font-weight:
+      600 !important;
+
+    text-align:
+      left !important;
+  }
+
+  .zen-session-mobile-drawer
+  nav
+  button
+  svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .zen-session-mobile-drawer
+  nav
+  button.active {
+    color:
+      var(--zs-blue) !important;
+
+    background:
+      var(--zs-blue-light) !important;
+  }
+
+  .zen-session-mobile-drawer
+  nav
+  button.logout {
+    margin-top:
+      7px !important;
+
+    color:
+      var(--zs-danger) !important;
+
+    border-top:
+      1px solid
+      var(--zs-border) !important;
+
+    border-radius:
+      0 !important;
   }
 
   .zen-session-main {
+    margin-left: 0;
+
+    padding-top: 72px;
+  }
+
+  .zen-session-main-content {
     width:
-      calc(100% - 28px);
+      calc(
+        100% - 34px
+      );
 
     padding:
-      22px
+      38px
       0
-      70px;
-  }
-
-  .zen-session-intro {
-    grid-template-columns:
-      1fr;
-
-    gap: 24px;
-  }
-
-  .zen-session-intro-copy {
-    max-width: 720px;
-  }
-
-  .zen-session-overview {
-    max-width: 520px;
-
-    justify-self: start;
-  }
-
-  .zen-session-toolbar-fields {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+      50px;
   }
 
   .zen-session-content-head {
     grid-template-columns:
       1fr;
 
-    gap: 12px;
+    gap: 10px;
   }
 
-  .zen-session-content-head > p {
-    max-width: 550px;
+  .zen-session-note {
+    grid-template-columns:
+      50px
+      minmax(0, 1fr);
+  }
+
+  .zen-session-note > p {
+    grid-column: 2;
   }
 
   .zen-session-modal-body {
@@ -1896,19 +2993,14 @@
       1fr;
   }
 
-  .zen-session-details-panel {
-    border-right: 0;
-
-    border-bottom:
-      1px solid
-      var(--zsh-line);
-  }
-
   .zen-session-detail-list {
     grid-template-columns:
       repeat(
-        3,
-        minmax(0, 1fr)
+        2,
+        minmax(
+          0,
+          1fr
+        )
       );
   }
 }
@@ -1917,67 +3009,66 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 620px) {
-  :root {
-    --zl-header-height: 64px;
+@media (
+  max-width:
+  680px
+) {
+  .zen-session-mobile-header {
+    height: 66px;
+
+    padding:
+      0
+      12px;
   }
 
   .zen-session-main {
-    width:
-      calc(100% - 16px);
-
-    padding:
-      18px
-      0
-      50px;
+    padding-top: 66px;
   }
 
-  .zen-session-intro {
-    padding-top: 3px;
+  .zen-session-main-content {
+    width:
+      calc(
+        100% - 20px
+      );
+
+    padding:
+      28px
+      0
+      40px;
+  }
+
+  .zen-session-eyebrow {
+    margin-bottom: 15px;
+
+    font-size: 11px;
+  }
+
+  .zen-session-overline {
+    font-size: 15px;
   }
 
   .zen-session-intro h1 {
     font-size:
       clamp(
         38px,
-        11.5vw,
-        50px
+        12vw,
+        52px
       );
   }
 
-  .zen-session-intro-copy > p {
-    font-size: 11px;
+  .zen-session-description {
+    margin-top: 16px;
+
+    font-size: 15px;
   }
 
   .zen-session-overview {
-    width: 100%;
-    max-width: none;
-
-    padding:
-      17px
-      15px;
-
     grid-template-columns:
-      1fr
       1fr;
   }
 
-  .zen-session-overview > div {
-    padding:
-      2px
-      14px;
-  }
-
-  .zen-session-overview > div:first-child {
-    padding-left: 0;
-  }
-
-  .zen-session-overview > div:last-child {
-    padding-right: 0;
-  }
-
-  .zen-session-toolbar {
-    padding: 10px;
+  .zen-session-card-layer.toolbar {
+    padding: 17px;
   }
 
   .zen-session-toolbar-fields {
@@ -1985,20 +3076,9 @@
       1fr;
   }
 
-  .zen-session-page
   .zen-session-reset-button {
     width:
       100% !important;
-  }
-
-  .zen-session-content {
-    margin-top: 20px;
-
-    padding-top: 24px;
-  }
-
-  .zen-session-content-head h2 {
-    font-size: 31px;
   }
 
   .zen-session-list {
@@ -2006,10 +3086,7 @@
 
     border: 0;
 
-    border-radius: 0;
-
-    background:
-      transparent;
+    background: transparent;
 
     box-shadow: none;
   }
@@ -2018,134 +3095,151 @@
     display: none;
   }
 
-  .zen-session-page
   .zen-session-row {
-    min-width:
-      0 !important;
+    min-width: 0;
 
-    min-height:
-      0 !important;
+    min-height: 0 !important;
 
-    margin-bottom:
-      10px !important;
+    margin-bottom: 10px !important;
 
     padding:
-      18px !important;
-
-    display:
-      grid !important;
+      17px !important;
 
     grid-template-columns:
       1fr
-      auto;
+      1fr;
 
     gap:
-      18px
+      15px
       12px;
 
     border:
       1px solid
-      var(--zsh-line) !important;
+      var(--zs-border) !important;
 
     border-radius:
       15px !important;
 
     background:
-      #ffffff !important;
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      ) !important;
 
     box-shadow:
       0
       7px
       22px
-      rgba(30, 51, 91, 0.035) !important;
+      rgba(
+        30,
+        51,
+        91,
+        0.035
+      ) !important;
   }
 
-  .zen-session-row-id {
+  .zen-session-row-id,
+  .zen-session-row-subject {
     grid-column:
       1 / -1;
   }
 
   .zen-session-row-subject {
-    grid-column:
-      1 / -1;
-
-    padding-bottom: 15px;
+    padding-bottom: 12px;
 
     border-bottom:
       1px solid
-      var(--zsh-line);
+      var(--zs-border);
   }
 
-  .zen-session-row-subject > span,
-  .zen-session-row-meta span {
+  .zen-session-row-subject
+  > span,
+  .zen-session-row-meta
+  span {
     display: block;
   }
 
-  .zen-session-row-subject strong {
-    font-size: 15px;
-  }
-
-  .zen-session-row-meta {
-    grid-template-columns:
-      17px
-      1fr;
-  }
-
   .zen-session-row-open {
-    display: none;
+    grid-column:
+      1 / -1;
+
+    justify-self: start;
+
+    padding-top: 7px;
+
+    color:
+      var(--zs-blue);
+  }
+
+  .zen-session-note {
+    padding: 23px;
+
+    grid-template-columns:
+      46px
+      1fr;
+
+    gap: 15px;
+  }
+
+  .zen-session-note-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .zen-session-note h2 {
+    font-size: 19px;
+  }
+
+  .zen-session-note > p {
+    grid-column:
+      1 / -1;
   }
 
   .zen-session-overlay {
-    padding:
-      8px;
-
-    align-items: end;
+    padding: 10px;
   }
 
   .zen-session-modal {
-    width: 100%;
-
     max-height:
-      calc(100dvh - 16px);
+      calc(
+        100dvh - 20px
+      );
 
-    border-radius:
-      19px
-      19px
-      12px
-      12px;
+    border-radius: 18px;
   }
 
   .zen-session-modal-head {
-    padding:
-      19px;
+    padding: 20px;
+
+    gap: 15px;
   }
 
   .zen-session-modal-head h2 {
-    font-size: 23px;
+    font-size: 25px;
   }
 
-  .zen-session-details-panel,
-  .zen-session-chart-panel {
-    padding: 19px;
+  .zen-session-modal-body {
+    padding: 14px;
   }
 
   .zen-session-detail-list {
     grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+      1fr;
   }
 
   .zen-session-chart-head {
     grid-template-columns:
       1fr;
 
-    gap: 8px;
+    gap: 10px;
   }
 
   .zen-session-chart {
-    height: 380px;
+    min-height: 400px;
+
+    height: 400px;
   }
 }
 
@@ -2153,55 +3247,35 @@
    SMALL MOBILE
 ========================================================= */
 
-@media (max-width: 390px) {
-  .zen-session-main {
+@media (
+  max-width:
+  390px
+) {
+  .zen-session-main-content {
     width:
-      calc(100% - 12px);
+      calc(
+        100% - 16px
+      );
   }
 
   .zen-session-intro h1 {
-    font-size: 37px;
+    font-size: 36px;
   }
 
-  .zen-session-overview {
+  .zen-session-row {
     grid-template-columns:
       1fr;
   }
 
-  .zen-session-overview > div {
-    padding:
-      12px
-      0;
-
-    border-right: 0;
-
-    border-bottom:
-      1px solid
-      var(--zsh-line);
-  }
-
-  .zen-session-overview > div:first-child {
-    padding-top: 0;
-  }
-
-  .zen-session-overview > div:last-child {
-    padding-bottom: 0;
-
-    border-bottom: 0;
-  }
-
-  .zen-session-detail-list {
-    grid-template-columns:
-      1fr;
-  }
-
-  .zen-session-chart {
-    height: 350px;
+  .zen-session-row-id,
+  .zen-session-row-subject,
+  .zen-session-row-open {
+    grid-column: auto;
   }
 }
 
 /* =========================================================
-   ANIMATIONS
+   ANIMATION
 ========================================================= */
 
 @keyframes zenSessionSpin {
@@ -2216,43 +3290,32 @@
   }
 }
 
-@keyframes zenSessionFadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes zenSessionModalIn {
-  from {
-    opacity: 0;
-
-    transform:
-      translateY(12px)
-      scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
-  }
-}
-
 /* =========================================================
    REDUCED MOTION
 ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
-  .zen-session-loading-spinner,
-  .zen-session-overlay,
-  .zen-session-modal {
-    animation:
-      none !important;
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+  .zen-session-card-glow {
+    display: none;
+  }
+
+  .zen-session-loading-spinner {
+    animation: none;
+  }
+
+  .zen-session-page *,
+  .zen-session-page *::before,
+  .zen-session-page *::after {
+    transition-duration:
+      0.01ms !important;
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
   }
 }

@@ -1,19 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap");
 
 :root {
-  --zab-navy: #0b1735;
-  --zab-blue: #4b78ed;
-  --zab-blue-dark: #315ed5;
-  --zab-blue-soft: #eef3ff;
+  --zab-navy: #081935;
+  --zab-blue: #315ed5;
+  --zab-blue-bright: #4b78ed;
+  --zab-blue-light: #edf3ff;
 
-  --zab-text: #1c2a43;
-  --zab-text-soft: #69768c;
-  --zab-text-muted: #98a5b8;
+  --zab-text: #142341;
+  --zab-text-soft: #6d7a92;
+  --zab-text-muted: #98a4b8;
 
-  --zab-line: #e2e8f1;
-  --zab-white: #ffffff;
+  --zab-border: #dfe6f1;
+  --zab-border-strong: #cfd9e8;
 
-  --zl-header-height: 76px;
+  --zab-danger: #b64859;
+
+  --zab-sidebar-width: 290px;
 }
 
 /* =========================================================
@@ -30,6 +32,7 @@
 .zen-about-page {
   width: 100%;
   min-width: 0;
+
   min-height: 100vh;
   min-height: 100dvh;
 
@@ -37,17 +40,37 @@
 
   overflow-x: clip;
 
-  font-family: "Inter", sans-serif;
+  color:
+    var(--zab-text);
 
-  color: var(--zab-text);
+  font-family:
+    "Inter",
+    sans-serif;
 
-  background:
-    linear-gradient(
-      180deg,
-      #fcfdff 0%,
-      #ffffff 52%,
-      #fafbfe 100%
-    );
+  background: #f4f6fc;
+}
+
+.zen-about-page button {
+  width: auto;
+  max-width: none;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  color: inherit;
+
+  background: none;
+
+  box-shadow: none;
+
+  font: inherit;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .zen-about-page a {
@@ -55,25 +78,627 @@
 }
 
 /* =========================================================
+   SIDEBAR
+========================================================= */
+
+.zen-about-sidebar {
+  position: fixed;
+
+  inset:
+    0
+    auto
+    0
+    0;
+
+  z-index: 1000;
+
+  width:
+    var(--zab-sidebar-width);
+
+  height: 100vh;
+  height: 100dvh;
+
+  border-right:
+    1px solid
+    var(--zab-border);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    8px
+    0
+    35px
+    rgba(
+      30,
+      50,
+      95,
+      0.025
+    );
+}
+
+.zen-about-sidebar-inner {
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+
+  padding:
+    27px
+    20px
+    18px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.zen-about-brand {
+  width:
+    100% !important;
+
+  flex:
+    0
+    0
+    auto;
+
+  padding:
+    0
+    7px
+    23px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    13px !important;
+
+  text-align:
+    left !important;
+}
+
+.zen-about-brand-mark {
+  width: 47px;
+  height: 47px;
+
+  min-width: 47px;
+
+  padding: 9px;
+
+  display: grid;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3b74f2 0%,
+      #556ee9 50%,
+      #7866e8 100%
+    );
+
+  box-shadow:
+    0
+    12px
+    26px
+    rgba(
+      57,
+      94,
+      220,
+      0.2
+    );
+}
+
+.zen-about-brand-mark img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  filter:
+    brightness(0)
+    invert(1);
+}
+
+.zen-about-brand-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-about-brand-copy strong {
+  color:
+    var(--zab-navy);
+
+  font-family:
+    "Manrope",
+    sans-serif;
+
+  font-size: 21px;
+
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing:
+    -0.045em;
+}
+
+.zen-about-brand-copy small {
+  color:
+    var(--zab-text-muted);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.zen-about-nav-scroll {
+  flex:
+    1
+    1
+    auto;
+
+  min-height: 0;
+
+  padding-right: 3px;
+  padding-bottom: 18px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #dce4ef
+    transparent;
+}
+
+.zen-about-nav-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.zen-about-nav-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: #dce4ef;
+}
+
+.zen-about-nav-label {
+  margin:
+    19px
+    10px
+    10px;
+
+  color: #98a4b6;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.zen-about-navigation {
+  display: grid;
+
+  gap: 4px;
+}
+
+.zen-about-nav-item {
+  width:
+    100% !important;
+
+  min-height: 52px;
+
+  padding:
+    0
+    13px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    12px !important;
+
+  border-radius:
+    13px !important;
+
+  color:
+    #69768c !important;
+
+  font-size:
+    15px !important;
+
+  font-weight: 500;
+
+  text-align:
+    left !important;
+
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.zen-about-nav-icon {
+  width: 31px;
+  height: 31px;
+
+  min-width: 31px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 9px;
+}
+
+.zen-about-nav-item svg {
+  width: 19px;
+  height: 19px;
+}
+
+.zen-about-nav-item:hover {
+  transform:
+    translateX(2px);
+
+  color:
+    var(--zab-blue) !important;
+
+  background:
+    #f4f7fd !important;
+}
+
+.zen-about-nav-item.active {
+  color:
+    var(--zab-blue) !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef3ff,
+      #e8efff
+    ) !important;
+}
+
+.zen-about-nav-item.active
+.zen-about-nav-icon {
+  background: #ffffff;
+
+  box-shadow:
+    0
+    6px
+    15px
+    rgba(
+      49,
+      94,
+      213,
+      0.09
+    );
+}
+
+.zen-about-nav-divider {
+  height: 1px;
+
+  margin:
+    18px
+    8px
+    12px;
+
+  background:
+    var(--zab-border);
+}
+
+/* =========================================================
+   USER
+========================================================= */
+
+.zen-about-sidebar-bottom {
+  flex:
+    0
+    0
+    auto;
+
+  padding-top: 13px;
+
+  border-top:
+    1px solid
+    var(--zab-border);
+
+  background: #ffffff;
+}
+
+.zen-about-user {
+  min-width: 0;
+
+  padding: 8px;
+
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.zen-about-user-avatar {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+
+  color:
+    var(--zab-blue);
+
+  background:
+    linear-gradient(
+      145deg,
+      #eef3ff,
+      #e5edff
+    );
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.zen-about-user-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.zen-about-user-copy strong,
+.zen-about-user-copy small {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.zen-about-user-copy strong {
+  color:
+    var(--zab-navy);
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.zen-about-user-copy small {
+  color:
+    var(--zab-text-muted);
+
+  font-size: 10px;
+}
+
+.zen-about-signout {
+  width:
+    100% !important;
+
+  min-height: 44px;
+
+  margin-top:
+    3px !important;
+
+  padding:
+    0
+    11px !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    11px !important;
+
+  border-radius:
+    11px !important;
+
+  color:
+    #788497 !important;
+
+  font-size:
+    13px !important;
+
+  font-weight: 600;
+}
+
+.zen-about-signout svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zen-about-signout:hover {
+  color:
+    var(--zab-danger) !important;
+
+  background:
+    #fff2f4 !important;
+}
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+.zen-about-mobile-header,
+.zen-about-mobile-drawer {
+  display: none;
+}
+
+/* =========================================================
    MAIN
 ========================================================= */
 
 .zen-about-main {
+  position: relative;
+
+  min-height:
+    100vh;
+  min-height:
+    100dvh;
+
+  margin-left:
+    var(--zab-sidebar-width);
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 14% 8%,
+      rgba(
+        144,
+        220,
+        255,
+        0.16
+      ),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 89% 5%,
+      rgba(
+        192,
+        132,
+        255,
+        0.15
+      ),
+      transparent 29%
+    ),
+    radial-gradient(
+      circle at 54% 48%,
+      rgba(
+        83,
+        99,
+        225,
+        0.08
+      ),
+      transparent 41%
+    ),
+    linear-gradient(
+      145deg,
+      #f6f9ff 0%,
+      #f2f4fd 47%,
+      #f8f6ff 100%
+    );
+}
+
+.zen-about-orb {
+  position: absolute;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  border-radius: 50%;
+
+  filter: blur(15px);
+}
+
+.zen-about-orb.orb-one {
+  width: 480px;
+  height: 480px;
+
+  top: -270px;
+  right: 0;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        105,
+        177,
+        255,
+        0.15
+      ),
+      transparent 70%
+    );
+}
+
+.zen-about-orb.orb-two {
+  width: 540px;
+  height: 540px;
+
+  bottom: -330px;
+  left: 10%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        123,
+        98,
+        230,
+        0.1
+      ),
+      transparent 70%
+    );
+}
+
+.zen-about-content {
+  position: relative;
+
+  z-index: 2;
+
   width:
     min(
-      1320px,
-      calc(100% - 48px)
+      1420px,
+      calc(
+        100% - 78px
+      )
     );
 
-  margin:
-    var(--zl-header-height)
-    auto
-    0;
+  margin: 0 auto;
 
   padding:
-    34px
+    50px
     0
-    92px;
+    64px;
 }
 
 /* =========================================================
@@ -81,88 +706,108 @@
 ========================================================= */
 
 .zen-about-hero {
-  position: relative;
-
-  min-height: 575px;
-
-  padding:
-    58px
-    0
-    68px;
+  min-height: 560px;
 
   display: grid;
 
   grid-template-columns:
-    minmax(0, 1.15fr)
-    minmax(330px, 0.65fr);
+    minmax(0, 1.05fr)
+    minmax(
+      380px,
+      0.75fr
+    );
 
   align-items: center;
 
-  gap: 90px;
-}
-
-.zen-about-hero::before {
-  content: "";
-
-  position: absolute;
-
-  top: 28px;
-  left: -80px;
-
-  width: 260px;
-  height: 260px;
-
-  border-radius: 50%;
-
-  background:
-    rgba(75, 120, 237, 0.045);
-
-  filter: blur(5px);
-
-  pointer-events: none;
+  gap: 52px;
 }
 
 .zen-about-hero-main {
-  position: relative;
-
-  z-index: 2;
-
   max-width: 800px;
 }
 
-.zen-about-kicker {
-  display: block;
+.zen-about-eyebrow {
+  width: fit-content;
 
   margin-bottom: 19px;
 
+  padding:
+    8px
+    11px;
+
+  display:
+    inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border:
+    1px solid
+    rgba(
+      200,
+      213,
+      235,
+      0.82
+    );
+
+  border-radius: 999px;
+
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
 
-  font-size: 8px;
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.68
+    );
 
-  line-height: 1;
+  font-size: 12px;
 
-  font-weight: 800;
+  font-weight: 700;
 
-  letter-spacing:
-    0.13em;
+  backdrop-filter:
+    blur(14px);
+}
+
+.zen-about-eyebrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.zen-about-overline {
+  margin:
+    0
+    0
+    8px;
+
+  color:
+    var(--zab-text-soft);
+
+  font-size: 17px;
+
+  font-weight: 500;
 }
 
 .zen-about-hero h1 {
+  max-width: 820px;
+
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
       55px,
-      5.6vw,
-      82px
+      5.3vw,
+      78px
     );
 
   line-height: 0.98;
@@ -170,38 +815,32 @@
   font-weight: 800;
 
   letter-spacing:
-    -0.068em;
+    -0.065em;
 }
 
-.zen-about-hero h1 em {
+.zen-about-hero h1 span {
   color:
     var(--zab-blue);
-
-  font-style: normal;
 }
 
-.zen-about-hero-main > p {
-  max-width: 610px;
+.zen-about-hero-description {
+  max-width: 650px;
 
   margin:
-    28px
+    24px
     0
     0;
 
   color:
     var(--zab-text-soft);
 
-  font-size: 13px;
+  font-size: 16px;
 
-  line-height: 1.78;
+  line-height: 1.75;
 }
 
-/* =========================================================
-   HERO ACTIONS
-========================================================= */
-
 .zen-about-hero-actions {
-  margin-top: 30px;
+  margin-top: 28px;
 
   display: flex;
 
@@ -214,44 +853,54 @@
 
 .zen-about-primary-link,
 .zen-about-secondary-link {
-  min-height: 46px;
+  min-height: 50px;
 
   padding:
     0
-    16px;
+    17px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
   justify-content: center;
 
-  gap: 8px;
+  gap: 9px;
 
-  border-radius: 9px;
+  border-radius: 12px;
 
-  font-size: 9px;
+  font-size: 13px;
 
   font-weight: 700;
 
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease;
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
 }
 
 .zen-about-primary-link {
-  background:
-    var(--zab-navy);
+  color: #ffffff;
 
-  color:
-    #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #315ed5,
+      #537bea 65%,
+      #696fe5
+    );
 
   box-shadow:
     0
-    11px
-    24px
-    rgba(11, 23, 53, 0.12);
+    15px
+    29px
+    rgba(
+      49,
+      94,
+      213,
+      0.2
+    );
 }
 
 .zen-about-primary-link:hover {
@@ -260,92 +909,200 @@
 
   box-shadow:
     0
-    15px
-    30px
-    rgba(11, 23, 53, 0.17);
+    20px
+    36px
+    rgba(
+      49,
+      94,
+      213,
+      0.27
+    );
 }
 
 .zen-about-secondary-link {
   border:
     1px solid
-    var(--zab-line);
-
-  background:
-    #ffffff;
+    var(--zab-border);
 
   color:
-    #5d6a7f;
+    var(--zab-navy);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.78
+    );
 }
 
 .zen-about-secondary-link:hover {
   transform:
-    translateY(-1px);
+    translateY(-2px);
 
   border-color:
-    #cad5e5;
+    #bdcbe0;
+
+  background: #ffffff;
 }
 
 .zen-about-primary-link svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* =========================================================
-   DEFINITION PANEL
+   GLOW
 ========================================================= */
 
-.zen-about-definition-panel {
+.zen-about-glow-card {
+  --about-glow-x: 50%;
+  --about-glow-y: 50%;
+  --about-glow-opacity: 0;
+
+  position: relative;
+
+  isolation: isolate;
+
+  overflow: hidden;
+}
+
+.zen-about-card-glow {
+  position: absolute;
+
+  z-index: 0;
+
+  left:
+    var(
+      --about-glow-x
+    );
+
+  top:
+    var(
+      --about-glow-y
+    );
+
+  width: 430px;
+  height: 430px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity:
+    var(
+      --about-glow-opacity
+    );
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        113,
+        171,
+        255,
+        0.25
+      ),
+      rgba(
+        112,
+        140,
+        244,
+        0.11
+      ) 37%,
+      rgba(
+        151,
+        113,
+        235,
+        0.05
+      ) 55%,
+      transparent 72%
+    );
+
+  filter: blur(5px);
+
+  transition:
+    opacity 220ms ease;
+}
+
+.zen-about-card-layer {
   position: relative;
 
   z-index: 2;
 
-  width: 100%;
-
-  padding:
-    28px
-    30px;
-
-  border-left:
-    1px solid
-    var(--zab-line);
+  height: 100%;
 }
 
-.zen-about-definition-block > span {
+/* =========================================================
+   DEFINITION
+========================================================= */
+
+.zen-about-definition-panel {
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.96
+      ),
+      rgba(
+        247,
+        250,
+        255,
+        0.94
+      )
+    );
+
+  box-shadow:
+    0
+    20px
+    48px
+    rgba(
+      30,
+      49,
+      90,
+      0.06
+    );
+}
+
+.zen-about-definition-panel
+.zen-about-card-layer {
+  padding: 30px;
+}
+
+.zen-about-definition-heading
+> span {
   display: block;
 
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.12em;
+  letter-spacing: 0.1em;
 }
 
-.zen-about-definition-block.muted > span {
-  color:
-    #8b96a9;
-}
+.zen-about-definition-heading h2 {
+  max-width: 420px;
 
-.zen-about-definition-block ul {
   margin: 0;
-  padding: 0;
-
-  list-style: none;
-
-  display: grid;
-
-  gap: 13px;
-}
-
-.zen-about-definition-block li {
-  position: relative;
-
-  padding-left: 15px;
 
   color:
     var(--zab-navy);
@@ -354,52 +1111,120 @@
     "Manrope",
     sans-serif;
 
-  font-size: 11px;
+  font-size: 26px;
 
-  line-height: 1.45;
+  line-height: 1.15;
 
-  font-weight: 700;
+  font-weight: 800;
+
+  letter-spacing:
+    -0.04em;
 }
 
-.zen-about-definition-block li::before {
-  content: "";
+.zen-about-definition-columns {
+  margin-top: 28px;
 
-  position: absolute;
+  display: grid;
 
-  top: 0.67em;
-  left: 0;
+  grid-template-columns:
+    1fr
+    1fr;
 
-  width: 4px;
-  height: 4px;
+  gap: 12px;
+}
 
-  border-radius: 50%;
+.zen-about-definition-columns
+> div {
+  padding: 18px;
+
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 14px;
 
   background:
-    var(--zab-blue-dark);
+    rgba(
+      255,
+      255,
+      255,
+      0.78
+    );
 }
 
-.zen-about-definition-block.muted li {
+.zen-about-definition-label {
+  display: block;
+
+  margin-bottom: 15px;
+
   color:
-    #788499;
+    var(--zab-blue);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.09em;
+}
+
+.zen-about-definition-columns
+.muted
+.zen-about-definition-label {
+  color:
+    #8d99aa;
+}
+
+.zen-about-definition-columns ul {
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+
+  gap: 12px;
+
+  list-style: none;
+}
+
+.zen-about-definition-columns li {
+  display: grid;
+
+  grid-template-columns:
+    18px
+    minmax(0, 1fr);
+
+  gap: 8px;
+
+  color:
+    var(--zab-navy);
+
+  font-size: 12px;
+
+  line-height: 1.45;
 
   font-weight: 600;
 }
 
-.zen-about-definition-block.muted li::before {
-  background:
-    #b3bccb;
+.zen-about-definition-columns li svg {
+  width: 16px;
+  height: 16px;
+
+  color:
+    var(--zab-blue);
 }
 
-.zen-about-definition-divider {
-  width: 100%;
-  height: 1px;
+.zen-about-definition-columns
+.muted
+li {
+  color:
+    var(--zab-text-soft);
+}
 
-  margin:
-    27px
-    0;
-
-  background:
-    var(--zab-line);
+.zen-about-definition-columns
+.muted
+li
+svg {
+  color:
+    #a5afbd;
 }
 
 /* =========================================================
@@ -408,64 +1233,77 @@
 
 .zen-about-purpose {
   padding:
-    82px
-    0
-    78px;
+    88px
+    0;
 
   display: grid;
 
   grid-template-columns:
-    55px
-    minmax(0, 0.8fr)
-    minmax(380px, 1.2fr);
+    50px
+    minmax(
+      0,
+      0.8fr
+    )
+    minmax(
+      380px,
+      1.2fr
+    );
 
   align-items: start;
 
-  gap: 38px;
+  gap: 34px;
 }
 
-.zen-about-purpose-index {
-  padding-top: 4px;
+.zen-about-section-number {
+  padding-top: 5px;
 
   color:
-    #b5becd;
+    #aab5c6;
 
   font-family:
     "Manrope",
     sans-serif;
 
-  font-size: 10px;
+  font-size: 12px;
 
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.zen-about-purpose-heading > span {
+.zen-about-section-label,
+.zen-about-section-intro > span,
+.zen-about-emotions-copy > span,
+.zen-about-principle
+> div:nth-child(2)
+> span,
+.zen-about-faq-heading > span,
+.zen-about-final
+> div
+> span {
   display: block;
 
   margin-bottom: 9px;
 
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing:
-    0.11em;
+  letter-spacing: 0.1em;
 }
 
-.zen-about-purpose-heading h2 {
-  max-width: 470px;
+.zen-about-purpose h2 {
+  max-width: 510px;
 
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
-
-  color:
-    var(--zab-navy);
 
   font-size:
     clamp(
@@ -483,7 +1321,7 @@
 }
 
 .zen-about-purpose-copy {
-  max-width: 650px;
+  max-width: 680px;
 
   display: grid;
 
@@ -496,9 +1334,9 @@
   color:
     var(--zab-text-soft);
 
-  font-size: 10.5px;
+  font-size: 15px;
 
-  line-height: 1.82;
+  line-height: 1.78;
 }
 
 /* =========================================================
@@ -507,204 +1345,274 @@
 
 .zen-about-statement {
   padding:
-    78px
+    70px
+    50px;
+
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #274fc0 0%,
+      #3565db 45%,
+      #587ae9 75%,
+      #6c6fe7 100%
+    );
+
+  box-shadow:
     0
-    85px;
+    22px
+    50px
+    rgba(
+      49,
+      94,
+      213,
+      0.18
+    );
 
   text-align: center;
+}
+
+.zen-about-statement > span {
+  display: block;
+
+  margin-bottom: 13px;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
 }
 
 .zen-about-statement p {
   margin:
     0
     0
-    11px;
+    10px;
 
   color:
-    #8b96a7;
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
 
-  font-size: 10px;
-
-  line-height: 1.5;
+  font-size: 14px;
 }
 
 .zen-about-statement h2 {
-  max-width: 880px;
+  max-width: 900px;
 
-  margin:
-    0
-    auto;
+  margin: 0 auto;
+
+  color: #ffffff;
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
-      35px,
+      36px,
       4vw,
-      55px
+      54px
     );
 
   line-height: 1.08;
 
-  font-weight: 700;
+  font-weight: 800;
 
   letter-spacing:
     -0.05em;
 }
 
 /* =========================================================
-   PROCESS PREVIEW
+   PROCESS
 ========================================================= */
 
 .zen-about-process-preview {
   padding:
-    44px
+    85px
     0;
 
   display: grid;
 
   grid-template-columns:
-    minmax(0, 0.9fr)
-    minmax(440px, 1.1fr);
+    minmax(
+      0,
+      0.9fr
+    )
+    minmax(
+      430px,
+      1.1fr
+    );
 
-  align-items: center;
-
-  gap: 72px;
+  gap: 24px;
 }
 
-.zen-about-process-copy > span {
-  display: block;
+.zen-about-process-copy {
+  border:
+    1px solid
+    var(--zab-border);
 
-  margin-bottom: 8px;
+  border-radius: 21px;
 
-  color:
-    var(--zab-blue-dark);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.96
+      ),
+      rgba(
+        248,
+        250,
+        255,
+        0.94
+      )
+    );
+}
 
-  font-size: 7px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.11em;
+.zen-about-process-copy
+.zen-about-card-layer {
+  padding: 32px;
 }
 
 .zen-about-process-copy h2 {
-  max-width: 550px;
+  max-width: 540px;
 
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
-      32px,
-      3.2vw,
-      46px
+      31px,
+      3vw,
+      43px
     );
 
-  line-height: 1.07;
+  line-height: 1.08;
 
   font-weight: 800;
 
   letter-spacing:
-    -0.052em;
+    -0.05em;
 }
 
 .zen-about-process-copy p {
   max-width: 520px;
 
   margin:
-    18px
+    17px
     0
     0;
 
   color:
     var(--zab-text-soft);
 
-  font-size: 9.5px;
+  font-size: 14px;
 
-  line-height: 1.75;
+  line-height: 1.7;
 }
 
 .zen-about-process-link {
   width: fit-content;
 
-  margin-top: 21px;
+  margin-top: 23px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
   gap: 8px;
 
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
 
-  font-size: 9px;
+  font-size: 13px;
 
   font-weight: 700;
 }
 
 .zen-about-process-link svg {
-  width: 14px;
-  height: 14px;
-
-  transition:
-    transform 160ms ease;
-}
-
-.zen-about-process-link:hover svg {
-  transform:
-    translateX(3px);
+  width: 16px;
+  height: 16px;
 }
 
 .zen-about-process-list {
-  display: grid;
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 21px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
 }
 
 .zen-about-process-list > div {
-  min-height: 64px;
+  min-height: 82px;
 
   padding:
     0
-    5px;
+    22px;
 
   display: grid;
 
   grid-template-columns:
     42px
-    minmax(0, 1fr);
+    minmax(0, 1fr)
+    20px;
 
   align-items: center;
 
-  gap: 15px;
+  gap: 14px;
 
   border-bottom:
     1px solid
-    var(--zab-line);
+    var(--zab-border);
 }
 
-.zen-about-process-list > div:first-child {
-  border-top:
-    1px solid
-    var(--zab-line);
+.zen-about-process-list
+> div:last-child {
+  border-bottom: 0;
 }
 
 .zen-about-process-list span {
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
 
-  font-size: 7.5px;
+  font-size: 11px;
 
   font-weight: 800;
 }
@@ -717,9 +1625,17 @@
     "Manrope",
     sans-serif;
 
-  font-size: 11px;
+  font-size: 15px;
 
   font-weight: 700;
+}
+
+.zen-about-process-list svg {
+  width: 16px;
+  height: 16px;
+
+  color:
+    #a4afc1;
 }
 
 /* =========================================================
@@ -727,46 +1643,30 @@
 ========================================================= */
 
 .zen-about-section-intro {
-  max-width: 760px;
+  max-width: 780px;
 
-  margin-bottom: 35px;
+  margin-bottom: 32px;
 }
 
 .zen-about-section-intro.compact {
-  max-width: 620px;
-}
-
-.zen-about-section-intro > span {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color:
-    var(--zab-blue-dark);
-
-  font-size: 7px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.11em;
+  max-width: 670px;
 }
 
 .zen-about-section-intro h2 {
   margin: 0;
 
+  color:
+    var(--zab-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
-      32px,
-      3.3vw,
-      46px
+      34px,
+      3.4vw,
+      48px
     );
 
   line-height: 1.06;
@@ -778,17 +1678,17 @@
 }
 
 .zen-about-section-intro p {
-  max-width: 570px;
+  max-width: 600px;
 
   margin:
-    14px
+    15px
     0
     0;
 
   color:
     var(--zab-text-soft);
 
-  font-size: 9px;
+  font-size: 14px;
 
   line-height: 1.7;
 }
@@ -799,105 +1699,141 @@
 
 .zen-about-capabilities {
   padding:
-    85px
+    25px
     0
-    65px;
+    80px;
 }
 
-.zen-about-capability-list {
-  display: grid;
-}
-
-.zen-about-capability-row {
-  min-height: 105px;
-
-  padding:
-    18px
-    0;
-
+.zen-about-capability-grid {
   display: grid;
 
   grid-template-columns:
-    48px
-    42px
-    minmax(240px, 0.72fr)
-    minmax(0, 1.28fr);
+    repeat(
+      3,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 16px;
+}
+
+.zen-about-capability-card {
+  min-height: 270px;
+
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 19px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.97
+      ),
+      rgba(
+        248,
+        250,
+        255,
+        0.94
+      )
+    );
+
+  box-shadow:
+    0
+    14px
+    37px
+    rgba(
+      30,
+      49,
+      90,
+      0.04
+    );
+}
+
+.zen-about-capability-card
+.zen-about-card-layer {
+  padding: 24px;
+}
+
+.zen-about-capability-top {
+  margin-bottom: 37px;
+
+  display: flex;
 
   align-items: center;
 
-  gap: 18px;
-
-  border-bottom:
-    1px solid
-    var(--zab-line);
-}
-
-.zen-about-capability-row:first-child {
-  border-top:
-    1px solid
-    var(--zab-line);
-}
-
-.zen-about-capability-number {
-  color:
-    #b4bdcc;
-
-  font-size: 7.5px;
-
-  font-weight: 800;
+  justify-content:
+    space-between;
 }
 
 .zen-about-capability-icon {
-  width: 42px;
-  height: 42px;
+  width: 50px;
+  height: 50px;
 
   display: grid;
 
   place-items: center;
 
-  border-radius: 10px;
-
-  background:
-    var(--zab-blue-soft);
+  border-radius: 14px;
 
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
+
+  background:
+    var(--zab-blue-light);
 }
 
 .zen-about-capability-icon svg {
-  width: 17px;
-  height: 17px;
+  width: 21px;
+  height: 21px;
 }
 
-.zen-about-capability-row h3 {
+.zen-about-capability-number {
+  color:
+    #a8b3c4;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+.zen-about-capability-card h3 {
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
+  font-size: 19px;
 
-  font-size: 14px;
+  line-height: 1.2;
 
-  line-height: 1.3;
-
-  font-weight: 700;
+  font-weight: 800;
 
   letter-spacing:
-    -0.025em;
+    -0.035em;
 }
 
-.zen-about-capability-row p {
-  max-width: 580px;
-
-  margin: 0;
+.zen-about-capability-card p {
+  margin:
+    13px
+    0
+    0;
 
   color:
     var(--zab-text-soft);
 
-  font-size: 8.5px;
+  font-size: 13px;
 
   line-height: 1.65;
 }
@@ -908,53 +1844,43 @@
 
 .zen-about-emotions {
   padding:
-    80px
+    75px
     0;
 
   display: grid;
 
   grid-template-columns:
-    minmax(0, 0.9fr)
-    minmax(430px, 1.1fr);
+    minmax(
+      0,
+      0.9fr
+    )
+    minmax(
+      430px,
+      1.1fr
+    );
 
   align-items: center;
 
-  gap: 70px;
-}
-
-.zen-about-emotions-copy > span {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color:
-    var(--zab-blue-dark);
-
-  font-size: 7px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.11em;
+  gap: 55px;
 }
 
 .zen-about-emotions-copy h2 {
-  max-width: 560px;
+  max-width: 570px;
 
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
-      31px,
+      32px,
       3.2vw,
-      45px
+      46px
     );
 
   line-height: 1.07;
@@ -966,7 +1892,7 @@
 }
 
 .zen-about-emotions-copy p {
-  max-width: 500px;
+  max-width: 520px;
 
   margin:
     17px
@@ -976,53 +1902,87 @@
   color:
     var(--zab-text-soft);
 
-  font-size: 9px;
+  font-size: 14px;
 
   line-height: 1.72;
 }
 
-.zen-about-emotion-words {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  justify-content: flex-start;
-
-  gap:
-    11px
-    12px;
-}
-
-.zen-about-emotion-words span {
-  min-height: 44px;
-
-  padding:
-    0
-    16px;
-
-  display: inline-flex;
-
-  align-items: center;
+.zen-about-emotion-list {
+  overflow: hidden;
 
   border:
     1px solid
-    var(--zab-line);
+    var(--zab-border);
 
-  border-radius: 999px;
+  border-radius: 19px;
 
   background:
-    #ffffff;
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
+}
 
+.zen-about-emotion-list > div {
+  min-height: 58px;
+
+  padding:
+    0
+    20px;
+
+  display: grid;
+
+  grid-template-columns:
+    38px
+    1fr
+    10px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid
+    var(--zab-border);
+}
+
+.zen-about-emotion-list
+> div:last-child {
+  border-bottom: 0;
+}
+
+.zen-about-emotion-list span {
   color:
-    var(--zab-navy);
-
-  font-family:
-    "Manrope",
-    sans-serif;
+    #a5b0c0;
 
   font-size: 10px;
 
+  font-weight: 800;
+}
+
+.zen-about-emotion-list strong {
+  color:
+    var(--zab-navy);
+
+  font-size: 14px;
+
   font-weight: 700;
+}
+
+.zen-about-emotion-list i {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #5488f6,
+      #8870e8
+    );
 }
 
 /* =========================================================
@@ -1031,91 +1991,110 @@
 
 .zen-about-audience {
   padding:
-    75px
+    55px
     0
-    62px;
+    80px;
 }
 
-.zen-about-audience-list {
+.zen-about-audience-grid {
   display: grid;
 
   grid-template-columns:
     repeat(
       3,
-      minmax(0, 1fr)
+      minmax(
+        0,
+        1fr
+      )
     );
 
   gap: 16px;
 }
 
-.zen-about-audience-item {
-  min-height: 190px;
-
-  padding:
-    23px;
+.zen-about-audience-card {
+  min-height: 250px;
 
   border:
     1px solid
-    var(--zab-line);
+    var(--zab-border);
 
-  border-radius: 14px;
+  border-radius: 19px;
 
   background:
-    #ffffff;
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.97
+      ),
+      rgba(
+        248,
+        250,
+        255,
+        0.94
+      )
+    );
+}
+
+.zen-about-audience-card
+.zen-about-card-layer {
+  padding: 25px;
 }
 
 .zen-about-audience-icon {
-  width: 42px;
-  height: 42px;
+  width: 51px;
+  height: 51px;
 
-  margin-bottom: 26px;
+  margin-bottom: 32px;
 
   display: grid;
 
   place-items: center;
 
-  border-radius: 10px;
-
-  background:
-    var(--zab-blue-soft);
+  border-radius: 14px;
 
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
+
+  background:
+    var(--zab-blue-light);
 }
 
 .zen-about-audience-icon svg {
-  width: 17px;
-  height: 17px;
+  width: 21px;
+  height: 21px;
 }
 
-.zen-about-audience-item h3 {
+.zen-about-audience-card h3 {
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
+  font-size: 20px;
 
-  font-size: 15px;
-
-  font-weight: 700;
+  font-weight: 800;
 
   letter-spacing:
-    -0.025em;
+    -0.035em;
 }
 
-.zen-about-audience-item p {
+.zen-about-audience-card p {
   margin:
-    9px
+    11px
     0
     0;
 
   color:
     var(--zab-text-soft);
 
-  font-size: 8.5px;
+  font-size: 13px;
 
   line-height: 1.65;
 }
@@ -1126,84 +2105,75 @@
 
 .zen-about-principle {
   padding:
-    32px
-    0;
+    30px;
 
   display: grid;
 
   grid-template-columns:
-    46px
+    52px
     minmax(0, 1fr)
-    minmax(320px, 0.8fr);
+    minmax(
+      300px,
+      0.75fr
+    );
 
   align-items: center;
 
-  gap: 24px;
+  gap: 22px;
 
-  border-top:
+  border:
     1px solid
-    var(--zab-line);
+    var(--zab-border);
 
-  border-bottom:
-    1px solid
-    var(--zab-line);
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f7f9ff
+    );
 }
 
 .zen-about-principle-icon {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
 
   display: grid;
 
   place-items: center;
 
-  border-radius: 11px;
-
-  background:
-    var(--zab-blue-soft);
+  border-radius: 14px;
 
   color:
-    var(--zab-blue-dark);
+    var(--zab-blue);
+
+  background:
+    var(--zab-blue-light);
 }
 
 .zen-about-principle-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 
-.zen-about-principle-heading > span {
-  display: block;
-
-  margin-bottom: 6px;
-
-  color:
-    var(--zab-blue-dark);
-
-  font-size: 6.8px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.1em;
-}
-
-.zen-about-principle-heading h2 {
-  max-width: 620px;
+.zen-about-principle h2 {
+  max-width: 680px;
 
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
+  font-size: 22px;
 
-  font-size: 18px;
+  line-height: 1.25;
 
-  line-height: 1.28;
-
-  font-weight: 700;
+  font-weight: 800;
 
   letter-spacing:
     -0.03em;
@@ -1215,9 +2185,9 @@
   color:
     var(--zab-text-soft);
 
-  font-size: 8.5px;
+  font-size: 13px;
 
-  line-height: 1.7;
+  line-height: 1.65;
 }
 
 /* =========================================================
@@ -1226,48 +2196,32 @@
 
 .zen-about-faq {
   padding:
-    88px
+    85px
     0
-    50px;
+    45px;
 }
 
 .zen-about-faq-heading {
-  max-width: 720px;
+  max-width: 750px;
 
-  margin-bottom: 34px;
-}
-
-.zen-about-faq-heading > span {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color:
-    var(--zab-blue-dark);
-
-  font-size: 7px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.11em;
+  margin-bottom: 32px;
 }
 
 .zen-about-faq-heading h2 {
   margin: 0;
 
+  color:
+    var(--zab-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
-      32px,
-      3.2vw,
-      45px
+      34px,
+      3.3vw,
+      47px
     );
 
   line-height: 1.06;
@@ -1279,20 +2233,33 @@
 }
 
 .zen-about-faq-list {
-  display: grid;
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 19px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
 }
 
-.zen-about-faq-item {
-  min-height: 110px;
+.zen-about-faq-list article {
+  min-height: 125px;
 
   padding:
-    21px
-    0;
+    24px;
 
   display: grid;
 
   grid-template-columns:
-    46px
+    45px
     minmax(0, 1fr);
 
   align-items: start;
@@ -1301,110 +2268,120 @@
 
   border-bottom:
     1px solid
-    var(--zab-line);
+    var(--zab-border);
 }
 
-.zen-about-faq-item:first-child {
-  border-top:
-    1px solid
-    var(--zab-line);
+.zen-about-faq-list
+article:last-child {
+  border-bottom: 0;
 }
 
-.zen-about-faq-item > span {
+.zen-about-faq-list
+article
+> span {
+  padding-top: 3px;
+
   color:
-    #aeb8c7;
+    #a6b1c1;
 
-  font-size: 7.5px;
+  font-size: 11px;
 
   font-weight: 800;
 }
 
-.zen-about-faq-item h3 {
+.zen-about-faq-list h3 {
   margin: 0;
+
+  color:
+    var(--zab-navy);
 
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
+  font-size: 17px;
 
-  font-size: 13px;
+  line-height: 1.35;
 
-  line-height: 1.4;
-
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.zen-about-faq-item p {
-  max-width: 760px;
+.zen-about-faq-list p {
+  max-width: 830px;
 
   margin:
-    8px
+    9px
     0
     0;
 
   color:
     var(--zab-text-soft);
 
-  font-size: 8.5px;
+  font-size: 13px;
 
   line-height: 1.65;
 }
 
 /* =========================================================
-   FINAL
+   FINAL CTA
 ========================================================= */
 
 .zen-about-final {
-  margin-top: 40px;
+  margin-top: 35px;
 
   padding:
-    34px
-    0;
+    38px;
 
   display: flex;
 
   align-items: center;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   gap: 40px;
+
+  border:
+    1px solid
+    var(--zab-border);
+
+  border-radius: 21px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.98
+      ),
+      rgba(
+        245,
+        248,
+        255,
+        0.95
+      )
+    );
 }
 
 .zen-about-final > div {
-  max-width: 700px;
-}
-
-.zen-about-final > div > span {
-  display: block;
-
-  margin-bottom: 7px;
-
-  color:
-    var(--zab-blue-dark);
-
-  font-size: 7px;
-
-  font-weight: 800;
-
-  letter-spacing:
-    0.11em;
+  max-width: 750px;
 }
 
 .zen-about-final h2 {
   margin: 0;
 
+  color:
+    var(--zab-navy);
+
   font-family:
     "Manrope",
     sans-serif;
 
-  color:
-    var(--zab-navy);
-
   font-size:
     clamp(
-      28px,
+      27px,
       2.8vw,
       39px
     );
@@ -1417,39 +2394,70 @@
     -0.048em;
 }
 
+.zen-about-final p {
+  max-width: 620px;
+
+  margin:
+    12px
+    0
+    0;
+
+  color:
+    var(--zab-text-soft);
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
 .zen-about-final-link {
   flex:
     0
     0
     auto;
 
-  min-height: 45px;
+  min-height: 50px;
 
   padding:
     0
-    15px;
+    17px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
   align-items: center;
 
   gap: 8px;
 
-  border-radius: 9px;
+  border-radius: 12px;
+
+  color: #ffffff;
 
   background:
-    var(--zab-navy);
+    linear-gradient(
+      135deg,
+      #315ed5,
+      #537bea
+    );
 
-  color:
-    #ffffff;
+  box-shadow:
+    0
+    14px
+    28px
+    rgba(
+      49,
+      94,
+      213,
+      0.18
+    );
 
-  font-size: 9px;
+  font-size: 13px;
 
   font-weight: 700;
 
   transition:
-    transform 160ms ease,
-    box-shadow 160ms ease;
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .zen-about-final-link:hover {
@@ -1458,148 +2466,464 @@
 
   box-shadow:
     0
-    13px
-    28px
-    rgba(11, 23, 53, 0.16);
+    20px
+    35px
+    rgba(
+      49,
+      94,
+      213,
+      0.25
+    );
 }
 
 .zen-about-final-link svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* =========================================================
    TABLET
 ========================================================= */
 
-@media (max-width: 1000px) {
-  .zen-about-hero {
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(300px, 0.65fr);
-
-    gap: 50px;
+@media (
+  max-width:
+  1280px
+) {
+  :root {
+    --zab-sidebar-width:
+      255px;
   }
 
-  .zen-about-purpose {
+  .zen-about-sidebar-inner {
+    padding:
+      23px
+      15px
+      16px;
+  }
+
+  .zen-about-nav-item {
+    min-height: 48px;
+
+    font-size:
+      14px !important;
+  }
+
+  .zen-about-content {
+    width:
+      calc(
+        100% - 52px
+      );
+  }
+
+  .zen-about-hero {
     grid-template-columns:
-      45px
-      minmax(0, 0.9fr)
-      minmax(330px, 1.1fr);
+      minmax(
+        0,
+        1fr
+      )
+      minmax(
+        330px,
+        0.75fr
+      );
+
+    gap: 35px;
+  }
+
+  .zen-about-definition-columns {
+    grid-template-columns:
+      1fr;
+  }
+
+  .zen-about-capability-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+}
+
+/* =========================================================
+   MOBILE SHELL
+========================================================= */
+
+@media (
+  max-width:
+  980px
+) {
+  .zen-about-sidebar {
+    display: none;
+  }
+
+  .zen-about-mobile-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 1100;
+
+    height: 72px;
+
+    padding:
+      0
+      18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+      space-between;
+
+    border-bottom:
+      1px solid
+      var(--zab-border);
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.95
+      );
+
+    backdrop-filter:
+      blur(18px);
+  }
+
+  .zen-about-mobile-brand {
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      10px !important;
+
+    color:
+      var(--zab-navy) !important;
+
+    font-family:
+      "Manrope",
+      sans-serif !important;
+
+    font-size:
+      19px !important;
+  }
+
+  .zen-about-mobile-brand
+  > span {
+    width: 38px;
+    height: 38px;
+
+    padding: 7px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    background:
+      linear-gradient(
+        145deg,
+        #315ed5,
+        #756ae7
+      );
+  }
+
+  .zen-about-mobile-brand img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    filter:
+      brightness(0)
+      invert(1);
+  }
+
+  .zen-about-mobile-toggle {
+    width:
+      44px !important;
+
+    height:
+      44px !important;
+
+    display:
+      grid !important;
+
+    place-items:
+      center !important;
+
+    border:
+      1px solid
+      var(--zab-border) !important;
+
+    border-radius:
+      12px !important;
+
+    color:
+      var(--zab-navy) !important;
+
+    background:
+      #ffffff !important;
+  }
+
+  .zen-about-mobile-toggle svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .zen-about-mobile-drawer {
+    position: fixed;
+
+    z-index: 1080;
+
+    top: 82px;
+
+    left: 14px;
+    right: 14px;
+
+    max-height:
+      calc(
+        100dvh - 98px
+      );
+
+    padding: 14px;
+
+    display: block;
+
+    overflow-y: auto;
+
+    border:
+      1px solid
+      var(--zab-border);
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0
+      25px
+      60px
+      rgba(
+        23,
+        42,
+        82,
+        0.16
+      );
+  }
+
+  .zen-about-mobile-user {
+    padding:
+      10px
+      8px
+      15px;
+
+    display: grid;
+
+    grid-template-columns:
+      42px
+      minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 11px;
+
+    border-bottom:
+      1px solid
+      var(--zab-border);
+  }
+
+  .zen-about-mobile-user > div {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+  }
+
+  .zen-about-mobile-user strong,
+  .zen-about-mobile-user small {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+  }
+
+  .zen-about-mobile-user strong {
+    color:
+      var(--zab-navy);
+
+    font-size: 14px;
+  }
+
+  .zen-about-mobile-user small {
+    color:
+      var(--zab-text-muted);
+
+    font-size: 11px;
+  }
+
+  .zen-about-mobile-drawer nav {
+    padding-top: 9px;
+
+    display: grid;
+
+    gap: 3px;
+  }
+
+  .zen-about-mobile-drawer
+  nav
+  button {
+    width:
+      100% !important;
+
+    min-height: 49px;
+
+    padding:
+      0
+      12px !important;
+
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      11px !important;
+
+    border-radius:
+      11px !important;
+
+    color:
+      #667287 !important;
+
+    font-size:
+      14px !important;
+
+    font-weight:
+      600 !important;
+
+    text-align:
+      left !important;
+  }
+
+  .zen-about-mobile-drawer
+  nav
+  button
+  svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .zen-about-mobile-drawer
+  nav
+  button.active {
+    color:
+      var(--zab-blue) !important;
+
+    background:
+      var(--zab-blue-light) !important;
+  }
+
+  .zen-about-mobile-drawer
+  nav
+  button.logout {
+    margin-top:
+      7px !important;
+
+    color:
+      var(--zab-danger) !important;
+
+    border-top:
+      1px solid
+      var(--zab-border) !important;
+
+    border-radius:
+      0 !important;
+  }
+
+  .zen-about-main {
+    margin-left: 0;
+
+    padding-top: 72px;
+  }
+
+  .zen-about-content {
+    width:
+      calc(
+        100% - 34px
+      );
+
+    padding:
+      38px
+      0
+      50px;
+  }
+
+  .zen-about-hero {
+    min-height: auto;
+
+    grid-template-columns:
+      1fr;
 
     gap: 28px;
   }
 
-  .zen-about-process-preview {
-    gap: 48px;
-  }
-
-  .zen-about-capability-row {
-    grid-template-columns:
-      40px
-      42px
-      minmax(210px, 0.8fr)
-      minmax(0, 1.2fr);
-  }
-}
-
-@media (max-width: 900px) {
-  :root {
-    --zl-header-height: 68px;
-  }
-
-  .zen-about-main {
-    width:
-      calc(100% - 28px);
-
-    padding:
-      24px
-      0
-      70px;
-  }
-
-  .zen-about-hero {
-    min-height: 0;
-
-    grid-template-columns:
-      1fr;
-
-    gap: 42px;
-  }
-
   .zen-about-definition-panel {
-    max-width: 600px;
-
-    padding:
-      4px
-      0
-      0
-      28px;
+    max-width: 720px;
   }
 
   .zen-about-purpose {
     grid-template-columns:
-      42px
+      44px
       1fr;
 
-    gap:
-      18px
-      28px;
+    gap: 25px;
   }
 
   .zen-about-purpose-copy {
-    grid-column:
-      2;
+    grid-column: 2;
   }
 
-  .zen-about-process-preview {
-    grid-template-columns:
-      1fr;
-
-    gap: 32px;
-  }
-
-  .zen-about-capability-row {
-    grid-template-columns:
-      38px
-      42px
-      minmax(0, 1fr);
-
-    gap: 15px;
-  }
-
-  .zen-about-capability-row p {
-    grid-column:
-      3;
-
-    margin-top: -6px;
-  }
-
+  .zen-about-process-preview,
   .zen-about-emotions {
     grid-template-columns:
       1fr;
-
-    gap: 30px;
   }
 
-  .zen-about-audience-list {
+  .zen-about-audience-grid {
     grid-template-columns:
       1fr;
-  }
-
-  .zen-about-audience-item {
-    min-height: 140px;
   }
 
   .zen-about-principle {
     grid-template-columns:
-      44px
-      1fr;
+      52px
+      minmax(0, 1fr);
   }
 
   .zen-about-principle > p {
-    grid-column:
-      2;
+    grid-column: 2;
+  }
+
+  .zen-about-final {
+    align-items: flex-start;
+
+    flex-direction: column;
   }
 }
 
@@ -1607,48 +2931,63 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 620px) {
-  :root {
-    --zl-header-height: 64px;
+@media (
+  max-width:
+  680px
+) {
+  .zen-about-mobile-header {
+    height: 66px;
+
+    padding:
+      0
+      12px;
   }
 
   .zen-about-main {
-    width:
-      calc(100% - 16px);
-
-    padding:
-      18px
-      0
-      52px;
+    padding-top: 66px;
   }
 
-  .zen-about-hero {
-    padding:
-      30px
-      0
-      42px;
+  .zen-about-content {
+    width:
+      calc(
+        100% - 20px
+      );
 
-    gap: 34px;
+    padding:
+      28px
+      0
+      40px;
+  }
+
+  .zen-about-eyebrow {
+    margin-bottom: 15px;
+
+    font-size: 11px;
+  }
+
+  .zen-about-overline {
+    font-size: 15px;
   }
 
   .zen-about-hero h1 {
     font-size:
       clamp(
-        43px,
+        41px,
         13vw,
-        59px
+        56px
       );
   }
 
-  .zen-about-hero-main > p {
-    font-size: 11px;
+  .zen-about-hero-description {
+    margin-top: 17px;
+
+    font-size: 15px;
   }
 
   .zen-about-hero-actions {
-    display: grid;
+    align-items: stretch;
 
-    grid-template-columns:
-      1fr;
+    flex-direction: column;
   }
 
   .zen-about-primary-link,
@@ -1656,90 +2995,79 @@
     width: 100%;
   }
 
-  .zen-about-definition-panel {
-    max-width: none;
+  .zen-about-definition-panel
+  .zen-about-card-layer {
+    padding: 22px;
+  }
 
-    padding:
-      2px
-      0
-      0
-      20px;
+  .zen-about-definition-columns {
+    grid-template-columns:
+      1fr;
   }
 
   .zen-about-purpose {
     padding:
-      55px
+      62px
       0;
 
     grid-template-columns:
       1fr;
-
-    gap: 13px;
   }
 
-  .zen-about-purpose-index {
+  .zen-about-section-number {
     display: none;
   }
 
   .zen-about-purpose-copy {
     grid-column: auto;
+  }
 
-    margin-top: 10px;
+  .zen-about-purpose-copy p {
+    font-size: 14px;
   }
 
   .zen-about-statement {
     padding:
-      55px
-      0
-      62px;
+      48px
+      23px;
   }
 
   .zen-about-statement h2 {
-    font-size: 34px;
+    font-size:
+      clamp(
+        30px,
+        9vw,
+        41px
+      );
   }
 
   .zen-about-process-preview {
     padding:
-      30px
+      60px
       0;
   }
 
-  .zen-about-process-copy h2 {
-    font-size: 31px;
+  .zen-about-process-copy
+  .zen-about-card-layer {
+    padding: 23px;
   }
 
-  .zen-about-capabilities {
+  .zen-about-process-list
+  > div {
+    min-height: 70px;
+
     padding:
-      65px
       0
-      45px;
+      17px;
   }
 
-  .zen-about-capability-row {
-    padding:
-      20px
-      0;
-
+  .zen-about-capability-grid {
     grid-template-columns:
-      32px
-      38px
-      minmax(0, 1fr);
+      1fr;
   }
 
-  .zen-about-capability-icon {
-    width: 38px;
-    height: 38px;
-  }
-
-  .zen-about-capability-row h3 {
-    font-size: 13px;
-  }
-
-  .zen-about-capability-row p {
-    grid-column:
-      3;
-
-    font-size: 8.5px;
+  .zen-about-capability-card {
+    min-height: 235px;
   }
 
   .zen-about-emotions {
@@ -1748,55 +3076,27 @@
       0;
   }
 
-  .zen-about-emotions-copy h2 {
-    font-size: 31px;
-  }
-
-  .zen-about-emotion-words {
-    gap: 8px;
-  }
-
-  .zen-about-emotion-words span {
-    min-height: 40px;
-
-    padding:
-      0
-      13px;
-
-    font-size: 9px;
-  }
-
   .zen-about-audience {
-    padding:
-      55px
-      0;
-  }
-
-  .zen-about-audience-item {
-    min-height: 0;
-
-    padding: 19px;
-  }
-
-  .zen-about-audience-icon {
-    margin-bottom: 20px;
+    padding-bottom: 60px;
   }
 
   .zen-about-principle {
-    padding:
-      24px
-      0;
+    padding: 23px;
 
     grid-template-columns:
-      40px
+      46px
       1fr;
 
-    gap: 14px;
+    gap: 15px;
   }
 
   .zen-about-principle-icon {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .zen-about-principle h2 {
+    font-size: 19px;
   }
 
   .zen-about-principle > p {
@@ -1805,28 +3105,21 @@
   }
 
   .zen-about-faq {
-    padding:
-      65px
-      0
-      38px;
+    padding-top: 65px;
   }
 
-  .zen-about-faq-heading h2 {
-    font-size: 31px;
-  }
+  .zen-about-faq-list article {
+    padding: 20px;
 
-  .zen-about-faq-item {
     grid-template-columns:
-      34px
+      35px
       1fr;
 
-    gap: 12px;
+    gap: 11px;
   }
 
   .zen-about-final {
-    align-items: flex-start;
-
-    flex-direction: column;
+    padding: 25px;
   }
 
   .zen-about-final-link {
@@ -1840,32 +3133,29 @@
    SMALL MOBILE
 ========================================================= */
 
-@media (max-width: 390px) {
-  .zen-about-main {
+@media (
+  max-width:
+  390px
+) {
+  .zen-about-content {
     width:
-      calc(100% - 12px);
+      calc(
+        100% - 16px
+      );
   }
 
   .zen-about-hero h1 {
-    font-size: 42px;
+    font-size: 39px;
   }
 
-  .zen-about-definition-panel {
-    padding-left: 16px;
+  .zen-about-definition-panel
+  .zen-about-card-layer {
+    padding: 18px;
   }
 
-  .zen-about-capability-row {
+  .zen-about-faq-list article {
     grid-template-columns:
-      28px
-      36px
       1fr;
-
-    gap: 11px;
-  }
-
-  .zen-about-capability-icon {
-    width: 36px;
-    height: 36px;
   }
 }
 
@@ -1873,12 +3163,24 @@
    REDUCED MOTION
 ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
-  .zen-about-primary-link,
-  .zen-about-secondary-link,
-  .zen-about-process-link svg,
-  .zen-about-final-link {
-    transition:
-      none !important;
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+  .zen-about-card-glow {
+    display: none;
+  }
+
+  .zen-about-page *,
+  .zen-about-page *::before,
+  .zen-about-page *::after {
+    transition-duration:
+      0.01ms !important;
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
   }
 }
