@@ -8,7 +8,7 @@ load_dotenv(dotenv_path=env_path, override=True)
 IMAGE_SIZE = 48
 NORMALIZATION_FACTOR = 255.0
 
-MODEL_PATH = "ZFNETModelV6.h5"
+MODEL_PATH = "CNNModelV11-2026-2.h5"
 
 UPLOAD_FOLDER = "uploads"
 PROCESSED_FOLDER = "processed"
