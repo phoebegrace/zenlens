@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./src/server    
+    ports:
+      - "5001:5001"
+    # env_file:
+    #   - ./src/server/.env
+    volumes:
+      - ./src/server:/app        
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - FLASK_ENV=development
+
+  client:
+    build: ./src/client    
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server

@@ -1,0 +1,20 @@
+uploads/
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Ignore dynamic JSON data files
+emotion_timeline.json
+analysis_data.json
+daily_emotion_timeline.json
+weekly_combined_results.json
+weekly_emotion_timeline.json
+
+orig-main.txt
+.env
+.python-version
+get-pip.py
