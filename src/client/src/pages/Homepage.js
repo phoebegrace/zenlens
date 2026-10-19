@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 
 import { auth, db } from "../components/firebase";
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./Homepage.css";
 
@@ -66,7 +66,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -187,7 +187,7 @@ const HomePage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const displayFirstName =
     firstName ||
@@ -273,13 +273,13 @@ const HomePage = () => {
           >
             <span className="zen-sidebar-brand-mark">
               <img
-                src={zenlensLogo}
-                alt="ZenLens"
+                src={ASTRALogo}
+                alt="ASTRA"
               />
             </span>
 
             <span className="zen-sidebar-brand-copy">
-              <strong>ZenLens</strong>
+              <strong>ASTRA</strong>
 
               <small>
                 Classroom Stress Analytics
@@ -294,7 +294,7 @@ const HomePage = () => {
 
             <nav
               className="zen-sidebar-navigation"
-              aria-label="ZenLens navigation"
+              aria-label="ASTRA navigation"
             >
               {navigationItems.map(
                 (item) => {
@@ -337,7 +337,7 @@ const HomePage = () => {
 
             <nav
               className="zen-sidebar-navigation"
-              aria-label="ZenLens information"
+              aria-label="ASTRA information"
             >
               {supportNavigation.map(
                 (item) => {
@@ -413,13 +413,13 @@ const HomePage = () => {
         >
           <span className="zen-mobile-brand-mark">
             <img
-              src={zenlensLogo}
-              alt="ZenLens"
+              src={ASTRALogo}
+              alt="ASTRA"
             />
           </span>
 
           <span>
-            ZenLens
+            ASTRA
           </span>
         </button>
 
@@ -523,7 +523,7 @@ const HomePage = () => {
               <span className="zen-dashboard-eyebrow">
                 <Sparkles />
 
-                ZenLens workspace
+                ASTRA workspace
               </span>
 
               <p className="zen-dashboard-welcome">
@@ -713,7 +713,7 @@ const HomePage = () => {
                       </strong>
 
                       <p>
-                        ZenLens processes
+                        ASTRA processes
                         visible facial
                         expressions and
                         organizes
@@ -746,7 +746,7 @@ const HomePage = () => {
                         results and
                         longer-term stress
                         trends through
-                        ZenLens.
+                        ASTRA.
                       </p>
                     </div>
                   </div>
@@ -762,7 +762,7 @@ const HomePage = () => {
                   }
                 >
                   <span>
-                    Learn how ZenLens
+                    Learn how ASTRA
                     works
                   </span>
 
@@ -796,7 +796,7 @@ const HomePage = () => {
                 </div>
 
                 <p className="zen-emotion-description">
-                  ZenLens organizes
+                  ASTRA organizes
                   detected facial
                   expressions into seven
                   emotion categories
@@ -973,7 +973,7 @@ const HomePage = () => {
                 </span>
 
                 <h2>
-                  ZenLens supports
+                  ASTRA supports
                   classroom stress
                   assessment.
                 </h2>
@@ -995,12 +995,12 @@ const HomePage = () => {
           <footer className="zen-dashboard-footer">
             <div>
               <img
-                src={zenlensLogo}
+                src={ASTRALogo}
                 alt=""
               />
 
               <span>
-                ZenLens
+                ASTRA
               </span>
             </div>
 

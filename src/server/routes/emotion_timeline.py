@@ -6,6 +6,7 @@ import logging
 from services.data_handler import (
     load_emotion_timeline,
     save_daily_results,
+    data_path,
 )
 from config import EMOTION_TIMELINE_FILE
 
@@ -17,7 +18,7 @@ timeline_bp = Blueprint("timeline_bp", __name__)
 @timeline_bp.route("/emotion-timeline", methods=["GET"])
 def get_emotion_timeline():
     try:
-        with open(EMOTION_TIMELINE_FILE, "r") as file:
+        with open(data_path(EMOTION_TIMELINE_FILE), "r") as file:
             emotion_timeline = json.load(file)
 
         return jsonify(emotion_timeline)

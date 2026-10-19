@@ -38,7 +38,7 @@ import {
   db,
 } from "./firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./Sidebar.css";
 
@@ -56,7 +56,7 @@ const Sidebar = () => {
     try {
       return (
         localStorage.getItem(
-          "zenlens-sidebar-collapsed"
+          "ASTRA-sidebar-collapsed"
         ) === "true"
       );
     } catch {
@@ -198,7 +198,7 @@ const Sidebar = () => {
 
     try {
       localStorage.setItem(
-        "zenlens-sidebar-collapsed",
+        "ASTRA-sidebar-collapsed",
         String(
           collapsed
         )
@@ -499,16 +499,16 @@ const Sidebar = () => {
             <span className="zl-sidebar-logo">
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             {!collapsed && (
               <span className="zl-sidebar-brand-copy">
                 <strong>
-                  ZenLens
+                  ASTRA
                 </strong>
 
                 <small>
@@ -714,14 +714,14 @@ const Sidebar = () => {
           <span>
             <img
               src={
-                zenlensLogo
+                ASTRALogo
               }
-              alt="ZenLens"
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -769,15 +769,15 @@ const Sidebar = () => {
                 <span>
                   <img
                     src={
-                      zenlensLogo
+                      ASTRALogo
                     }
-                    alt="ZenLens"
+                    alt="ASTRA"
                   />
                 </span>
 
                 <div>
                   <strong>
-                    ZenLens
+                    ASTRA
                   </strong>
 
                   <small>

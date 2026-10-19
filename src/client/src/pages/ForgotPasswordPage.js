@@ -4,7 +4,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 import { auth } from "../components/firebase";
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./ForgotPasswordPage.css";
 
@@ -16,7 +16,7 @@ const getResetErrorMessage = (error) => {
   }
 
   if (code === "auth/missing-email") {
-    return "Enter the email address connected to your ZenLens account.";
+    return "Enter the email address connected to your ASTRA account.";
   }
 
   if (code === "auth/too-many-requests") {
@@ -24,7 +24,7 @@ const getResetErrorMessage = (error) => {
   }
 
   if (code === "auth/network-request-failed") {
-    return "ZenLens could not reach Firebase. Check your internet connection and try again.";
+    return "ASTRA could not reach Firebase. Check your internet connection and try again.";
   }
 
   return "We could not send the reset email right now. Please try again.";
@@ -45,7 +45,7 @@ const ForgotPasswordPage = () => {
 
     if (!normalizedEmail) {
       setErrorMessage(
-        "Enter the email address connected to your ZenLens account."
+        "Enter the email address connected to your ASTRA account."
       );
       return;
     }
@@ -70,11 +70,11 @@ const ForgotPasswordPage = () => {
         <section className="zen-forgot-visual" aria-hidden="true">
           <div className="zen-forgot-brand">
             <div className="zen-forgot-logo-box">
-              <img src={zenlensLogo} alt="" className="zen-forgot-logo" />
+              <img src={ASTRALogo} alt="" className="zen-forgot-logo" />
             </div>
 
             <div className="zen-forgot-brand-copy">
-              <strong>ZenLens</strong>
+              <strong>ASTRA</strong>
               <span>Classroom Emotion &amp; Stress Analytics</span>
             </div>
           </div>
@@ -85,7 +85,7 @@ const ForgotPasswordPage = () => {
 
             <p>
               Request a secure password reset link using the email address
-              connected to your ZenLens account.
+              connected to your ASTRA account.
             </p>
           </div>
 
@@ -107,11 +107,11 @@ const ForgotPasswordPage = () => {
         <section className="zen-forgot-form-side">
           <div className="zen-forgot-mobile-brand">
             <div className="zen-forgot-mobile-logo-box">
-              <img src={zenlensLogo} alt="ZenLens" />
+              <img src={ASTRALogo} alt="ASTRA" />
             </div>
 
             <div>
-              <strong>ZenLens</strong>
+              <strong>ASTRA</strong>
               <span>Classroom Stress Analytics</span>
             </div>
           </div>
@@ -222,7 +222,7 @@ const ForgotPasswordPage = () => {
                 <h2>Check your inbox.</h2>
 
                 <p>
-                  If <strong>{email.trim()}</strong> is connected to a ZenLens
+                  If <strong>{email.trim()}</strong> is connected to a ASTRA
                   account, a password reset link has been sent to that address.
                 </p>
 

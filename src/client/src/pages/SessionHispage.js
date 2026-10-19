@@ -4,7 +4,7 @@ import React, {
   useState,
 } from "react";
 
-import axios from "axios";
+import { api as axios } from "../api";
 import Plot from "react-plotly.js";
 
 import {
@@ -51,12 +51,11 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./SessionHispage.css";
 
-const API_BASE_URL =
-  "http://127.0.0.1:5001";
+const API_BASE_URL = "/api";
 
 const navigationItems = [
   {
@@ -93,7 +92,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -262,7 +261,7 @@ const SessionHisPage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -424,7 +423,7 @@ const SessionHisPage = () => {
             error.response
               ?.data
               ?.message ||
-            `The ZenLens server returned status ${error.response.status}.`;
+            `The ASTRA server returned status ${error.response.status}.`;
 
           setErrorMessage(
             serverMessage
@@ -433,7 +432,7 @@ const SessionHisPage = () => {
           error.request
         ) {
           setErrorMessage(
-            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+            "Unable to connect to the ASTRA server at 127.0.0.1:5000. Make sure python app.py is still running."
           );
         } else {
           setErrorMessage(
@@ -496,7 +495,7 @@ const SessionHisPage = () => {
           error.request
         ) {
           setErrorMessage(
-            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+            "Unable to connect to the ASTRA server at 127.0.0.1:5000. Make sure python app.py is still running."
           );
         } else {
           setErrorMessage(
@@ -780,15 +779,15 @@ const SessionHisPage = () => {
               <span className="zen-session-brand-mark">
                 <img
                   src={
-                    zenlensLogo
+                    ASTRALogo
                   }
-                  alt="ZenLens"
+                  alt="ASTRA"
                 />
               </span>
 
               <span className="zen-session-brand-copy">
                 <strong>
-                  ZenLens
+                  ASTRA
                 </strong>
 
                 <small>
@@ -939,14 +938,14 @@ const SessionHisPage = () => {
             <span>
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             <strong>
-              ZenLens
+              ASTRA
             </strong>
           </button>
 
@@ -1076,7 +1075,7 @@ const SessionHisPage = () => {
               <span className="zen-session-eyebrow">
                 <Sparkles />
 
-                ZenLens history workspace
+                ASTRA history workspace
               </span>
 
               <p className="zen-session-overline">
@@ -1543,7 +1542,7 @@ const SessionHisPage = () => {
                 </h3>
 
                 <p>
-                  Adjust the current filters or reset them to view all available ZenLens sessions.
+                  Adjust the current filters or reset them to view all available ASTRA sessions.
                 </p>
 
                 {activeFilterCount >

@@ -1,3 +1,4 @@
+import { apiFetch } from "../api";
 import React, {
   useEffect,
   useMemo,
@@ -49,12 +50,11 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./OverallHispage.css";
 
-const API_BASE_URL =
-  "http://127.0.0.1:5001";
+const API_BASE_URL = "/api";
 
 const navigationItems = [
   {
@@ -91,7 +91,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -251,7 +251,7 @@ const DailyWeeklyPage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -317,7 +317,7 @@ const DailyWeeklyPage = () => {
 
       try {
         const response =
-          await fetch(
+          await apiFetch(
             `${API_BASE_URL}/daily-emotion-timeline`
           );
 
@@ -352,7 +352,7 @@ const DailyWeeklyPage = () => {
           TypeError
         ) {
           setErrorMessage(
-            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+            "Unable to connect to the ASTRA server at 127.0.0.1:5000. Make sure python app.py is still running."
           );
         } else {
           setErrorMessage(
@@ -383,7 +383,7 @@ const DailyWeeklyPage = () => {
 
       try {
         const response =
-          await fetch(
+          await apiFetch(
             `${API_BASE_URL}/weekly-emotion-timeline`
           );
 
@@ -418,7 +418,7 @@ const DailyWeeklyPage = () => {
           TypeError
         ) {
           setErrorMessage(
-            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+            "Unable to connect to the ASTRA server at 127.0.0.1:5000. Make sure python app.py is still running."
           );
         } else {
           setErrorMessage(
@@ -455,7 +455,7 @@ const DailyWeeklyPage = () => {
 
       try {
         const response =
-          await fetch(
+          await apiFetch(
             `${API_BASE_URL}/get-weekly-recommendation`
           );
 
@@ -512,7 +512,7 @@ const DailyWeeklyPage = () => {
           TypeError
         ) {
           setRecommendation(
-            "ZenLens could not connect to the analysis server."
+            "ASTRA could not connect to the analysis server."
           );
         } else {
           setRecommendation(
@@ -1009,15 +1009,15 @@ const DailyWeeklyPage = () => {
             <span className="zen-overall-brand-mark">
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             <span className="zen-overall-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <small>
@@ -1181,14 +1181,14 @@ const DailyWeeklyPage = () => {
           <span>
             <img
               src={
-                zenlensLogo
+                ASTRALogo
               }
-              alt="ZenLens"
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -1316,7 +1316,7 @@ const DailyWeeklyPage = () => {
               <span className="zen-overall-eyebrow">
                 <Sparkles />
 
-                ZenLens historical insights
+                ASTRA historical insights
               </span>
 
               <p className="zen-overall-overline">
@@ -1568,7 +1568,7 @@ const DailyWeeklyPage = () => {
                 </strong>
 
                 <span>
-                  Retrieving ZenLens timeline data.
+                  Retrieving ASTRA timeline data.
                 </span>
               </div>
             ) : currentData.length >
@@ -1726,7 +1726,7 @@ const DailyWeeklyPage = () => {
                 </h3>
 
                 <p>
-                  ZenLens will display historical patterns here once classroom session data is available.
+                  ASTRA will display historical patterns here once classroom session data is available.
                 </p>
               </div>
             )}
@@ -1894,7 +1894,7 @@ const DailyWeeklyPage = () => {
                         </span>
 
                         <strong>
-                          ZenLens insight
+                          ASTRA insight
                         </strong>
                       </div>
                     </div>

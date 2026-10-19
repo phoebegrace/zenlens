@@ -32,12 +32,12 @@ import {
   db,
 } from "./firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
-import "./ZenLensHeader.css";
+import "./ASTRAHeader.css";
 
 
-const ZenLensHeader = () => {
+const ASTRAHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -91,7 +91,7 @@ const ZenLensHeader = () => {
           }
         } catch (error) {
           console.error(
-            "Unable to load ZenLens user:",
+            "Unable to load ASTRA user:",
             error
           );
 
@@ -170,7 +170,7 @@ const ZenLensHeader = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -211,11 +211,11 @@ const ZenLensHeader = () => {
     */
 
     localStorage.removeItem(
-      "formData"
+      `astra-${auth.currentUser?.uid}-${"formData"}`
     );
 
     localStorage.removeItem(
-      "analysisResults"
+      `astra-${auth.currentUser?.uid}-${"analysisResults"}`
     );
 
     /*
@@ -357,11 +357,11 @@ const ZenLensHeader = () => {
             onClick={() =>
               goTo("/home")
             }
-            aria-label="Go to ZenLens home"
+            aria-label="Go to ASTRA home"
           >
             <span className="zl-header-brand-mark">
               <img
-                src={zenlensLogo}
+                src={ASTRALogo}
                 alt=""
                 aria-hidden="true"
               />
@@ -369,7 +369,7 @@ const ZenLensHeader = () => {
 
             <span className="zl-header-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <small>
@@ -675,4 +675,4 @@ const ZenLensHeader = () => {
 };
 
 
-export default ZenLensHeader;
+export default ASTRAHeader;

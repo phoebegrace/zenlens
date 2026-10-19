@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./LoginPage.css";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -117,7 +117,7 @@ const LoginPage = () => {
       );
 
       /*
-        Preserves the original ZenLens
+        Preserves the original ASTRA
         login behavior.
 
         Firebase authenticates first,
@@ -129,7 +129,7 @@ const LoginPage = () => {
       }, 1800);
     } catch (error) {
       console.error(
-        "ZenLens login error:",
+        "ASTRA login error:",
         error
       );
 
@@ -220,15 +220,15 @@ const LoginPage = () => {
           <div className="zen-login-brand">
             <div className="zen-login-logo-box">
               <img
-                src={zenlensLogo}
-                alt="ZenLens logo"
+                src={ASTRALogo}
+                alt="ASTRA logo"
                 className="zen-login-logo"
               />
             </div>
 
             <div className="zen-login-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <span>
@@ -286,15 +286,15 @@ const LoginPage = () => {
           <div className="zen-login-mobile-brand">
             <div className="zen-login-mobile-logo-box">
               <img
-                src={zenlensLogo}
-                alt="ZenLens logo"
+                src={ASTRALogo}
+                alt="ASTRA logo"
                 className="zen-login-mobile-logo"
               />
             </div>
 
             <div className="zen-login-mobile-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <span>
@@ -313,7 +313,7 @@ const LoginPage = () => {
               </span>
 
               <h2>
-                Sign in to ZenLens
+                Sign in to ASTRA
               </h2>
 
               <p>
@@ -574,7 +574,7 @@ const LoginPage = () => {
 
             <div className="zen-login-register">
               <span>
-                New to ZenLens?
+                New to ASTRA?
               </span>
 
               <button
