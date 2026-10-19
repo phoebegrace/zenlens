@@ -62,6 +62,7 @@ import {
 } from "../components/firebase";
 
 import ASTRALogo from "../image/app.png";
+import ASTRABlueLogo from "../image/astra-mark-blue.svg";
 
 import "./Analysispage.css";
 
@@ -1077,6 +1078,8 @@ const AnalysisPage = () => {
             }
 
             .brand-mark {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
               width: 42px;
               height: 42px;
 
@@ -1087,12 +1090,7 @@ const AnalysisPage = () => {
 
               color: white;
 
-              background:
-                linear-gradient(
-                  145deg,
-                  #315ed5,
-                  #6d6fe7
-                );
+              background: #edf6ff;
 
               font-weight: 800;
             }
@@ -1398,7 +1396,7 @@ const AnalysisPage = () => {
             <header class="header">
               <div class="brand">
                 <div class="brand-mark">
-                  Z
+                  <img src="${escapeHtml(new URL(ASTRABlueLogo, window.location.origin).href)}" alt="ASTRA" width="42" height="42" style="display:block;object-fit:contain" />
                 </div>
 
                 <div>

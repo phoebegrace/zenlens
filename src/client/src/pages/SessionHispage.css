@@ -3319,3 +3319,13 @@ span {
       1 !important;
   }
 }
+/* Stack session rows as readable cards instead of a 940px mobile table. */
+@media (max-width: 680px) {
+  .zen-session-list { overflow:visible; }
+  .zen-session-list-header { display:none; }
+  .zen-session-row { min-width:0;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:18px;text-align:left; }
+  .zen-session-row-id,.zen-session-row-subject { grid-column:1/-1;min-width:0; }
+  .zen-session-row-meta { min-width:0; }
+  .zen-session-row-meta:nth-of-type(5) { grid-column:1/-1; }
+  .zen-session-row-open { grid-column:1/-1;justify-self:start; }
+}

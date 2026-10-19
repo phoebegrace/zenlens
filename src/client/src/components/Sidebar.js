@@ -190,7 +190,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     document.documentElement.style.setProperty(
-      "--zen-sidebar-width",
+      "--astra-desktop-sidebar-width",
       collapsed
         ? "78px"
         : "286px"
@@ -225,6 +225,22 @@ const Sidebar = () => {
   /* ======================================================
      USER DISPLAY
   ====================================================== */
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = event => { if (event.key === 'Escape') setMobileOpen(false); };
+    const breakpoint = window.matchMedia('(max-width: 980px)');
+    const closeOnDesktop = event => { if (!event.matches) setMobileOpen(false); };
+    document.addEventListener('keydown', closeOnEscape);
+    breakpoint.addEventListener('change', closeOnDesktop);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener('keydown', closeOnEscape);
+      breakpoint.removeEventListener('change', closeOnDesktop);
+    };
+  }, [mobileOpen]);
 
   const firstName =
     userDetails?.firstName?.trim() ||
@@ -737,6 +753,8 @@ const Sidebar = () => {
             )
           }
           aria-label="Toggle navigation"
+          aria-expanded={mobileOpen}
+          aria-controls="astra-mobile-navigation"
         >
           {mobileOpen ? (
             <X />
@@ -763,7 +781,8 @@ const Sidebar = () => {
             }
           />
 
-          <aside className="zl-sidebar-mobile-drawer">
+          <aside className="zl-sidebar-mobile-drawer"
+            id="astra-mobile-navigation">
             <div className="zl-sidebar-mobile-drawer-head">
               <div className="zl-sidebar-mobile-drawer-brand">
                 <span>
