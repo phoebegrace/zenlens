@@ -1,4 +1,4 @@
-"""Load the bundled ZFNet weights with compatible inference-only metadata."""
+"""Load the bundled emotion-classification weights with compatible inference-only metadata."""
 import json
 from functools import lru_cache
 import h5py
@@ -41,7 +41,7 @@ def get_model():
     with h5py.File(MODEL_PATH) as handle:
         config = inference_config(json.loads(handle.attrs['model_config']))
     if config['class_name'] != 'Sequential':
-        raise ValueError('Expected the bundled sequential ZFNet model.')
+        raise ValueError('Expected the bundled sequential emotion model.')
     model = keras.Sequential.from_config(config['config'])
     model.load_weights(MODEL_PATH)
     if model.input_shape != (None, 48, 48, 1) or model.output_shape[-1] != 7:

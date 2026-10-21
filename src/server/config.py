@@ -7,7 +7,7 @@ load_dotenv(SERVER_ROOT.parents[1] / 'config' / '.env', override=False)
 
 IMAGE_SIZE = 48
 NORMALIZATION_FACTOR = 255.0
-MODEL_PATH = str(Path(os.getenv('MODEL_PATH', SERVER_ROOT / 'ZFNETModelV8-2026.h5')).resolve())
+MODEL_PATH = str(Path(os.getenv('MODEL_PATH', SERVER_ROOT / 'CNNModelV11-2026-2.h5')).resolve())
 DATA_ROOT = Path(os.getenv('DATA_ROOT', SERVER_ROOT / 'data')).resolve()
 UPLOAD_FOLDER = 'uploads'
 PROCESSED_FOLDER = 'processed'
