@@ -149,8 +149,20 @@ def analyze_image(
             cv2.COLOR_BGR2RGB
         )
 
+        # RetinaFace otherwise enlarges photos to ~1024px on the short side,
+        # exceeding the hosted worker's memory budget. Keep output at full size.
+        height, width = image.shape[:2]
+        detector_scale = min(1.0, 640.0 / max(height, width))
+        detector_image = image
+        if detector_scale < 1.0:
+            detector_image = cv2.resize(
+                image, (round(width * detector_scale), round(height * detector_scale)),
+                interpolation=cv2.INTER_AREA,
+            )
+        scale_x = width / detector_image.shape[1]
+        scale_y = height / detector_image.shape[0]
         with _inference_lock:
-            faces = RetinaFace.detect_faces(image)
+            faces = RetinaFace.detect_faces(detector_image, allow_upscaling=False)
         if not isinstance(faces, dict):
             faces = {}
 
@@ -173,6 +185,8 @@ def analyze_image(
             ]
 
             x, y, x2, y2 = facial_area
+            x, x2 = round(x * scale_x), round(x2 * scale_x)
+            y, y2 = round(y * scale_y), round(y2 * scale_y)
             x, y = max(0, x), max(0, y)
             x2, y2 = min(image.shape[1], x2), min(image.shape[0], y2)
             if x2 <= x or y2 <= y:

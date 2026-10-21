@@ -70,3 +70,24 @@ def test_fake_image_content_is_rejected(tmp_path):
         g.user_key = hashlib.sha256(b'alice').hexdigest()
         with pytest.raises(ValueError, match='invalid'):
             process_and_save_images([FileStorage(BytesIO(b'not-an-image'), filename='fake.jpg')], 'test', '2026-10-19')
+
+
+def test_large_photo_bounds_detector_input_and_restores_coordinates(tmp_path, monkeypatch):
+    import cv2
+    import numpy as np
+    from services import image_processing as processing
+    path = tmp_path / 'large.jpg'
+    cv2.imwrite(str(path), np.zeros((1200, 1600, 3), dtype=np.uint8))
+    output = tmp_path / 'processed'
+    output.mkdir()
+
+    def detector(image, **kwargs):
+        assert max(image.shape[:2]) <= 640
+        assert kwargs.get('allow_upscaling') is False
+        return {'face_1': {'facial_area': [40, 40, 120, 120]}}
+
+    monkeypatch.setattr(processing.RetinaFace, 'detect_faces', detector)
+    monkeypatch.setattr(processing, 'predict_emotion', lambda _: np.array([[0, 0, 0, 1, 0, 0, 0]]))
+    saved, faces, _ = processing.analyze_image(str(path), str(output))
+    assert faces['Face 1']['coordinates'] == (100, 100, 200, 200)
+    assert cv2.imread(saved).shape[:2] == (1200, 1600)
