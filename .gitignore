@@ -21,3 +21,7 @@ __pycache__/
 src/server/.venv/
 src/server/.python-version
 src/server/get-pip.py
+
+src/server/data/
+src/client/build/
+.pytest_cache/

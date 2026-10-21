@@ -1,0 +1,14 @@
+.git
+**/node_modules
+**/build
+**/__pycache__
+**/.venv
+**/venv
+**/data
+**/uploads
+**/.env*
+config
+doc
+tests
+src/server/CNNModelV11-2026-1.h5
+src/server/ZFNETModelV8-2026-compat.h5

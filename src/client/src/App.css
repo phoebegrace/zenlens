@@ -205,3 +205,15 @@
       70px !important;
   }
 }
+/* Scope the shell width so page-level root styles cannot offset mobile pages. */
+.app-has-sidebar { --zen-sidebar-width: var(--astra-desktop-sidebar-width, 286px); }
+@media (max-width: 980px) {
+  .app-has-sidebar { --zen-sidebar-width: 0px; }
+  .app-has-sidebar .content { width:100%;min-width:0; }
+  .zl-sidebar-mobile-drawer { overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(18px,env(safe-area-inset-bottom)); }
+}
+@media (max-width: 680px) {
+  .app-has-sidebar :is(.zen-analysis-main,.zen-monitor-main,.zen-monitoring-main,.zen-session-main,.zen-history-main,.zen-overall-main,.zen-about-main,.zen-how-main,.zen-dashboard-main) { min-width:0;max-width:100%; }
+  .app :is(input,select,textarea) { font-size:16px; }
+  .zl-sidebar-mobile-toggle { min-width:44px;min-height:44px; }
+}

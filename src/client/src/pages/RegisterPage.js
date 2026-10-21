@@ -27,7 +27,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./RegisterPage.css";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -188,7 +188,7 @@ const RegisterPage = () => {
 
     try {
       /*
-        REAL ORIGINAL ZENLENS AUTH FLOW
+        REAL ORIGINAL ASTRA AUTH FLOW
 
         1. Create Firebase Authentication user.
         2. Get newly authenticated user.
@@ -214,7 +214,7 @@ const RegisterPage = () => {
 
       /*
         Preserve the exact original
-        ZenLens Firestore structure.
+        ASTRA Firestore structure.
       */
 
       await setDoc(
@@ -244,7 +244,7 @@ const RegisterPage = () => {
       );
 
       /*
-        Original ZenLens did not
+        Original ASTRA did not
         automatically redirect after
         registration, so we preserve
         that behavior.
@@ -253,7 +253,7 @@ const RegisterPage = () => {
       */
     } catch (error) {
       console.error(
-        "ZenLens registration error:",
+        "ASTRA registration error:",
         error
       );
 
@@ -351,15 +351,15 @@ const RegisterPage = () => {
           <div className="zen-register-brand">
             <div className="zen-register-logo-box">
               <img
-                src={zenlensLogo}
-                alt="ZenLens logo"
+                src={ASTRALogo}
+                alt="ASTRA logo"
                 className="zen-register-logo"
               />
             </div>
 
             <div className="zen-register-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <span>
@@ -386,7 +386,7 @@ const RegisterPage = () => {
             </h1>
 
             <p>
-              Create your ZenLens account
+              Create your ASTRA account
               to analyze classroom sessions,
               review emotion patterns, and
               monitor stress trends over time.
@@ -418,15 +418,15 @@ const RegisterPage = () => {
           <div className="zen-register-mobile-brand">
             <div className="zen-register-mobile-logo-box">
               <img
-                src={zenlensLogo}
-                alt="ZenLens logo"
+                src={ASTRALogo}
+                alt="ASTRA logo"
                 className="zen-register-mobile-logo"
               />
             </div>
 
             <div className="zen-register-mobile-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <span>
@@ -449,7 +449,7 @@ const RegisterPage = () => {
               </h2>
 
               <p>
-                Set up your ZenLens account
+                Set up your ASTRA account
                 to begin analyzing classroom
                 sessions and reviewing stress
                 insights.

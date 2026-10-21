@@ -85,3 +85,6 @@
   margin-top: 2.8px;
   transition: filter 0.3s ease; /* Smooth transition for the icon */
 }
+
+.astra-legacy-brand { display:flex;align-items:center;gap:10px;text-decoration:none;color:#111;font:700 28px sans-serif; }
+.astra-legacy-brand img { width:40px;height:40px;object-fit:contain; }

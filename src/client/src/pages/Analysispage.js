@@ -4,7 +4,7 @@ import React, {
   useState,
 } from "react";
 
-import axios from "axios";
+import { api as axios } from "../api";
 
 import {
   Activity,
@@ -61,12 +61,12 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
+import ASTRABlueLogo from "../image/astra-mark-blue.svg";
 
 import "./Analysispage.css";
 
-const API_BASE_URL =
-  "http://127.0.0.1:5001";
+const API_BASE_URL = "/api";
 
 const EMOTION_CODES = [
   {
@@ -193,7 +193,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -343,7 +343,7 @@ const AnalysisPage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -391,7 +391,7 @@ const AnalysisPage = () => {
       const savedFormData =
         JSON.parse(
           localStorage.getItem(
-            "formData"
+            `astra-${auth.currentUser?.uid}-${"formData"}`
           )
         );
 
@@ -658,7 +658,7 @@ const AnalysisPage = () => {
         );
 
         localStorage.setItem(
-          "formData",
+          `astra-${auth.currentUser?.uid}-${"formData"}`,
           JSON.stringify({
             subject,
             roomNumber,
@@ -671,7 +671,7 @@ const AnalysisPage = () => {
         );
 
         localStorage.setItem(
-          "analysisResults",
+          `astra-${auth.currentUser?.uid}-${"analysisResults"}`,
           JSON.stringify(
             response.data
           )
@@ -689,7 +689,7 @@ const AnalysisPage = () => {
             error.response
               ?.data
               ?.message ||
-            "The ZenLens server returned an error while processing the session.";
+            "The ASTRA server returned an error while processing the session.";
 
           setErrorMessage(
             serverMessage
@@ -698,7 +698,7 @@ const AnalysisPage = () => {
           error.request
         ) {
           setErrorMessage(
-            "ZenLens could not connect to the analysis server at 127.0.0.1:5000. Make sure python app.py is still running."
+            "ASTRA could not reach the analysis service. Please try again shortly."
           );
         } else {
           setErrorMessage(
@@ -739,11 +739,11 @@ const AnalysisPage = () => {
     }
 
     localStorage.removeItem(
-      "formData"
+      `astra-${auth.currentUser?.uid}-${"formData"}`
     );
 
     localStorage.removeItem(
-      "analysisResults"
+      `astra-${auth.currentUser?.uid}-${"analysisResults"}`
     );
   };
 
@@ -1032,7 +1032,7 @@ const AnalysisPage = () => {
           <meta charset="UTF-8" />
 
           <title>
-            ZenLens Analysis Results
+            ASTRA Analysis Results
           </title>
 
           <style>
@@ -1078,6 +1078,8 @@ const AnalysisPage = () => {
             }
 
             .brand-mark {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
               width: 42px;
               height: 42px;
 
@@ -1088,12 +1090,7 @@ const AnalysisPage = () => {
 
               color: white;
 
-              background:
-                linear-gradient(
-                  145deg,
-                  #315ed5,
-                  #6d6fe7
-                );
+              background: #edf6ff;
 
               font-weight: 800;
             }
@@ -1399,12 +1396,12 @@ const AnalysisPage = () => {
             <header class="header">
               <div class="brand">
                 <div class="brand-mark">
-                  Z
+                  <img src="${escapeHtml(new URL(ASTRABlueLogo, window.location.origin).href)}" alt="ASTRA" width="42" height="42" style="display:block;object-fit:contain" />
                 </div>
 
                 <div>
                   <h1>
-                    ZenLens
+                    ASTRA
                   </h1>
 
                   <p>
@@ -1584,7 +1581,7 @@ const AnalysisPage = () => {
             </section>
 
             <div class="notice">
-              ZenLens provides supporting information based on detected classroom emotional patterns. Results should not be interpreted as a medical or psychological diagnosis.
+              ASTRA provides supporting information based on detected classroom emotional patterns. Results should not be interpreted as a medical or psychological diagnosis.
             </div>
           </main>
         </body>
@@ -1695,14 +1692,14 @@ const AnalysisPage = () => {
           >
             <span className="zen-analysis-brand-mark">
               <img
-                src={zenlensLogo}
-                alt="ZenLens"
+                src={ASTRALogo}
+                alt="ASTRA"
               />
             </span>
 
             <span className="zen-analysis-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <small>
@@ -1843,13 +1840,13 @@ const AnalysisPage = () => {
         >
           <span>
             <img
-              src={zenlensLogo}
-              alt="ZenLens"
+              src={ASTRALogo}
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -1975,7 +1972,7 @@ const AnalysisPage = () => {
               </div>
 
               <span className="zen-analysis-loading-kicker">
-                ZENLENS ANALYSIS
+                ASTRA ANALYSIS
               </span>
 
               <h1>
@@ -1983,7 +1980,7 @@ const AnalysisPage = () => {
               </h1>
 
               <p>
-                ZenLens is processing the uploaded session and organizing detected emotional observations.
+                ASTRA is processing the uploaded session and organizing detected emotional observations.
               </p>
 
               <div className="zen-analysis-loading-status">
@@ -2080,7 +2077,7 @@ const AnalysisPage = () => {
                     </strong>
 
                     <p>
-                      Overall category returned by the ZenLens analysis.
+                      Overall category returned by the ASTRA analysis.
                     </p>
                   </div>
                 </article>
@@ -2416,7 +2413,7 @@ const AnalysisPage = () => {
                   </span>
 
                   <h2>
-                    ZenLens supports classroom stress assessment.
+                    ASTRA supports classroom stress assessment.
                   </h2>
                 </div>
 
@@ -2432,7 +2429,7 @@ const AnalysisPage = () => {
                   <span className="zen-analysis-eyebrow">
                     <Sparkles />
 
-                    ZenLens analysis workspace
+                    ASTRA analysis workspace
                   </span>
 
                   <p className="zen-analysis-overline">
@@ -2448,7 +2445,7 @@ const AnalysisPage = () => {
                   </h1>
 
                   <p className="zen-analysis-description">
-                    Add the classroom context and upload the session image folder. ZenLens will process the images and organize detected emotional patterns for review.
+                    Add the classroom context and upload the session image folder. ASTRA will process the images and organize detected emotional patterns for review.
                   </p>
                 </div>
 
@@ -2909,7 +2906,7 @@ const AnalysisPage = () => {
                           </h3>
 
                           <p>
-                            Select a folder containing the classroom images you want ZenLens to analyze.
+                            Select a folder containing the classroom images you want ASTRA to analyze.
                           </p>
 
                           <span className="zen-analysis-upload-button">
@@ -2935,7 +2932,7 @@ const AnalysisPage = () => {
                           </strong>
 
                           <span>
-                            ZenLens analyzes uploaded images rather than continuous live video.
+                            ASTRA analyzes uploaded images rather than continuous live video.
                           </span>
                         </p>
                       </div>
@@ -3029,7 +3026,7 @@ const AnalysisPage = () => {
                 </div>
 
                 <p>
-                  ZenLens displays detected emotions for each processed image and keeps the classroom context connected to the analysis result.
+                  ASTRA displays detected emotions for each processed image and keeps the classroom context connected to the analysis result.
                 </p>
               </section>
             </>

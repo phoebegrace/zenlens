@@ -4,7 +4,7 @@ import React, {
   useState,
 } from "react";
 
-import axios from "axios";
+import { api as axios } from "../api";
 
 import {
   Activity,
@@ -53,12 +53,11 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./Historypage.css";
 
-const API_BASE_URL =
-  "http://127.0.0.1:5001";
+const API_BASE_URL = "/api";
 
 const navigationItems = [
   {
@@ -95,7 +94,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -258,7 +257,7 @@ const HistoryPage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -381,7 +380,7 @@ const HistoryPage = () => {
             error.response
               ?.data
               ?.message ||
-            `The ZenLens server returned status ${error.response.status}.`;
+            `The ASTRA server returned status ${error.response.status}.`;
 
           setErrorMessage(
             serverMessage
@@ -390,7 +389,7 @@ const HistoryPage = () => {
           error.request
         ) {
           setErrorMessage(
-            "Unable to connect to the ZenLens server at 127.0.0.1:5000. Make sure python app.py is still running."
+            "Unable to connect to the ASTRA server at 127.0.0.1:5000. Make sure python app.py is still running."
           );
         } else {
           setErrorMessage(
@@ -681,15 +680,15 @@ const HistoryPage = () => {
             <span className="zen-history-brand-mark">
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             <span className="zen-history-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <small>
@@ -853,14 +852,14 @@ const HistoryPage = () => {
           <span>
             <img
               src={
-                zenlensLogo
+                ASTRALogo
               }
-              alt="ZenLens"
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -988,7 +987,7 @@ const HistoryPage = () => {
               <span className="zen-history-eyebrow">
                 <Sparkles />
 
-                ZenLens stress archive
+                ASTRA stress archive
               </span>
 
               <p className="zen-history-overline">
@@ -1429,7 +1428,7 @@ const HistoryPage = () => {
                 {viewOption ===
                 "individual"
                   ? "Review the classroom context recorded for each completed session."
-                  : "Review aggregated stress results and the ZenLens response associated with each saved period."}
+                  : "Review aggregated stress results and the ASTRA response associated with each saved period."}
               </p>
             </div>
 
@@ -1448,7 +1447,7 @@ const HistoryPage = () => {
                 </strong>
 
                 <span>
-                  Retrieving saved ZenLens results.
+                  Retrieving saved ASTRA results.
                 </span>
               </div>
             ) : (
@@ -1738,7 +1737,7 @@ const HistoryPage = () => {
 
                                     <div>
                                       <span>
-                                        ZENLENS RESPONSE
+                                        ASTRA RESPONSE
                                       </span>
 
                                       <p>

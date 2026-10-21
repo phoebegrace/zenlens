@@ -7,9 +7,15 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import logging
 
-from services.model_loader import model, emotion_labels, emotion_scores, max_score
+from services.model_loader import get_model, emotion_labels, emotion_scores, max_score
 from config import IMAGE_SIZE, NORMALIZATION_FACTOR, UPLOAD_FOLDER, PROCESSED_FOLDER
-from services.data_handler import save_emotion_timeline
+from services.data_handler import save_emotion_timeline, user_root
+from werkzeug.utils import secure_filename
+from pathlib import Path
+from uuid import uuid4
+import threading
+
+_inference_lock = threading.Lock()
 from services.stress_utils import categorize_stress
 
 logger = logging.getLogger(__name__)
@@ -68,7 +74,7 @@ def preprocess_image(gray: np.ndarray) -> np.ndarray:
 
 
 def predict_emotion(processed_image: np.ndarray) -> np.ndarray:
-    return model.predict(processed_image)
+    return get_model()(processed_image.astype(np.float32), training=False).numpy()
 
 
 def classify_emotions(probabilities: np.ndarray) -> (str, int):
@@ -143,9 +149,22 @@ def analyze_image(
             cv2.COLOR_BGR2RGB
         )
 
-        faces = RetinaFace.detect_faces(
-            rgb_image
-        )
+        # RetinaFace otherwise enlarges photos to ~1024px on the short side,
+        # exceeding the hosted worker's memory budget. Keep output at full size.
+        height, width = image.shape[:2]
+        detector_scale = min(1.0, 640.0 / max(height, width))
+        detector_image = image
+        if detector_scale < 1.0:
+            detector_image = cv2.resize(
+                image, (round(width * detector_scale), round(height * detector_scale)),
+                interpolation=cv2.INTER_AREA,
+            )
+        scale_x = width / detector_image.shape[1]
+        scale_y = height / detector_image.shape[0]
+        with _inference_lock:
+            faces = RetinaFace.detect_faces(detector_image, allow_upscaling=False)
+        if not isinstance(faces, dict):
+            faces = {}
 
         stress_results = {}
 
@@ -166,6 +185,12 @@ def analyze_image(
             ]
 
             x, y, x2, y2 = facial_area
+            x, x2 = round(x * scale_x), round(x2 * scale_x)
+            y, y2 = round(y * scale_y), round(y2 * scale_y)
+            x, y = max(0, x), max(0, y)
+            x2, y2 = min(image.shape[1], x2), min(image.shape[0], y2)
+            if x2 <= x or y2 <= y:
+                continue
 
             cropped_face = rgb_image[
                 y:y2,
@@ -296,10 +321,7 @@ def process_and_save_images(
 
     emotion_timeline = []
 
-    session_folder = os.path.join(
-        UPLOAD_FOLDER,
-        session_id
-    )
+    session_folder = str(user_root() / UPLOAD_FOLDER / session_id)
 
     processed_folder = os.path.join(
         session_folder,
@@ -311,8 +333,25 @@ def process_and_save_images(
         exist_ok=True
     )
 
+    # Validate all files before writing; client filenames never become paths.
+    validated = []
     for file in files:
-        filename = file.filename
+        original = (file.filename or '').replace('\\', '/').split('/')[-1]
+        filename = secure_filename(original)
+        if not filename or Path(filename).suffix.lower() not in {'.png', '.jpg', '.jpeg'}:
+            raise ValueError('Only JPG and PNG images are supported.')
+        try:
+            with Image.open(file.stream) as candidate:
+                if candidate.format not in {'JPEG', 'PNG'} or candidate.width * candidate.height > 25000000:
+                    raise ValueError('Invalid image format or image too large.')
+                candidate.verify()
+        except Exception as error:
+            raise ValueError('An uploaded image is invalid or too large.') from error
+        finally:
+            file.stream.seek(0)
+        validated.append((file, f'{uuid4().hex[:12]}_{filename}'))
+
+    for file, filename in validated:
 
         if filename.lower().endswith(
             (
@@ -433,13 +472,10 @@ def process_and_save_images(
         else 0
     )
 
-    stress_category = categorize_stress(
-        average_stress
-    )
+    stress_category = categorize_stress(average_stress) if total_faces else "Unavailable"
 
-    save_emotion_timeline(
-        emotion_timeline
-    )
+    if total_faces:
+        save_emotion_timeline(emotion_timeline)
 
     return {
         "total_stress":
@@ -458,5 +494,5 @@ def process_and_save_images(
             stress_results,
 
         "folder_path":
-            processed_folder
+            str(Path(processed_folder).relative_to(user_root()))
     }
