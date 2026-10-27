@@ -2,8 +2,8 @@ import requests
 import logging
 from datetime import datetime, timedelta
 
-from config import OPENAI_API_KEY, WEEKLY_RESULTS_FILE
-from services.data_handler import load_data, save_weekly_results
+from config import OPENAI_API_KEY, OPENAI_MODEL, WEEKLY_RESULTS_FILE
+from services.data_handler import load_data, save_weekly_results, load_weekly_results
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def get_openai_response(average_stress, stress_category):
         )
 
         prompt = (
-            f"ZenLens detected an average classroom stress level of "
+            f"ASTRA detected an average classroom stress level of "
             f"{average_stress:.2f}%, which falls under the "
             f"'{stress_category}' category.\n\n"
 
@@ -67,7 +67,7 @@ def get_openai_response(average_stress, stress_category):
             "Address teachers and school staff directly. "
             "Do not address students directly or tell students what they should do. "
             "Do not diagnose individual students, identify specific students as "
-            "having a mental health condition, or present the ZenLens result as a "
+            "having a mental health condition, or present the ASTRA result as a "
             "medical or clinical diagnosis. "
             "Treat the detected stress level as a classroom-level indicator that "
             "can help school staff decide whether adjustments or further review "
@@ -90,12 +90,12 @@ def get_openai_response(average_stress, stress_category):
         }
 
         payload = {
-            "model": "gpt-3.5-turbo",
+            "model": OPENAI_MODEL,
             "messages": [
                 {
                     "role": "system",
                     "content": (
-                        "You are ZenLens, a classroom stress-support assistant "
+                        "You are ASTRA, a classroom stress-support assistant "
                         "for teachers, educators, and guidance counselors. "
                         "Your role is to translate classroom-level stress patterns "
                         "into practical, non-diagnostic actions that school staff "
@@ -216,6 +216,7 @@ def group_by_week(data):
 
 def calculate_weekly_averages(grouped_data):
     weekly_averages = []
+    cached = {entry["week"]: entry for entry in load_weekly_results()}
 
     for week in grouped_data:
         total_faces = sum(
@@ -241,10 +242,14 @@ def calculate_weekly_averages(grouped_data):
         )
 
         try:
-            openai_response = get_openai_response(
-                average_stress,
-                stress_category,
-            )
+            week_key = f"{week[0]['date']} - {week[-1]['date']}"
+            previous = cached.get(week_key, {})
+            reusable = (previous.get('total_faces') == total_faces
+                        and previous.get('average_stress') == average_stress
+                        and previous.get('sessions_count') == sessions_count
+                        and previous.get('openai_response')
+                        and not previous['openai_response'].startswith(('Unable', 'The request', 'OpenAI API')))
+            openai_response = previous['openai_response'] if reusable else get_openai_response(average_stress, stress_category)
 
             logger.info(
                 "OpenAI Response: %s",

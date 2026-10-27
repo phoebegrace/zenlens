@@ -48,7 +48,7 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import step1Image from "../image/step1.png";
 import step2Image from "../image/step2.png";
@@ -93,7 +93,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -132,7 +132,7 @@ const steps = [
     icon:
       ScanFace,
     description:
-      "ZenLens processes the uploaded images to locate faces and prepare the visual information required for emotion classification.",
+      "ASTRA processes the uploaded images to locate faces and prepare the visual information required for emotion classification.",
     details: [
       "Face detection",
       "Image preprocessing",
@@ -170,7 +170,7 @@ const steps = [
     icon:
       BarChart3,
     description:
-      "ZenLens combines the detected emotional observations and summarizes them into a session-level stress interpretation.",
+      "ASTRA combines the detected emotional observations and summarizes them into a session-level stress interpretation.",
     details: [
       "Image-by-image observations",
       "Session stress category",
@@ -295,7 +295,7 @@ const HowItWorksPage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -414,15 +414,15 @@ const HowItWorksPage = () => {
             <span className="zen-how-brand-mark">
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             <span className="zen-how-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <small>
@@ -582,14 +582,14 @@ const HowItWorksPage = () => {
           <span>
             <img
               src={
-                zenlensLogo
+                ASTRALogo
               }
-              alt="ZenLens"
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -713,7 +713,7 @@ const HowItWorksPage = () => {
               <span className="zen-how-eyebrow">
                 <Sparkles />
 
-                How the ZenLens system works
+                How the ASTRA system works
               </span>
 
               <p className="zen-how-overline">
@@ -729,7 +729,7 @@ const HowItWorksPage = () => {
               </h1>
 
               <p className="zen-how-description">
-                ZenLens transforms a collection of classroom images into a structured view of emotional and stress patterns that can be reviewed within one session and across time.
+                ASTRA transforms a collection of classroom images into a structured view of emotional and stress patterns that can be reviewed within one session and across time.
               </p>
 
               <div className="zen-how-hero-actions">
@@ -779,7 +779,7 @@ const HowItWorksPage = () => {
                   </span>
 
                   <span>
-                    ZENLENS
+                    ASTRA
                   </span>
 
                   <strong>
@@ -911,7 +911,7 @@ const HowItWorksPage = () => {
           <section className="zen-how-section-head">
             <div>
               <span>
-                THE ZENLENS WORKFLOW
+                THE ASTRA WORKFLOW
               </span>
 
               <h2>
@@ -1060,7 +1060,7 @@ const HowItWorksPage = () => {
               </span>
 
               <h2>
-                ZenLens supports interpretation, not diagnosis.
+                ASTRA supports interpretation, not diagnosis.
               </h2>
             </div>
 
@@ -1084,7 +1084,7 @@ const HowItWorksPage = () => {
               </h2>
 
               <p>
-                Add the classroom context, upload the image folder, and let ZenLens organize the emotional observations for review.
+                Add the classroom context, upload the image folder, and let ASTRA organize the emotional observations for review.
               </p>
             </div>
 

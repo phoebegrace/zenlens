@@ -1,82 +1,58 @@
-from flask import Blueprint, request, jsonify
-import os
+from datetime import datetime
 import logging
+from uuid import uuid4
+from flask import Blueprint, request, jsonify
+from filelock import Timeout
 
-from services.data_handler import load_data, save_data
-from services.image_processing import process_and_save_images
+from services.data_handler import load_data, save_data, user_lock
 from services.stress_utils import update_weekly_results
-from config import UPLOAD_FOLDER
 
 logger = logging.getLogger(__name__)
-
 analyze_bp = Blueprint('analyze_bp', __name__)
+
 
 @analyze_bp.route('/analyze', methods=['POST'])
 def analyze():
+    fields = {key: request.form.get(key, '').strip() for key in
+              ('weather', 'subject', 'teacher', 'date', 'startTime', 'endTime')}
+    if any(not value or len(value) > 200 for value in fields.values()):
+        return jsonify(error='Complete all classroom and session fields.'), 400
     try:
-        weather = request.form.get('weather')
-        if not weather:
-            logger.error('Weather value is missing')
-            
-        subject = request.form.get('subject')
-        if not subject:
-            logger.error('Subject value is missing')
-            
-        teacher = request.form.get('teacher')
-        if not teacher:
-            logger.error('Teacher value is missing')
-            
-        date = request.form.get('date')
-        if not date:
-            logger.error('Date value is missing')
-            
-        startTime = request.form.get('startTime')  # Ensure the correct key
-        endTime = request.form.get('endTime')  # Ensure the correct key
+        parsed = datetime.strptime(fields['date'], '%Y-%m-%d')
+        if parsed.strftime('%Y-%m-%d') != fields['date']:
+            raise ValueError()
+        start = datetime.strptime(fields['startTime'], '%H:%M')
+        end = datetime.strptime(fields['endTime'], '%H:%M')
+        if end <= start:
+            raise ValueError()
+    except ValueError:
+        return jsonify(error='Enter a valid session date and an end time after the start time.'), 400
+    files = request.files.getlist('folder')
+    if not files or len(files) > 100:
+        return jsonify(error='Upload between 1 and 100 JPG or PNG images.'), 400
 
-        if 'folder' not in request.files:
-            return jsonify({"error": "No folder part"}), 400
-
-        files = request.files.getlist('folder')  # Get all files in the folder
-        logger.info(f"Received {len(files)} files for processing.")
-
-        # Load existing data to determine session number
-        data = load_data()
-        date_sessions = [entry for entry in data if entry['date'] == date]
-        session_number = len(date_sessions) + 1  # Increment session number based on existing entries
-        session_id = f"{date}_{session_number}"
-
-        os.makedirs(os.path.join(UPLOAD_FOLDER, session_id), exist_ok=True)
-
-        # Process the files in batch
-        results = process_and_save_images(files, session_id, date)
-        
-        logger.info(f"Results to return: {results}")
-        if not results:
-            logger.error("No results generated from processing")
-            return jsonify({"error": "Image Processing Error"}), 500
-
-        # Save the new analysis result
-        data.append({
-            'session_id': session_id,
-            'session': session_number,
-            'subject': subject,
-            'weather': weather,
-            'teacher': teacher,
-            'date': date,
-            'startTime': startTime,  # Ensure correct key
-            'endTime': endTime,  # Ensure correct key
-            'total_faces': results.get('total_faces', 0),
-            'average_stress': results.get('average_stress', 0.0),
-            'stress_category': results['stress_category']  # Add stress category to the saved data
-        })
-
-        save_data(data)  # Save the updated data
-        update_weekly_results()
-
-        response = jsonify(results)
-        logger.info(f"Returning response: {response.get_json()}")
-        return response, 200
-
-    except Exception as e:
-        logger.error(f"Error in /analyze route: {e}")
-        return jsonify({"error": f"Server error: {str(e)}"}), 500
+    try:
+        # Import only when needed; static pages and health checks start without
+        # downloading detection weights or allocating TensorFlow model memory.
+        from services.image_processing import process_and_save_images
+        with user_lock():
+            data = load_data()
+            session_number = 1 + max((entry.get('session', 0) for entry in data
+                                      if entry.get('date') == fields['date']), default=0)
+            session_id = f"{fields['date']}_{session_number}_{uuid4().hex[:12]}"
+            results = process_and_save_images(files, session_id, fields['date'])
+            if not results.get('total_faces'):
+                return jsonify(error='No faces were detected. Try clearer classroom images.'), 422
+            data.append(dict(fields, session_id=session_id, session=session_number,
+                             total_faces=results['total_faces'], average_stress=results['average_stress'],
+                             stress_category=results['stress_category']))
+            save_data(data)
+            update_weekly_results()
+        return jsonify(results), 200
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    except Timeout:
+        return jsonify(error='Another analysis is running. Please try again shortly.'), 409
+    except Exception:
+        logger.exception('Analysis failed')
+        return jsonify(error='ASTRA could not analyze these images. Please try again.'), 500

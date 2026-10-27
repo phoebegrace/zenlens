@@ -3111,3 +3111,16 @@
       1 !important;
   }
 }
+/* Show the full walkthrough screenshots at their original proportions. */
+.zen-how-step-image-wrap {
+  height: auto;
+  min-height: 0;
+}
+.zen-how-step-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.zen-how-step:hover .zen-how-step-image {
+  transform: none;
+}

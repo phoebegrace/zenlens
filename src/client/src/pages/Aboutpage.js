@@ -49,7 +49,7 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./Aboutpage.css";
 
@@ -88,7 +88,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -105,7 +105,7 @@ const capabilities = [
     title:
       "Image-based classroom analysis",
     description:
-      "ZenLens works with classroom images collected during a session and organizes the observations into a structured analysis.",
+      "ASTRA works with classroom images collected during a session and organizes the observations into a structured analysis.",
   },
   {
     icon: ScanFace,
@@ -119,7 +119,7 @@ const capabilities = [
     title:
       "Emotion classification",
     description:
-      "ZenLens classifies seven emotional categories that help describe what is being observed across the classroom images.",
+      "ASTRA classifies seven emotional categories that help describe what is being observed across the classroom images.",
   },
   {
     icon: BarChart3,
@@ -171,27 +171,27 @@ const audiences = [
 const faqs = [
   {
     question:
-      "Does ZenLens analyze live classroom video?",
+      "Does ASTRA analyze live classroom video?",
     answer:
-      "No. ZenLens is image-based. Classroom images are collected and then uploaded as part of a session analysis.",
+      "No. ASTRA is image-based. Classroom images are collected and then uploaded as part of a session analysis.",
   },
   {
     question:
-      "What emotions does ZenLens identify?",
+      "What emotions does ASTRA identify?",
     answer:
-      "ZenLens classifies happiness, surprise, neutral, sadness, anger, fear, and disgust.",
+      "ASTRA classifies happiness, surprise, neutral, sadness, anger, fear, and disgust.",
   },
   {
     question:
-      "Is ZenLens a diagnostic tool?",
+      "Is ASTRA a diagnostic tool?",
     answer:
-      "No. ZenLens is designed to support interpretation of classroom emotional and stress patterns. It should not be treated as a medical or psychological diagnosis.",
+      "No. ASTRA is designed to support interpretation of classroom emotional and stress patterns. It should not be treated as a medical or psychological diagnosis.",
   },
   {
     question:
       "Can previous analyses be reviewed later?",
     answer:
-      "Yes. ZenLens includes session history, daily and weekly insights, and combined monitoring for reviewing recorded patterns over time.",
+      "Yes. ASTRA includes session history, daily and weekly insights, and combined monitoring for reviewing recorded patterns over time.",
   },
 ];
 
@@ -300,7 +300,7 @@ const Aboutpage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -411,15 +411,15 @@ const Aboutpage = () => {
             <span className="zen-about-brand-mark">
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             <span className="zen-about-brand-copy">
               <strong>
-                ZenLens
+                ASTRA
               </strong>
 
               <small>
@@ -575,14 +575,14 @@ const Aboutpage = () => {
           <span>
             <img
               src={
-                zenlensLogo
+                ASTRALogo
               }
-              alt="ZenLens"
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -698,7 +698,7 @@ const Aboutpage = () => {
               <span className="zen-about-eyebrow">
                 <Sparkles />
 
-                About the ZenLens system
+                About the ASTRA system
               </span>
 
               <p className="zen-about-overline">
@@ -714,7 +714,7 @@ const Aboutpage = () => {
               </h1>
 
               <p className="zen-about-hero-description">
-                ZenLens organizes emotional observations from classroom images into session-level and historical patterns that educators can review alongside classroom context.
+                ASTRA organizes emotional observations from classroom images into session-level and historical patterns that educators can review alongside classroom context.
               </p>
 
               <div className="zen-about-hero-actions">
@@ -723,7 +723,7 @@ const Aboutpage = () => {
                   className="zen-about-primary-link"
                 >
                   <span>
-                    See how ZenLens works
+                    See how ASTRA works
                   </span>
 
                   <ArrowRight />
@@ -751,14 +751,14 @@ const Aboutpage = () => {
                   </span>
 
                   <h2>
-                    What ZenLens is designed to do.
+                    What ASTRA is designed to do.
                   </h2>
                 </div>
 
                 <div className="zen-about-definition-columns">
                   <div>
                     <span className="zen-about-definition-label">
-                      ZENLENS IS
+                      ASTRA IS
                     </span>
 
                     <ul>
@@ -784,7 +784,7 @@ const Aboutpage = () => {
 
                   <div className="muted">
                     <span className="zen-about-definition-label">
-                      ZENLENS IS NOT
+                      ASTRA IS NOT
                     </span>
 
                     <ul>
@@ -833,7 +833,7 @@ const Aboutpage = () => {
               </p>
 
               <p>
-                ZenLens was built around that idea. Instead of focusing on one isolated result, the system helps users review patterns within a session and compare those patterns across time.
+                ASTRA was built around that idea. Instead of focusing on one isolated result, the system helps users review patterns within a session and compare those patterns across time.
               </p>
             </div>
           </section>
@@ -869,7 +869,7 @@ const Aboutpage = () => {
                 </h2>
 
                 <p>
-                  ZenLens follows a structured workflow from classroom image collection through facial processing, emotion classification, session interpretation, and historical review.
+                  ASTRA follows a structured workflow from classroom image collection through facial processing, emotion classification, session interpretation, and historical review.
                 </p>
 
                 <Link
@@ -928,7 +928,7 @@ const Aboutpage = () => {
           <section className="zen-about-capabilities">
             <div className="zen-about-section-intro">
               <span>
-                WHAT ZENLENS DOES
+                WHAT ASTRA DOES
               </span>
 
               <h2>
@@ -1108,7 +1108,7 @@ const Aboutpage = () => {
               </span>
 
               <h2>
-                ZenLens supports interpretation. It does not make a diagnosis.
+                ASTRA supports interpretation. It does not make a diagnosis.
               </h2>
             </div>
 
@@ -1124,7 +1124,7 @@ const Aboutpage = () => {
               </span>
 
               <h2>
-                A few things worth knowing before using ZenLens.
+                A few things worth knowing before using ASTRA.
               </h2>
             </div>
 
@@ -1179,7 +1179,7 @@ const Aboutpage = () => {
               </h2>
 
               <p>
-                Explore the full ZenLens workflow from image collection to session interpretation.
+                Explore the full ASTRA workflow from image collection to session interpretation.
               </p>
             </div>
 
@@ -1188,7 +1188,7 @@ const Aboutpage = () => {
               className="zen-about-final-link"
             >
               <span>
-                How ZenLens works
+                How ASTRA works
               </span>
 
               <ArrowRight />

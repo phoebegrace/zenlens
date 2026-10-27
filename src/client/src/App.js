@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 
 import {
   BrowserRouter as Router,
@@ -8,16 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import HomePage from "./pages/Homepage";
-import AnalysisPage from "./pages/Analysispage";
-import HistoryPage from "./pages/Historypage";
-import MonitoringPage from "./pages/Monitoringpage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import SessionHisPage from "./pages/SessionHispage";
-import DailyWeeklyPage from "./pages/OverallHispage";
-import Aboutpage from "./pages/Aboutpage";
-import HowItWorksPage from "./pages/HowItWorksPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Sidebar from "./components/Sidebar";
 
@@ -30,6 +21,18 @@ import {
 } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const HomePage = lazy(() => import("./pages/Homepage"));
+const AnalysisPage = lazy(() => import("./pages/Analysispage"));
+const HistoryPage = lazy(() => import("./pages/Historypage"));
+const MonitoringPage = lazy(() => import("./pages/Monitoringpage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const SessionHisPage = lazy(() => import("./pages/SessionHispage"));
+const DailyWeeklyPage = lazy(() => import("./pages/OverallHispage"));
+const Aboutpage = lazy(() => import("./pages/Aboutpage"));
+const HowItWorksPage = lazy(() => import("./pages/HowItWorksPage"));
 
 const AppContent = () => {
   const location =
@@ -56,10 +59,11 @@ const AppContent = () => {
       }`}
     >
       {showSidebar && (
-        <Sidebar />
+        <ProtectedRoute><Sidebar /></ProtectedRoute>
       )}
 
       <div className="content">
+        <Suspense fallback={<div role="status" style={{ padding: "2rem" }}>Loading ASTRA…</div>}>
         <Routes>
           {/* ============================================
               AUTH
@@ -86,6 +90,8 @@ const AppContent = () => {
             }
           />
 
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
           {/* ============================================
               HOME
           ============================================ */}
@@ -93,7 +99,7 @@ const AppContent = () => {
           <Route
             path="/home"
             element={
-              <HomePage />
+              <ProtectedRoute><HomePage /></ProtectedRoute>
             }
           />
 
@@ -104,14 +110,14 @@ const AppContent = () => {
           <Route
             path="/stressdetection"
             element={
-              <AnalysisPage />
+              <ProtectedRoute><AnalysisPage /></ProtectedRoute>
             }
           />
 
           <Route
             path="/stressmonitoring"
             element={
-              <MonitoringPage />
+              <ProtectedRoute><MonitoringPage /></ProtectedRoute>
             }
           />
 
@@ -122,14 +128,14 @@ const AppContent = () => {
           <Route
             path="/sessionhistory"
             element={
-              <SessionHisPage />
+              <ProtectedRoute><SessionHisPage /></ProtectedRoute>
             }
           />
 
           <Route
             path="/stresshistory"
             element={
-              <HistoryPage />
+              <ProtectedRoute><HistoryPage /></ProtectedRoute>
             }
           />
 
@@ -140,7 +146,7 @@ const AppContent = () => {
           <Route
             path="/overallhistory"
             element={
-              <DailyWeeklyPage />
+              <ProtectedRoute><DailyWeeklyPage /></ProtectedRoute>
             }
           />
 
@@ -151,14 +157,14 @@ const AppContent = () => {
           <Route
             path="/about"
             element={
-              <Aboutpage />
+              <ProtectedRoute><Aboutpage /></ProtectedRoute>
             }
           />
 
           <Route
             path="/how-it-works"
             element={
-              <HowItWorksPage />
+              <ProtectedRoute><HowItWorksPage /></ProtectedRoute>
             }
           />
 
@@ -176,6 +182,7 @@ const AppContent = () => {
             }
           />
         </Routes>
+        </Suspense>
 
         <ToastContainer
           position="top-right"

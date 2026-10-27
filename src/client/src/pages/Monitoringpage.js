@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 
-import axios from "axios";
+import { api as axios } from "../api";
 
 import { DateRange } from "react-date-range";
 
@@ -59,15 +59,14 @@ import {
   db,
 } from "../components/firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./Monitoringpage.css";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-const API_BASE_URL =
-  "http://localhost:5001";
+const API_BASE_URL = "/api";
 
 const navigationItems = [
   {
@@ -104,7 +103,7 @@ const navigationItems = [
 
 const supportNavigation = [
   {
-    label: "About ZenLens",
+    label: "About ASTRA",
     icon: Info,
     route: "/about",
   },
@@ -266,7 +265,7 @@ const MonitoringPage = () => {
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     email?.split("@")[0] ||
-    "ZenLens User";
+    "ASTRA User";
 
   const initials = (() => {
     if (
@@ -348,7 +347,7 @@ const MonitoringPage = () => {
         setHistory([]);
 
         setErrorMessage(
-          "Unable to load analysis history. Check that the ZenLens server is running and try again."
+          "Unable to load analysis history. Check that the ASTRA server is running and try again."
         );
       } finally {
         setIsLoading(
@@ -708,15 +707,15 @@ const MonitoringPage = () => {
               <span className="zen-monitor-brand-mark">
                 <img
                   src={
-                    zenlensLogo
+                    ASTRALogo
                   }
-                  alt="ZenLens"
+                  alt="ASTRA"
                 />
               </span>
 
               <span className="zen-monitor-brand-copy">
                 <strong>
-                  ZenLens
+                  ASTRA
                 </strong>
 
                 <small>
@@ -867,14 +866,14 @@ const MonitoringPage = () => {
             <span>
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             <strong>
-              ZenLens
+              ASTRA
             </strong>
           </button>
 
@@ -1004,7 +1003,7 @@ const MonitoringPage = () => {
               <span className="zen-monitor-eyebrow">
                 <Sparkles />
 
-                ZenLens monitoring workspace
+                ASTRA monitoring workspace
               </span>
 
               <p className="zen-monitor-overline">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../image/logo.png";
+import logo from "../image/app.png";
 import icon1 from "../image/icon1.png";
 import icon2 from "../image/icon2.png";
 import icon3 from "../image/icon3.png";
@@ -41,7 +41,7 @@ const Header = () => {
 
   return (
     <header className="header">
-      <img src={logo} alt="Zenlens Logo" className="logo" />
+      <Link to="/home" className="astra-legacy-brand"><img src={logo} alt="" /><strong>ASTRA</strong></Link>
       <nav className="nav">
         {isSignedIn ? (
           <>

@@ -38,7 +38,7 @@ import {
   db,
 } from "./firebase";
 
-import zenlensLogo from "../image/app.png";
+import ASTRALogo from "../image/app.png";
 
 import "./Sidebar.css";
 
@@ -56,7 +56,7 @@ const Sidebar = () => {
     try {
       return (
         localStorage.getItem(
-          "zenlens-sidebar-collapsed"
+          "ASTRA-sidebar-collapsed"
         ) === "true"
       );
     } catch {
@@ -190,7 +190,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     document.documentElement.style.setProperty(
-      "--zen-sidebar-width",
+      "--astra-desktop-sidebar-width",
       collapsed
         ? "78px"
         : "286px"
@@ -198,7 +198,7 @@ const Sidebar = () => {
 
     try {
       localStorage.setItem(
-        "zenlens-sidebar-collapsed",
+        "ASTRA-sidebar-collapsed",
         String(
           collapsed
         )
@@ -225,6 +225,22 @@ const Sidebar = () => {
   /* ======================================================
      USER DISPLAY
   ====================================================== */
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = event => { if (event.key === 'Escape') setMobileOpen(false); };
+    const breakpoint = window.matchMedia('(max-width: 980px)');
+    const closeOnDesktop = event => { if (!event.matches) setMobileOpen(false); };
+    document.addEventListener('keydown', closeOnEscape);
+    breakpoint.addEventListener('change', closeOnDesktop);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener('keydown', closeOnEscape);
+      breakpoint.removeEventListener('change', closeOnDesktop);
+    };
+  }, [mobileOpen]);
 
   const firstName =
     userDetails?.firstName?.trim() ||
@@ -499,16 +515,16 @@ const Sidebar = () => {
             <span className="zl-sidebar-logo">
               <img
                 src={
-                  zenlensLogo
+                  ASTRALogo
                 }
-                alt="ZenLens"
+                alt="ASTRA"
               />
             </span>
 
             {!collapsed && (
               <span className="zl-sidebar-brand-copy">
                 <strong>
-                  ZenLens
+                  ASTRA
                 </strong>
 
                 <small>
@@ -714,14 +730,14 @@ const Sidebar = () => {
           <span>
             <img
               src={
-                zenlensLogo
+                ASTRALogo
               }
-              alt="ZenLens"
+              alt="ASTRA"
             />
           </span>
 
           <strong>
-            ZenLens
+            ASTRA
           </strong>
         </button>
 
@@ -737,6 +753,8 @@ const Sidebar = () => {
             )
           }
           aria-label="Toggle navigation"
+          aria-expanded={mobileOpen}
+          aria-controls="astra-mobile-navigation"
         >
           {mobileOpen ? (
             <X />
@@ -763,21 +781,22 @@ const Sidebar = () => {
             }
           />
 
-          <aside className="zl-sidebar-mobile-drawer">
+          <aside className="zl-sidebar-mobile-drawer"
+            id="astra-mobile-navigation">
             <div className="zl-sidebar-mobile-drawer-head">
               <div className="zl-sidebar-mobile-drawer-brand">
                 <span>
                   <img
                     src={
-                      zenlensLogo
+                      ASTRALogo
                     }
-                    alt="ZenLens"
+                    alt="ASTRA"
                   />
                 </span>
 
                 <div>
                   <strong>
-                    ZenLens
+                    ASTRA
                   </strong>
 
                   <small>
