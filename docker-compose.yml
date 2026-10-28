@@ -3,12 +3,14 @@ version: '3.8'
 services:
   server:
     build: ./src/server    
+    image: ejprincesev/astra-server:latest
     ports:
       - "5001:5001"
     # env_file:
     #   - ./src/server/.env
     volumes:
       - ./src/server:/app        
+      - ./src/client/build:/app/client/build
     deploy:
       resources:
         reservations:
@@ -18,10 +20,15 @@ services:
               capabilities: [gpu]
     environment:
       - FLASK_ENV=development
+      - CLIENT_BUILD_PATH=/app/client/build
 
   client:
-    build: ./src/client    
+    build: ./src/client   
+    image: ejprincesev/astra-client:latest 
     ports:
       - "3000:3000"
+    volumes:
+      - ./src/client:/app
+      - /app/node_modules
     depends_on:
       - server

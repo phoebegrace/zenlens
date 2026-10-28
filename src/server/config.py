@@ -20,3 +20,4 @@ WEEKLY_RESULTS_FILE = os.path.join(BASE_DIR, "weekly_combined_results.json")
 EMOTION_TIMELINE_FILE = os.path.join(BASE_DIR, "emotion_timeline.json")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+CLIENT_BUILD = os.getenv("CLIENT_BUILD", "/app/client/build")
